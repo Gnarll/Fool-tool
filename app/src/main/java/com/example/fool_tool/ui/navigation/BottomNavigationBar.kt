@@ -42,6 +42,7 @@ fun BottomNavigationBar(navController: NavHostController, currentRoute: BottomNa
                     navController.navigate(topLevelRoute.route) {
                         popUpTo(currentRoute::class) {
                             saveState = true
+                            inclusive = true
                         }
                         launchSingleTop = true
                         restoreState = true
