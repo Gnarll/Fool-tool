@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
+import androidx.navigation.toRoute
 import com.example.fool_tool.ui.screens.flashcard.CreateFlashcardDialog
 import com.example.fool_tool.ui.screens.flashcard.FlashcardScreen
 import kotlinx.serialization.Serializable
@@ -18,8 +19,10 @@ object FlashcardRoute
 object CreateFlashcardRoute
 
 fun NavController.navigateToSmartnoteGraph() {
-    popBackStack(route = BottomNavRoute.FlashcardGraphRoute, inclusive = true)
-    navigate(BottomNavRoute.SmartnoteGraphRoute)
+//    popBackStack(route = BottomNavRoute.FlashcardGraphRoute, inclusive = true)
+    navigate(route = BottomNavigationRoute.SmartnoteGraphRoute) {
+        popUpTo<BottomNavigationRoute.FlashcardGraphRoute> { inclusive = true }
+    }
 }
 
 fun NavController.navigateToCreateFlashcard() {
@@ -31,10 +34,11 @@ fun NavGraphBuilder.flashcardDestination(
     onNavigateToCreateFlashcard: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    navigation<BottomNavRoute.FlashcardGraphRoute>(
+    navigation<BottomNavigationRoute.FlashcardGraphRoute>(
         startDestination = FlashcardRoute
     ) {
         composable<FlashcardRoute> { backStack ->
+            backStack.toRoute<FlashcardRoute>()
             FlashcardScreen(
                 onNavigateToSmartnote = onNavigateToSmartnote,
                 onCreateFlashcard = onNavigateToCreateFlashcard,
