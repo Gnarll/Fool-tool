@@ -5,6 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.example.fool_tool.ui.screens.smartnote.CreateSmartnoteScreen
 import com.example.fool_tool.ui.screens.smartnote.EditSmartnoteScreen
 import com.example.fool_tool.ui.screens.smartnote.SmartnoteScreen
@@ -18,19 +19,19 @@ object SmartnoteRoute
 object CreateSmartnoteRoute
 
 @Serializable
-object EditSmartnoteRoute
+data class EditSmartnoteRoute(val id: String)
 
 fun NavController.navigateToFlashcardGraph() {
-    popBackStack(route = BottomNavRoute.SmartnoteGraphRoute, inclusive = true)
-    navigate(BottomNavRoute.FlashcardGraphRoute)
+    popBackStack(route = BottomNavigationRoute.SmartnoteGraphRoute, inclusive = true)
+    navigate(BottomNavigationRoute.FlashcardGraphRoute)
 }
 
 fun NavController.navigateToCreateSmartnote() {
     navigate(CreateSmartnoteRoute)
 }
 
-fun NavController.navigateToEditSmartnote() {
-    navigate(EditSmartnoteRoute)
+fun NavController.navigateToEditSmartnote(id: String) {
+    navigate(EditSmartnoteRoute(id))
 }
 
 fun NavGraphBuilder.smartnoteDestination(
@@ -40,7 +41,7 @@ fun NavGraphBuilder.smartnoteDestination(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    navigation<BottomNavRoute.SmartnoteGraphRoute>(startDestination = SmartnoteRoute) {
+    navigation<BottomNavigationRoute.SmartnoteGraphRoute>(startDestination = SmartnoteRoute) {
         composable<SmartnoteRoute> {
             SmartnoteScreen(
                 onNavigateToFlashcard = onNavigateToFlashcardGraph,
@@ -57,9 +58,12 @@ fun NavGraphBuilder.smartnoteDestination(
             )
         }
 
-        composable<EditSmartnoteRoute> {
+        composable<EditSmartnoteRoute> { backStack ->
+            val smartnoteId = backStack.toRoute<EditSmartnoteRoute>().id
+ 
             EditSmartnoteScreen(
                 onSmartnoteEdited = onNavigateBack,
+                smartnote = smartnoteId,
                 modifier = modifier
             )
         }

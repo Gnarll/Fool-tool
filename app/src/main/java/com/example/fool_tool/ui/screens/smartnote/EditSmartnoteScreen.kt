@@ -4,6 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun EditSmartnoteScreen(onSmartnoteEdited: () -> Unit, modifier: Modifier = Modifier) {
+fun EditSmartnoteScreen(
+    onSmartnoteEdited: () -> Unit,
+    smartnote: Any,
+    modifier: Modifier = Modifier
+) {
 
 }

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Fool-tool</string>
+    <string name="flashcard_screen_title">Flashcards</string>
+    <string name="smartnote_screen_title">Notes</string>
 </resources>
