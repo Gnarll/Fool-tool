@@ -41,13 +41,13 @@ class NavigationTest {
     }
 
     @Test
-    fun RootNavigator_verifyStartDestinationIsFlashcard() {
+    fun rootNavigator_verifyStartDestinationIsFlashcard() {
         composeTestRule.onNodeWithText(getStringRes(R.string.flashcard_screen_title))
             .assertIsSelected()
     }
 
     @Test
-    fun RootNavigator_navigateToSmartnoteGraph_navigationPerformed() {
+    fun rootNavigator_navigateToSmartnoteGraph_navigationPerformed() {
         composeTestRule.onNodeWithText(getStringRes(R.string.smartnote_screen_title))
             .performClick()
             .assertIsSelected()
@@ -57,7 +57,7 @@ class NavigationTest {
     }
 
     @Test
-    fun RootNavigator_navigateFromOneTabToAnother_backStackIsCleared() {
+    fun rootNavigator_navigateFromOneTabToAnother_backStackIsCleared() {
         val initialRoutes = navController.backStack.routes()
 
         composeTestRule.runOnUiThread {
@@ -76,7 +76,7 @@ class NavigationTest {
     }
 
     @Test
-    fun RootNavigator_multiclickOneTab_backStackIsNotFillingUp() {
+    fun rootNavigator_multiclickOneTab_backStackIsNotFillingUp() {
         composeTestRule.onNodeWithText(getStringRes(R.string.flashcard_screen_title))
             .performClick()
 
