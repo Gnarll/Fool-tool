@@ -1,5 +1,6 @@
 package com.example.fool_tool.ui.navigation
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -38,13 +39,16 @@ fun RootNavigator(navController: NavHostController) {
 
         NavHost(
             navController = navController,
-            startDestination = BottomNavigationRoute.FlashcardGraphRoute
+            startDestination = BottomNavigationRoute.FlashcardGraphRoute,
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
         ) {
             flashcardDestination(
                 onNavigateToSmartnote = { navController.navigateToSmartnoteGraph() },
                 onNavigateToCreateFlashcard = { navController.navigateToCreateFlashcard() },
-                modifier = Modifier.padding(innerPadding)
-            )
+
+                )
             smartnoteDestination(
                 onNavigateToFlashcardGraph = { navController.navigateToFlashcardGraph() },
                 onNavigateToCreateSmartnote = { navController.navigateToCreateSmartnote() },
@@ -52,8 +56,8 @@ fun RootNavigator(navController: NavHostController) {
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-                modifier = Modifier.padding(innerPadding)
-            )
+
+                )
         }
     }
 }
