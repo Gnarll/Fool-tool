@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FlashcardViewModel @Inject constructor(
-    val flashcardRepository: FlashcardRepository,
+    private val flashcardRepository: FlashcardRepository,
 ) :
     ViewModel() {
 
@@ -32,5 +32,6 @@ class FlashcardViewModel @Inject constructor(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000L)
             )
+
 }
 
