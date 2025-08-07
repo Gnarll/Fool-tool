@@ -13,6 +13,12 @@ interface FlashcardDao {
     @Query("SELECT * FROM flashcard")
     fun getAll(): Flow<List<FlashcardEntity>>
 
+    @Query(
+        "SELECT * FROM flashcard" +
+                " WHERE flashcard.uid = :id"
+    )
+    suspend fun getById(id: Long): FlashcardEntity
+
     @Insert
     suspend fun insert(flashcard: FlashcardEntity)
 
