@@ -1,4 +1,4 @@
-package com.example.fool_tool
+package com.example.fool_tool.dbTest
 
 import android.content.Context
 import androidx.room.Room
@@ -20,7 +20,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.IOException
-import java.util.UUID
 import java.util.concurrent.CountDownLatch
 
 @RunWith(AndroidJUnit4::class)
@@ -44,8 +43,8 @@ class FlashcardDaoTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun db_writeAndReadFlashcard_flashcardIsValid() = runTest {
-        val flashcardOne: FlashcardEntity = createFlashcardEntity(nativeWord = "One")
-        val flashcardTwo: FlashcardEntity = createFlashcardEntity(nativeWord = "Two")
+        val flashcardOne: FlashcardEntity = DbTestUtils.createFlashcardEntity(nativeWord = "One")
+        val flashcardTwo: FlashcardEntity = DbTestUtils.createFlashcardEntity(nativeWord = "Two")
 
 
         flashcardDao.insert(flashcardOne)
@@ -69,7 +68,7 @@ class FlashcardDaoTest {
 
     @Test
     fun db_insertAndDeleteFlashcard_flashcardIsDeleted() = runTest {
-        val flashcard = createFlashcardEntity()
+        val flashcard = DbTestUtils.createFlashcardEntity()
 
         flashcardDao.getAll().test {
             assertEquals(emptyList<FlashcardEntity>(), awaitItem())
@@ -86,7 +85,7 @@ class FlashcardDaoTest {
 
     @Test
     fun db_insertAndGetByIdFlashcard_flashcardIsValid() = runTest {
-        val flashcard = createFlashcardEntity()
+        val flashcard = DbTestUtils.createFlashcardEntity()
         flashcardDao.insert(flashcard)
 
         val fetchedFlashcard = flashcardDao.getById(flashcard.uid)
@@ -95,7 +94,7 @@ class FlashcardDaoTest {
 
     @Test
     fun db_addAndUpdateFlashcard_flashcardIsUpdated() = runTest {
-        var flashcard = createFlashcardEntity(nativeWord = "one")
+        var flashcard = DbTestUtils.createFlashcardEntity(nativeWord = "one")
         flashcardDao.insert(flashcard)
 
         flashcard = flashcard.copy(nativeWord = "two")
@@ -105,11 +104,5 @@ class FlashcardDaoTest {
         assertEquals(updatedFlashcard, flashcard)
     }
 
-    private fun createFlashcardEntity(
-        nativeWord: String = "Test",
-        foreignWord: String = "Test",
-        id: Long = UUID.randomUUID().mostSignificantBits
-    ): FlashcardEntity =
-        FlashcardEntity(uid = id, nativeWord = nativeWord, foreignWord = foreignWord)
 
 }

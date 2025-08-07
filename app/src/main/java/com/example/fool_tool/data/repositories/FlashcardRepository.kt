@@ -11,6 +11,7 @@ import javax.inject.Inject
 
 interface FlashcardRepository {
     fun getAllFlashcardsStream(): Flow<List<Flashcard>>
+    suspend fun getFlashcardById(id: Long): Flashcard
     suspend fun insertFlashcard(flashcard: Flashcard)
     suspend fun updateFlashcard(flashcard: Flashcard)
     suspend fun deleteFlashcard(flashcard: Flashcard)
@@ -18,6 +19,10 @@ interface FlashcardRepository {
 
 class FlashcardRepositoryImpl @Inject constructor(val flashcardDao: FlashcardDao) :
     FlashcardRepository {
+    override suspend fun getFlashcardById(id: Long): Flashcard =
+        flashcardDao.getById(id = id).toFlashcard()
+
+
     override fun getAllFlashcardsStream(): Flow<List<Flashcard>> =
         flashcardDao.getAll().map { flashcards ->
             flashcards.map { it.toFlashcard() }
