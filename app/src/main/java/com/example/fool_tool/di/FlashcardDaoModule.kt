@@ -1,4 +1,4 @@
-package com.example.fool_tool.data.repositories.di
+package com.example.fool_tool.di
 
 import com.example.fool_tool.data.local.dao.FlashcardDao
 import com.example.fool_tool.data.local.db.AppDatabase

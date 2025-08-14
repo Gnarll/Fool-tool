@@ -1,4 +1,4 @@
-package com.example.fool_tool.data.repositories.di
+package com.example.fool_tool.di
 
 import android.content.Context
 import androidx.room.Room
