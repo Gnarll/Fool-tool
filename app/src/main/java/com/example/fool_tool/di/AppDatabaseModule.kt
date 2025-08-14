@@ -21,5 +21,7 @@ object AppDatabaseModule {
             context,
             AppDatabase::class.java,
             AppDatabase.DB_NAME
-        ).build()
+        )
+            .createFromAsset("database/fooltool.db")
+            .build()
 }
