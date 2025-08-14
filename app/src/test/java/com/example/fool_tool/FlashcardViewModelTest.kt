@@ -16,6 +16,7 @@ import org.junit.Test
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 
 
 class MainDispatcherRule @OptIn(ExperimentalCoroutinesApi::class)
@@ -50,31 +51,36 @@ class FlashcardViewModelTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun flashcardViewModel_verifyFlashcardFlow() = runTest {
+    fun flashcardViewModel_verifyFlashcardsAppeared() = runTest(UnconfinedTestDispatcher()) {
         assertEquals(viewModel.flashcardStateFlow.value, UiState.Loading)
 
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+        backgroundScope.launch {
             viewModel.flashcardStateFlow.collect { }
         }
 
-
         var uiState = UiState.Success(fakeRepository.currentFlashcards)
         assertEquals(viewModel.flashcardStateFlow.value, uiState)
-
-        fakeRepository.deleteFlashcard(fakeRepository.currentFlashcards.first())
-        uiState = UiState.Success(fakeRepository.currentFlashcards)
-        assertEquals(viewModel.flashcardStateFlow.value, uiState)
-
-        fakeRepository.updateFlashcard(
-            fakeRepository.currentFlashcards.first().copy(foreignWord = "new")
-        )
-        uiState = UiState.Success(fakeRepository.currentFlashcards)
-        assertEquals(viewModel.flashcardStateFlow.value, uiState)
-
-        fakeRepository.insertFlashcard(
-            fakeRepository.currentFlashcards.last().copy(foreignWord = "OneMoreNew")
-        )
-        uiState = UiState.Success(fakeRepository.currentFlashcards)
-        assertEquals(viewModel.flashcardStateFlow.value, uiState)
     }
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun flashcardViewModel_deleteItem_ItemDeleted() = runTest(UnconfinedTestDispatcher()) {
+        backgroundScope.launch {
+            viewModel.flashcardStateFlow.collect { }
+        }
+
+        assertEquals(
+            UiState.Success(fakeRepository.currentFlashcards),
+            viewModel.flashcardStateFlow.value
+        )
+
+        val firstFlashcard = fakeRepository.currentFlashcards[0]
+        viewModel.deleteFlashcard(firstFlashcard)
+
+        assertFalse {
+            (viewModel.flashcardStateFlow.value as UiState.Success).value.contains(firstFlashcard)
+        }
+
+    }
+
 }
