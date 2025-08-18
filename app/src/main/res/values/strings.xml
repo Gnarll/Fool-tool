@@ -5,4 +5,5 @@
     <string name="error_msg_something_went_wrong">Something went wrong</string>
     <string name="add_flashcard">Add flashcard</string>
     <string name="turn_over">Turn over</string>
+    <string name="delete_word">Delete word</string>
 </resources>
