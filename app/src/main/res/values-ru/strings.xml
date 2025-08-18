@@ -6,4 +6,5 @@
     <string name="error_msg_something_went_wrong">Что-то пошло не так</string>
     <string name="add_flashcard">Добавить карточку</string>
     <string name="turn_over">Перевернуть</string>
+    <string name="delete_word">Удалить слово</string>
 </resources>
