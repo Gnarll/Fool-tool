@@ -19,7 +19,6 @@ class FlashcardViewModel @Inject constructor(
     private val flashcardRepository: FlashcardRepository,
 ) :
     ViewModel() {
-
     val flashcardStateFlow: StateFlow<UiState<List<Flashcard>>> =
         flashcardRepository.getAllFlashcardsStream()
             .map { flashcards ->
@@ -38,6 +37,12 @@ class FlashcardViewModel @Inject constructor(
     fun deleteFlashcard(flashcard: Flashcard) {
         viewModelScope.launch {
             flashcardRepository.deleteFlashcard(flashcard)
+        }
+    }
+
+    fun deleteFlashcardById(id: Long) {
+        viewModelScope.launch {
+            flashcardRepository.deleteFlashcardById(id)
         }
     }
 }

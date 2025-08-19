@@ -15,6 +15,8 @@ interface FlashcardRepository {
     suspend fun insertFlashcard(flashcard: Flashcard)
     suspend fun updateFlashcard(flashcard: Flashcard)
     suspend fun deleteFlashcard(flashcard: Flashcard)
+
+    suspend fun deleteFlashcardById(id: Long)
 }
 
 class FlashcardRepositoryImpl @Inject constructor(val flashcardDao: FlashcardDao) :
@@ -37,6 +39,9 @@ class FlashcardRepositoryImpl @Inject constructor(val flashcardDao: FlashcardDao
     override suspend fun deleteFlashcard(flashcard: Flashcard) =
         flashcardDao.delete(flashcard.toFlashcardEntity())
 
+    override suspend fun deleteFlashcardById(id: Long) {
+        flashcardDao.deleteById(id)
+    }
 }
 
 
