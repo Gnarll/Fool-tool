@@ -6,4 +6,7 @@
     <string name="add_flashcard">Add flashcard</string>
     <string name="turn_over">Turn over</string>
     <string name="delete_word">Delete word</string>
+    <string name="ensure_deletion_question">Are you sure, you want to delete?</string>
+    <string name="positive_answer">Yes</string>
+    <string name="negative_answer">No</string>
 </resources>
