@@ -27,4 +27,7 @@ interface FlashcardDao {
 
     @Delete
     suspend fun delete(flashcard: FlashcardEntity)
+
+    @Query("DELETE from flashcard WHERE uid = :id")
+    suspend fun deleteById(id: Long)
 }

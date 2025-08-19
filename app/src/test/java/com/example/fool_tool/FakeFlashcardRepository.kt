@@ -37,6 +37,14 @@ class FakeFlashcardRepository : FlashcardRepository {
         }
     }
 
+    override suspend fun deleteFlashcardById(id: Long) {
+        _flashcardsFlow.update { prevState ->
+            prevState.filter {
+                id != it.id
+            }
+        }
+    }
+
     override suspend fun deleteFlashcard(flashcard: Flashcard) {
         _flashcardsFlow.update { prevState ->
             prevState.filter {

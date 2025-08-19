@@ -82,5 +82,26 @@ class FlashcardViewModelTest {
         }
 
     }
+    
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun flashcardViewModel_deleteItemById_ItemDeleted() = runTest(UnconfinedTestDispatcher()) {
+        backgroundScope.launch {
+            viewModel.flashcardStateFlow.collect { }
+        }
+
+        assertEquals(
+            UiState.Success(fakeRepository.currentFlashcards),
+            viewModel.flashcardStateFlow.value
+        )
+
+        val firstFlashcard = fakeRepository.currentFlashcards[0]
+        viewModel.deleteFlashcardById(firstFlashcard.id)
+
+        assertFalse {
+            (viewModel.flashcardStateFlow.value as UiState.Success).value.contains(firstFlashcard)
+        }
+
+    }
 
 }
