@@ -2,12 +2,15 @@ package com.example.fool_tool.ui.screens.flashcard
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +32,7 @@ fun FlashcardScreen(
     viewModel: FlashcardViewModel = hiltViewModel(),
 ) {
     val flashcardState by viewModel.flashcardStateFlow.collectAsStateWithLifecycle()
+    val flashcardDeletionState = viewModel.flashcardDeletionState.collectAsState().value
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         when (flashcardState) {
@@ -44,13 +48,54 @@ fun FlashcardScreen(
             }
 
             is UiState.Success -> {
+
                 FlashcardPager(
                     flashcards = (flashcardState as UiState.Success<List<Flashcard>>).value,
-                    onDeleteFlashcard = { flashcard -> viewModel.deleteFlashcard(flashcard) },
+                    onRequestToDeleteFlashcard = { id, index ->
+                        viewModel.setFlashcardDeletionState(
+                            FlashcardDeletionState.Pending(id = id, index = index)
+                        )
+                    },
+                    onDeleteFlashcard = { id ->
+                        viewModel.setFlashcardDeletionState(
+                            FlashcardDeletionState.NoSelection
+                        )
+                        viewModel.deleteFlashcardById(id)
+                    },
+                    flashcardDeletionState = flashcardDeletionState,
                     modifier = Modifier.align(
                         Alignment.Center
                     )
                 )
+
+                if (flashcardDeletionState is FlashcardDeletionState.Pending) {
+                    AlertDialog(
+                        onDismissRequest = {
+                            viewModel.setFlashcardDeletionState(FlashcardDeletionState.NoSelection)
+                        },
+                        text = { Text(text = stringResource(R.string.ensure_deletion_question)) },
+                        confirmButton = {
+                            Button(onClick = {
+                                viewModel.setFlashcardDeletionState(
+                                    FlashcardDeletionState.Ready(
+                                        id = flashcardDeletionState.id,
+                                        index = flashcardDeletionState.index
+                                    )
+                                )
+                            }) {
+                                Text(text = stringResource(R.string.positive_answer))
+                            }
+                        },
+                        dismissButton = {
+                            Button(onClick = {
+                                viewModel.setFlashcardDeletionState(FlashcardDeletionState.NoSelection)
+                            }) {
+                                Text(text = stringResource(R.string.negative_answer))
+                            }
+                        }
+                    )
+                }
+
 
                 FloatingActionButton(
                     onClick = { onCreateFlashcard() },

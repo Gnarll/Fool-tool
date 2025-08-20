@@ -29,7 +29,7 @@ import com.example.fool_tool.ui.model.Flashcard
 @Composable
 fun FlashcardItem(
     flashcard: Flashcard,
-    onDeleteItem: (Flashcard) -> Unit,
+    onDeleteItem: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isForeignSideVisible by rememberSaveable { mutableStateOf(true) }
@@ -73,7 +73,7 @@ fun FlashcardItem(
             }
 
             IconButton(
-                onClick = { onDeleteItem(flashcard) },
+                onClick = { onDeleteItem(flashcard.id) },
                 modifier = Modifier.align(if (isFront) Alignment.TopEnd else Alignment.TopStart)
             ) {
                 Icon(
