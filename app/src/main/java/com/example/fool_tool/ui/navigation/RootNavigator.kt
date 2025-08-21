@@ -28,7 +28,7 @@ fun RootNavigator(navController: NavHostController) {
 
     Scaffold(bottomBar = {
         currentBottomNavigationRoute?.let {
-            BottomNavigationBar(
+            CustomNavigationBar(
                 navController = navController,
                 currentRoute = currentBottomNavigationRoute
             )
