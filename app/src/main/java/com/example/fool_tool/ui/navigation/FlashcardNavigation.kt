@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
+import com.example.fool_tool.ui.navigation.navigation_bar.BottomNavigationRoute
 import com.example.fool_tool.ui.screens.flashcard.CreateFlashcardDialog
 import com.example.fool_tool.ui.screens.flashcard.FlashcardScreen
 import kotlinx.serialization.Serializable
