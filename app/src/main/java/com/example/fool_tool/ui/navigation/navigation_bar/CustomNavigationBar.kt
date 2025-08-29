@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,8 +22,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -34,11 +38,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.lerp
 import androidx.navigation.NavHostController
 import com.example.fool_tool.R
+import com.example.fool_tool.ui.navigation.calculateDistanceToRectBorder
+import com.example.fool_tool.ui.navigation.polarToCart
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlin.math.hypot
+import kotlin.random.Random
 
 
 private data class NavigationItem(
@@ -199,12 +207,99 @@ fun NavigationBarBackground(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun FloatingNavigationIndicator(shapeProgress: Float, modifier: Modifier = Modifier) {
-    val shape = remember(shapeProgress) {
-        RoundedCornerShape(15.dp * shapeProgress)
-    }
+fun FloatingNavigationIndicator(
+    shapeProgress: Float,
+    color: Color = Color.Yellow,
+    numberOfWaves: Int = 6,
+    modifier: Modifier = Modifier
+) {
+    Spacer(
+        modifier = modifier.drawWithCache {
+            val origin = Offset(size.width / 2, size.height / 2)
 
-    Spacer(modifier = modifier.background(Color.Yellow, shape = shape))
+            val circleSizeCoefficient = 1f / 3f
+            val innerCircleRadius = minOf(size.width, size.height) * circleSizeCoefficient
+
+            val clipperInitialRadius = hypot(size.width / 2, size.height / 2)
+            val clipperCurrentRadius =
+                lerp(clipperInitialRadius, innerCircleRadius, 1 - shapeProgress)
+            val clipPath = Path().apply {
+                addOval(Rect(center = origin, radius = clipperCurrentRadius))
+            }
+
+
+            val blotPath = Path().apply {
+                val angleStep = 360f / numberOfWaves
+
+                repeat(numberOfWaves) { i ->
+                    val midAngle = -i * angleStep
+                    val leftAngle = midAngle + (angleStep / 2)
+                    val rightAngle = midAngle - (angleStep / 2)
+
+                    val midRadius = calculateDistanceToRectBorder(midAngle)
+                    val leftRadius = calculateDistanceToRectBorder(leftAngle)
+                    val rightRadius = calculateDistanceToRectBorder(rightAngle)
+                    val extinctionCoefficient =
+                        1 - (Random.nextFloat() * circleSizeCoefficient)
+
+                    val leftNearDot = polarToCart(leftAngle, innerCircleRadius, origin)
+                    val rightNearDot = polarToCart(rightAngle, innerCircleRadius, origin)
+
+                    if (i == 0) {
+                        moveTo(leftNearDot.x, leftNearDot.y)
+                    }
+
+
+                    val commonNearFocus =
+                        polarToCart(midAngle, hypot(innerCircleRadius, innerCircleRadius), origin)
+                    val leftFarFocus =
+                        polarToCart(leftAngle, leftRadius * extinctionCoefficient, origin)
+                    val leftFarDot =
+                        polarToCart(midAngle, midRadius, origin)
+
+                    cubicTo(
+                        x1 = commonNearFocus.x,
+                        y1 = commonNearFocus.y,
+                        x2 = leftFarFocus.x,
+                        y2 = leftFarFocus.y,
+                        x3 = leftFarDot.x,
+                        y3 = leftFarDot.y
+                    )
+
+                    val rightFarFocus =
+                        polarToCart(rightAngle, rightRadius * extinctionCoefficient, origin)
+                    val rightFarDot =
+                        polarToCart(midAngle, midRadius, origin)
+
+                    val midFarFocus = polarToCart(midAngle, midRadius, origin)
+
+                    quadraticTo(
+                        x1 = midFarFocus.x,
+                        y1 = midFarFocus.y + 50f,
+                        x2 = rightFarDot.x,
+                        y2 = rightFarDot.y
+                    )
+
+                    cubicTo(
+                        x1 = rightFarFocus.x,
+                        y1 = rightFarFocus.y,
+                        x2 = commonNearFocus.x,
+                        y2 = commonNearFocus.y,
+                        x3 = rightNearDot.x,
+                        y3 = rightNearDot.y
+                    )
+
+                }
+                close()
+            }
+
+            onDrawBehind {
+                clipPath(clipPath, ClipOp.Intersect) {
+                    drawCircle(radius = innerCircleRadius, color = color)
+                    drawPath(blotPath, color = color)
+                }
+            }
+        })
 }
 
 @Composable
