@@ -6,6 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
+import com.example.fool_tool.ui.navigation.navigation_bar.BottomNavigationRoute
 import com.example.fool_tool.ui.screens.smartnote.CreateSmartnoteScreen
 import com.example.fool_tool.ui.screens.smartnote.EditSmartnoteScreen
 import com.example.fool_tool.ui.screens.smartnote.SmartnoteScreen
@@ -60,7 +61,7 @@ fun NavGraphBuilder.smartnoteDestination(
 
         composable<EditSmartnoteRoute> { backStack ->
             val smartnoteId = backStack.toRoute<EditSmartnoteRoute>().id
- 
+
             EditSmartnoteScreen(
                 onSmartnoteEdited = onNavigateBack,
                 smartnote = smartnoteId,

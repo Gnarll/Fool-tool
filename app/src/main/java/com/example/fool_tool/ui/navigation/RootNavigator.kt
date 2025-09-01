@@ -11,6 +11,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.fool_tool.ui.navigation.navigation_bar.BottomNavigationRoute
+import com.example.fool_tool.ui.navigation.navigation_bar.CustomNavigationBar
 
 @Composable
 fun RootNavigator(navController: NavHostController) {
@@ -28,7 +30,7 @@ fun RootNavigator(navController: NavHostController) {
 
     Scaffold(bottomBar = {
         currentBottomNavigationRoute?.let {
-            BottomNavigationBar(
+            CustomNavigationBar(
                 navController = navController,
                 currentRoute = currentBottomNavigationRoute
             )
