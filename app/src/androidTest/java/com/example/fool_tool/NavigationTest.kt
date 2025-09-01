@@ -12,9 +12,9 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.ComposeNavigator
 import androidx.navigation.compose.DialogNavigator
 import androidx.navigation.testing.TestNavHostController
-import com.example.fool_tool.ui.navigation.BottomNavigationRoute
 import com.example.fool_tool.ui.navigation.CreateSmartnoteRoute
 import com.example.fool_tool.ui.navigation.RootNavigator
+import com.example.fool_tool.ui.navigation.navigation_bar.BottomNavigationRoute
 import junit.framework.TestCase.assertEquals
 import org.junit.Before
 import org.junit.Rule

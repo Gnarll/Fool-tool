@@ -1,7 +1,6 @@
-package com.example.fool_tool.ui.navigation
+package com.example.fool_tool.ui.navigation.navigation_bar
 
 import kotlinx.serialization.Serializable
-
 
 @Serializable
 sealed class BottomNavigationRoute(
