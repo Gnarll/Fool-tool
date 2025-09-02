@@ -26,7 +26,6 @@ import com.example.fool_tool.ui.model.Flashcard
 
 @Composable
 fun FlashcardScreen(
-    onNavigateToSmartnote: () -> Unit,
     onCreateFlashcard: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: FlashcardViewModel = hiltViewModel(),

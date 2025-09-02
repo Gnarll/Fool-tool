@@ -16,10 +16,8 @@ import com.example.fool_tool.ui.navigation.navigation_bar.CustomNavigationBar
 
 @Composable
 fun RootNavigator(navController: NavHostController) {
-
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
-
 
     val currentBottomNavigationRoute =
         BottomNavigationRoute.items.firstOrNull { bottomNavigationRoute ->
@@ -36,9 +34,7 @@ fun RootNavigator(navController: NavHostController) {
             )
         }
 
-
     }) { innerPadding ->
-
         NavHost(
             navController = navController,
             startDestination = BottomNavigationRoute.FlashcardGraphRoute,
@@ -47,10 +43,8 @@ fun RootNavigator(navController: NavHostController) {
                 .fillMaxSize()
         ) {
             flashcardDestination(
-                onNavigateToSmartnote = { navController.navigateToSmartnoteGraph() },
                 onNavigateToCreateFlashcard = { navController.navigateToCreateFlashcard() },
-
-                )
+            )
             smartnoteDestination(
                 onNavigateToFlashcardGraph = { navController.navigateToFlashcardGraph() },
                 onNavigateToCreateSmartnote = { navController.navigateToCreateSmartnote() },
@@ -58,8 +52,7 @@ fun RootNavigator(navController: NavHostController) {
                 onNavigateBack = {
                     navController.popBackStack()
                 },
-
-                )
+            )
         }
     }
 }
