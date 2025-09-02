@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -93,6 +94,18 @@ fun CustomNavigationBar(navController: NavHostController, currentRoute: BottomNa
 
     val relativeIndicatorOffsetAnimatable = remember { Animatable(0f) }
     val indicatorShapeProgressAnimatable = remember { Animatable(1f) }
+
+    LaunchedEffect(Unit) {
+        val currentRouteIndex = navigationItems.indexOfFirst { it.route == currentRoute }
+        if (currentRouteIndex != -1) {
+            val targetPositionX = calculateRelativeOffsetFromIndicator(
+                indicatorCoordinates,
+                navItemsCoordinates,
+                currentRouteIndex
+            ).x
+            relativeIndicatorOffsetAnimatable.snapTo(targetPositionX)
+        }
+    }
 
     CustomNavigationBarLayout(
         innerPadding = PaddingValues(
