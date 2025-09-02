@@ -18,18 +18,11 @@ object FlashcardRoute
 @Serializable
 object CreateFlashcardRoute
 
-fun NavController.navigateToSmartnoteGraph() {
-    navigate(route = BottomNavigationRoute.SmartnoteGraphRoute) {
-        popUpTo<BottomNavigationRoute.FlashcardGraphRoute> { inclusive = true }
-    }
-}
-
 fun NavController.navigateToCreateFlashcard() {
     navigate(CreateFlashcardRoute)
 }
 
 fun NavGraphBuilder.flashcardDestination(
-    onNavigateToSmartnote: () -> Unit,
     onNavigateToCreateFlashcard: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -38,7 +31,6 @@ fun NavGraphBuilder.flashcardDestination(
     ) {
         composable<FlashcardRoute> { backStack ->
             FlashcardScreen(
-                onNavigateToSmartnote = onNavigateToSmartnote,
                 onCreateFlashcard = onNavigateToCreateFlashcard,
                 modifier = modifier
             )
