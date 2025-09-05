@@ -18,7 +18,7 @@ import kotlin.math.hypot
 @Composable
 fun FloatingNavigationIndicator(
     shapeProgress: Float,
-    color: Color = Color.Yellow,
+    color: Color,
     numberOfWaves: Int = 5,
     modifier: Modifier = Modifier
 ) {
