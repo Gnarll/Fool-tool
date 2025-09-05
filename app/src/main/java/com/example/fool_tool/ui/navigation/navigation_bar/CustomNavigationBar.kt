@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -91,9 +92,13 @@ fun CustomNavigationBar(navController: NavHostController, currentRoute: BottomNa
 
     val navItemsCoordinates = remember { mutableStateMapOf<Int, Offset>() }
     var indicatorCoordinates: Offset by remember { mutableStateOf(Offset.Zero) }
-
     val relativeIndicatorOffsetAnimatable = remember { Animatable(0f) }
     val indicatorShapeProgressAnimatable = remember { Animatable(1f) }
+
+    val cs = MaterialTheme.colorScheme
+    val indicatorColor = cs.secondaryContainer
+    val backgroundColor = cs.surfaceContainer
+    val navBarItemColor = cs.onSurfaceVariant
 
     LaunchedEffect(Unit) {
         val currentRouteIndex = navigationItems.indexOfFirst { it.route == currentRoute }
@@ -115,6 +120,7 @@ fun CustomNavigationBar(navController: NavHostController, currentRoute: BottomNa
         ),
         floatingNavigationIndicator = {
             FloatingNavigationIndicator(
+                color = indicatorColor,
                 shapeProgress = indicatorShapeProgressAnimatable.value,
                 modifier = Modifier
                     .onGloballyPositioned { coordinates ->
@@ -126,7 +132,11 @@ fun CustomNavigationBar(navController: NavHostController, currentRoute: BottomNa
 
             )
         },
-        navigationBarBackground = { NavigationBarBackground() },
+        navigationBarBackground = {
+            NavigationBarBackground(
+                modifier = Modifier.background(color = backgroundColor)
+            )
+        },
     ) {
         navigationItems.forEachIndexed { navItemIndex, navItem ->
             val isSelected = navItem.route == currentRoute
@@ -192,9 +202,9 @@ fun CustomNavigationBar(navController: NavHostController, currentRoute: BottomNa
                         restoreState = true
                     }
                 },
-                isSelected = isSelected,
                 icon = painterResource(navItem.icon),
                 labelText = stringResource(navItem.title),
+                color = if (isSelected) navBarItemColor else navBarItemColor.copy(alpha = 0.5f),
                 modifier = Modifier.onGloballyPositioned { coordinates ->
                     navItemsCoordinates[navItemIndex] = coordinates.positionInParent()
                 }
@@ -206,20 +216,18 @@ fun CustomNavigationBar(navController: NavHostController, currentRoute: BottomNa
 
 @Composable
 fun NavigationBarBackground(modifier: Modifier = Modifier) {
-    Spacer(modifier = modifier.background(color = Color.Blue))
+    Spacer(modifier = modifier)
 }
 
 
 @Composable
 fun CustomNavigationBarItem(
     onClick: () -> Unit,
-    isSelected: Boolean,
     icon: Painter,
     labelText: String,
+    color: Color,
     modifier: Modifier = Modifier,
 ) {
-
-    val itemColor = if (isSelected) Color.Black else Color.Black.copy(alpha = 0.5f)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -236,12 +244,13 @@ fun CustomNavigationBarItem(
         Icon(
             painter = icon,
             contentDescription = labelText,
-            tint = itemColor,
+            tint = color,
             modifier = Modifier.size(dimensionResource(R.dimen.nav_icon_size))
         )
         Text(
             text = labelText,
-            color = itemColor,
+            style = MaterialTheme.typography.labelLarge,
+            color = color,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
