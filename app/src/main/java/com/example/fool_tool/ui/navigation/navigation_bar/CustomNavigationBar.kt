@@ -3,6 +3,9 @@ package com.example.fool_tool.ui.navigation.navigation_bar
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -145,6 +148,11 @@ fun CustomNavigationBar(navController: NavHostController, currentRoute: BottomNa
                 onClick = {
                     if (isSelected) return@CustomNavigationBarItem
 
+                    val shapeMorphAnimationSpec: AnimationSpec<Float> = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessMedium
+                    )
+                    
                     val targetPositionX = calculateRelativeOffsetFromIndicator(
                         indicatorCoordinates,
                         navItemsCoordinates,
@@ -156,37 +164,58 @@ fun CustomNavigationBar(navController: NavHostController, currentRoute: BottomNa
                         when (currentIndicatorState) {
                             is IndicatorState.Idle -> {
                                 currentIndicatorState = IndicatorState.Shrinking
-                                indicatorShapeProgressAnimatable.animateTo(0f)
+                                indicatorShapeProgressAnimatable.animateTo(
+                                    0f,
+                                    shapeMorphAnimationSpec
+                                )
                                 currentIndicatorState = IndicatorState.Moving
                                 relativeIndicatorOffsetAnimatable.animateTo(targetPositionX)
                                 currentIndicatorState = IndicatorState.Stretching
-                                indicatorShapeProgressAnimatable.animateTo(1f)
+                                indicatorShapeProgressAnimatable.animateTo(
+                                    1f,
+                                    shapeMorphAnimationSpec
+                                )
                                 currentIndicatorState = IndicatorState.Idle
                             }
 
                             is IndicatorState.Shrinking -> {
-                                indicatorShapeProgressAnimatable.animateTo(0f)
+                                indicatorShapeProgressAnimatable.animateTo(
+                                    0f,
+                                    shapeMorphAnimationSpec
+                                )
                                 currentIndicatorState = IndicatorState.Moving
                                 relativeIndicatorOffsetAnimatable.animateTo(targetPositionX)
                                 currentIndicatorState = IndicatorState.Stretching
-                                indicatorShapeProgressAnimatable.animateTo(1f)
+                                indicatorShapeProgressAnimatable.animateTo(
+                                    1f,
+                                    shapeMorphAnimationSpec
+                                )
                                 currentIndicatorState = IndicatorState.Idle
                             }
 
                             is IndicatorState.Moving -> {
                                 relativeIndicatorOffsetAnimatable.animateTo(targetPositionX)
                                 currentIndicatorState = IndicatorState.Stretching
-                                indicatorShapeProgressAnimatable.animateTo(1f)
+                                indicatorShapeProgressAnimatable.animateTo(
+                                    1f,
+                                    shapeMorphAnimationSpec
+                                )
                                 currentIndicatorState = IndicatorState.Idle
                             }
 
                             is IndicatorState.Stretching -> {
                                 currentIndicatorState = IndicatorState.Shrinking
-                                indicatorShapeProgressAnimatable.animateTo(0f)
+                                indicatorShapeProgressAnimatable.animateTo(
+                                    0f,
+                                    shapeMorphAnimationSpec
+                                )
                                 currentIndicatorState = IndicatorState.Moving
                                 relativeIndicatorOffsetAnimatable.animateTo(targetPositionX)
                                 currentIndicatorState = IndicatorState.Stretching
-                                indicatorShapeProgressAnimatable.animateTo(1f)
+                                indicatorShapeProgressAnimatable.animateTo(
+                                    1f,
+                                    shapeMorphAnimationSpec
+                                )
                                 currentIndicatorState = IndicatorState.Idle
                             }
                         }
