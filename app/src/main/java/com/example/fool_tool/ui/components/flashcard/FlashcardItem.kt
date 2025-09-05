@@ -8,8 +8,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -21,6 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.fool_tool.R
@@ -41,6 +45,11 @@ fun FlashcardItem(
     )
 
     Card(
+        shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary
+        ),
         modifier = modifier.graphicsLayer {
             rotationY = rotation
             cameraDistance = 8 * density
@@ -55,6 +64,10 @@ fun FlashcardItem(
 
             Text(
                 text = text,
+                style = MaterialTheme.typography.displaySmall,
+                textAlign = TextAlign.Center,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .padding(8.dp)
                     .graphicsLayer {
@@ -86,7 +99,7 @@ fun FlashcardItem(
 }
 
 @Composable
-@Preview
+@Preview()
 fun FlashcardItemPreview() {
     FlashcardItem(
         flashcard = Flashcard(id = 1, foreignWord = "Foreign", nativeWord = "Native"),
@@ -94,5 +107,21 @@ fun FlashcardItemPreview() {
         modifier = Modifier
             .width(200.dp)
             .height(120.dp)
+    )
+}
+
+@Composable
+@Preview()
+fun FlashcardItemLongWordPreview() {
+    FlashcardItem(
+        flashcard = Flashcard(
+            id = 1,
+            foreignWord = "Foreign word that is really too long for this component",
+            nativeWord = "Native"
+        ),
+        onDeleteItem = {},
+        modifier = Modifier
+            .width(300.dp)
+            .height(200.dp)
     )
 }

@@ -72,7 +72,12 @@ fun FlashcardScreen(
                         onDismissRequest = {
                             viewModel.setFlashcardDeletionState(FlashcardDeletionState.NoSelection)
                         },
-                        text = { Text(text = stringResource(R.string.ensure_deletion_question)) },
+                        text = {
+                            Text(
+                                text = stringResource(R.string.ensure_deletion_question),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        },
                         confirmButton = {
                             Button(onClick = {
                                 viewModel.setFlashcardDeletionState(
@@ -82,16 +87,22 @@ fun FlashcardScreen(
                                     )
                                 )
                             }) {
-                                Text(text = stringResource(R.string.positive_answer))
+                                Text(
+                                    text = stringResource(R.string.positive_answer),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
                             }
                         },
                         dismissButton = {
                             Button(onClick = {
                                 viewModel.setFlashcardDeletionState(FlashcardDeletionState.NoSelection)
                             }) {
-                                Text(text = stringResource(R.string.negative_answer))
+                                Text(
+                                    text = stringResource(R.string.negative_answer),
+                                    style = MaterialTheme.typography.labelLarge
+                                )
                             }
-                        }
+                        },
                     )
                 }
 
