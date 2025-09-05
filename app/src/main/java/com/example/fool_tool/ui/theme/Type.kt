@@ -22,7 +22,7 @@ val bodyFontFamily = FontFamily(
 
 val displayFontFamily = FontFamily(
     Font(
-        googleFont = GoogleFont("Acme"),
+        googleFont = GoogleFont("Roboto Slab"),
         fontProvider = provider,
     )
 )
@@ -47,5 +47,7 @@ val AppTypography = Typography(
     labelMedium = baseline.labelMedium.copy(fontFamily = bodyFontFamily),
     labelSmall = baseline.labelSmall.copy(fontFamily = bodyFontFamily),
 )
+
+
 
 
