@@ -18,6 +18,7 @@ hilt = "2.57"
 hiltNavigationCompose = "1.2.0"
 turbine = "1.2.1"
 coroutines = "1.10.2"
+uiTextGoogleFonts = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,6 +54,7 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
