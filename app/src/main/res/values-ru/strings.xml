@@ -10,4 +10,9 @@
     <string name="ensure_deletion_question">Вы уверены, что хотите удалить?</string>
     <string name="positive_answer">Да</string>
     <string name="negative_answer">Нет</string>
+    <string name="empty_input_error">Поле не должно быть пустым</string>
+    <string name="native_word">Родное слово</string>
+    <string name="foreign_word">Иностранное слово</string>
+    <string name="create_flashcard">Создать карточку</string>
+    <string name="flashcard_is_created">Карточка создана</string>
 </resources>

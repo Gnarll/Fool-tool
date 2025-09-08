@@ -1,10 +1,10 @@
-package com.example.fool_tool.dbTest
+package com.example.fool_tool.ui.utils
 
 import com.example.fool_tool.data.local.entities.FlashcardEntity
 import com.example.fool_tool.ui.model.Flashcard
 import java.util.UUID
 
-object DbTestUtils {
+object FlashcardCreating {
     fun createFlashcardEntity(
         nativeWord: String = "Test",
         foreignWord: String = "Test",

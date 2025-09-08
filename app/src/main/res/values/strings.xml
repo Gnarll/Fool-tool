@@ -9,4 +9,9 @@
     <string name="ensure_deletion_question">Are you sure, you want to delete?</string>
     <string name="positive_answer">Yes</string>
     <string name="negative_answer">No</string>
+    <string name="empty_input_error">This field must not be empty</string>
+    <string name="native_word">Native word</string>
+    <string name="foreign_word">Foreign word</string>
+    <string name="create_flashcard">Create flashcard</string>
+    <string name="flashcard_is_created">Flashcard is created</string>
 </resources>

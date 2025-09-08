@@ -44,6 +44,9 @@ fun RootNavigator(navController: NavHostController) {
         ) {
             flashcardDestination(
                 onNavigateToCreateFlashcard = { navController.navigateToCreateFlashcard() },
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
             )
             smartnoteDestination(
                 onNavigateToFlashcardGraph = { navController.navigateToFlashcardGraph() },
