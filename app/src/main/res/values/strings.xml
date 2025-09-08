@@ -14,4 +14,5 @@
     <string name="foreign_word">Foreign word</string>
     <string name="create_flashcard">Create flashcard</string>
     <string name="flashcard_is_created">Flashcard is created</string>
+    <string name="go_back">Go back</string>
 </resources>

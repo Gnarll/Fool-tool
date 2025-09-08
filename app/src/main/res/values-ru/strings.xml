@@ -15,4 +15,5 @@
     <string name="foreign_word">Иностранное слово</string>
     <string name="create_flashcard">Создать карточку</string>
     <string name="flashcard_is_created">Карточка создана</string>
+    <string name="go_back">Вернуться назад</string>
 </resources>

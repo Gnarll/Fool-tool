@@ -1,5 +1,6 @@
 package com.example.fool_tool.ui.components.shared
 
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -14,7 +15,8 @@ fun ValidatedTextField(
     onValueChange: (String) -> Unit,
     labelText: String,
     error: ValidationError?,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     OutlinedTextField(
         value = value,
@@ -35,6 +37,7 @@ fun ValidatedTextField(
                 )
             }
         },
+        keyboardOptions = keyboardOptions,
         modifier = modifier
     )
 }

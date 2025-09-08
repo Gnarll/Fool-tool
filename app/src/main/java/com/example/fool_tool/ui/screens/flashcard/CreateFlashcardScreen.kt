@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.components.shared.ValidatedTextField
@@ -42,7 +44,8 @@ fun CreateFlashcardScreen(
                 onValueChange = viewModel::onNativeWordChange,
                 labelText =
                     stringResource(R.string.native_word),
-                error = formState.nativeWordError
+                error = formState.nativeWordError,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next)
             )
 
             ValidatedTextField(
@@ -50,7 +53,8 @@ fun CreateFlashcardScreen(
                 onValueChange = viewModel::onForeignWordChange,
                 labelText =
                     stringResource(R.string.foreign_word),
-                error = formState.foreignWordError
+                error = formState.foreignWordError,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done)
             )
 
             Button(
