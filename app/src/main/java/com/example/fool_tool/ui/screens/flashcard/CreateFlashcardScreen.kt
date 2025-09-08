@@ -1,6 +1,5 @@
 package com.example.fool_tool.ui.screens.flashcard
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,8 +29,6 @@ fun CreateFlashcardScreen(
     val formState = viewModel.createFlashcardFormState.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-
-    Log.i("input", "${formState.nativeWordError}  ${formState.foreignWordError}")
 
     val createdToastText = stringResource(R.string.flashcard_is_created)
 
