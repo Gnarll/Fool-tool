@@ -5,20 +5,12 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.example.fool_tool.ui.navigation.navigation_bar.BottomNavigationRoute
 import com.example.fool_tool.ui.screens.flashcard.CreateFlashcardScreen
 import com.example.fool_tool.ui.screens.flashcard.FlashcardScreen
-import kotlinx.serialization.Serializable
 
-
-@Serializable
-object FlashcardRoute
-
-@Serializable
-object CreateFlashcardRoute
 
 fun NavController.navigateToCreateFlashcard() {
-    navigate(CreateFlashcardRoute)
+    navigate(Route.CreateFlashcardRoute)
 }
 
 fun NavGraphBuilder.flashcardDestination(
@@ -26,16 +18,16 @@ fun NavGraphBuilder.flashcardDestination(
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    navigation<BottomNavigationRoute.FlashcardGraphRoute>(
-        startDestination = FlashcardRoute
+    navigation<Route.BottomNavigationRoute.FlashcardGraphRoute>(
+        startDestination = Route.FlashcardRoute
     ) {
-        composable<FlashcardRoute> { backStack ->
+        composable<Route.FlashcardRoute> { backStack ->
             FlashcardScreen(
                 onCreateFlashcard = onNavigateToCreateFlashcard,
                 modifier = modifier
             )
         }
-        composable<CreateFlashcardRoute> { backStack ->
+        composable<Route.CreateFlashcardRoute> { backStack ->
             CreateFlashcardScreen(
                 onNavigateBack = onNavigateBack,
                 modifier = modifier

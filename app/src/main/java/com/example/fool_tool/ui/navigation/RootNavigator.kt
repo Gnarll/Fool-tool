@@ -1,5 +1,6 @@
 package com.example.fool_tool.ui.navigation
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -11,7 +12,6 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.fool_tool.ui.navigation.navigation_bar.BottomNavigationRoute
 import com.example.fool_tool.ui.navigation.navigation_bar.CustomNavigationBar
 
 @Composable
@@ -20,24 +20,31 @@ fun RootNavigator(navController: NavHostController) {
     val currentDestination = navBackStackEntry?.destination
 
     val currentBottomNavigationRoute =
-        BottomNavigationRoute.items.firstOrNull { bottomNavigationRoute ->
+        Route.graphRoutes.firstOrNull { graphRoute ->
             currentDestination?.hierarchy?.any {
-                it.hasRoute(bottomNavigationRoute::class)
+                it.hasRoute(graphRoute::class)
             } == true
         }
 
+    val shouldShowBottomNavBar = Route.routesShouldShowBottomNavigation.any { route ->
+        currentDestination?.hasRoute(route::class) == true
+    }
+
     Scaffold(bottomBar = {
-        currentBottomNavigationRoute?.let {
-            CustomNavigationBar(
-                navController = navController,
-                currentRoute = currentBottomNavigationRoute
-            )
+        if (currentBottomNavigationRoute != null) {
+            AnimatedVisibility(visible = shouldShowBottomNavBar) {
+                CustomNavigationBar(
+                    navController = navController,
+                    currentRoute = currentBottomNavigationRoute
+                )
+            }
         }
 
-    }) { innerPadding ->
+    }
+    ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = BottomNavigationRoute.FlashcardGraphRoute,
+            startDestination = Route.BottomNavigationRoute.FlashcardGraphRoute,
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()

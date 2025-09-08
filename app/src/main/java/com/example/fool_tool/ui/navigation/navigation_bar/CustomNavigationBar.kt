@@ -40,6 +40,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
 import com.example.fool_tool.R
+import com.example.fool_tool.ui.navigation.Route
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -47,19 +48,19 @@ import kotlinx.coroutines.launch
 private data class NavigationItem(
     @StringRes val title: Int,
     @DrawableRes val icon: Int,
-    val route: BottomNavigationRoute
+    val route: Route.BottomNavigationRoute
 )
 
 private val navigationItems: List<NavigationItem> = listOf(
     NavigationItem(
         title = R.string.flashcard_screen_title,
         icon = R.drawable.ic_quiz,
-        route = BottomNavigationRoute.FlashcardGraphRoute
+        route = Route.BottomNavigationRoute.FlashcardGraphRoute
     ),
     NavigationItem(
         title = R.string.smartnote_screen_title,
         icon = R.drawable.ic_notes,
-        route = BottomNavigationRoute.SmartnoteGraphRoute
+        route = Route.BottomNavigationRoute.SmartnoteGraphRoute
     ),
 )
 
@@ -88,7 +89,10 @@ private fun calculateRelativeOffsetFromIndicator(
 }
 
 @Composable
-fun CustomNavigationBar(navController: NavHostController, currentRoute: BottomNavigationRoute) {
+fun CustomNavigationBar(
+    navController: NavHostController,
+    currentRoute: Route.BottomNavigationRoute
+) {
     val coroutineScope = rememberCoroutineScope()
     var currentAnimationJob: Job? by remember { mutableStateOf(null) }
     var currentIndicatorState: IndicatorState by remember { mutableStateOf(IndicatorState.Idle) }
@@ -152,7 +156,7 @@ fun CustomNavigationBar(navController: NavHostController, currentRoute: BottomNa
                         dampingRatio = Spring.DampingRatioMediumBouncy,
                         stiffness = Spring.StiffnessMedium
                     )
-                    
+
                     val targetPositionX = calculateRelativeOffsetFromIndicator(
                         indicatorCoordinates,
                         navItemsCoordinates,
