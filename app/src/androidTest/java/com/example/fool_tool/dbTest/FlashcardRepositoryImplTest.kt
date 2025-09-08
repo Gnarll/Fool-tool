@@ -8,6 +8,7 @@ import com.example.fool_tool.data.local.dao.FlashcardDao
 import com.example.fool_tool.data.local.db.AppDatabase
 import com.example.fool_tool.data.repositories.FlashcardRepository
 import com.example.fool_tool.data.repositories.FlashcardRepositoryImpl
+import com.example.fool_tool.ui.utils.FlashcardCreating
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.test.runTest
@@ -36,7 +37,7 @@ class FlashcardRepositoryImplTest {
 
     @Test
     fun flashcardRepository_insertAndGetFlashcardById_flashcardIsValid() = runTest {
-        val flashcard = DbTestUtils.createFlashcard()
+        val flashcard = FlashcardCreating.createFlashcard()
         flashcardRepository.insertFlashcard(flashcard)
 
         val fetchedFlashcard = flashcardRepository.getFlashcardById(flashcard.id)
@@ -45,8 +46,8 @@ class FlashcardRepositoryImplTest {
 
     @Test
     fun flashcardRepository_insertAndGetAllFlashcards_flashcardsAreValid() = runTest {
-        val flashcardOne = DbTestUtils.createFlashcard()
-        val flashcardTwo = DbTestUtils.createFlashcard()
+        val flashcardOne = FlashcardCreating.createFlashcard()
+        val flashcardTwo = FlashcardCreating.createFlashcard()
 
         flashcardRepository.insertFlashcard(flashcardOne)
         flashcardRepository.insertFlashcard(flashcardTwo)
@@ -61,7 +62,7 @@ class FlashcardRepositoryImplTest {
 
     @Test
     fun flashcardRepository_insertAndDeleteFlashcard_flashcardIsDeleted() = runTest {
-        val flashcard = DbTestUtils.createFlashcard()
+        val flashcard = FlashcardCreating.createFlashcard()
 
         flashcardRepository.insertFlashcard(flashcard)
         val fetchedFlashcard = flashcardRepository.getFlashcardById(flashcard.id)
@@ -77,7 +78,7 @@ class FlashcardRepositoryImplTest {
 
     @Test
     fun flashcardRepository_insertAndUpdateFlashcard_flashcardIsUpdated() = runTest {
-        var flashcard = DbTestUtils.createFlashcard()
+        var flashcard = FlashcardCreating.createFlashcard()
 
         flashcardRepository.insertFlashcard(flashcard)
         flashcard = flashcard.copy(foreignWord = "Updated")

@@ -8,6 +8,7 @@ import app.cash.turbine.test
 import com.example.fool_tool.data.local.dao.FlashcardDao
 import com.example.fool_tool.data.local.db.AppDatabase
 import com.example.fool_tool.data.local.entities.FlashcardEntity
+import com.example.fool_tool.ui.utils.FlashcardCreating
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
@@ -43,8 +44,10 @@ class FlashcardDaoTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun db_writeAndReadFlashcard_flashcardIsValid() = runTest {
-        val flashcardOne: FlashcardEntity = DbTestUtils.createFlashcardEntity(nativeWord = "One")
-        val flashcardTwo: FlashcardEntity = DbTestUtils.createFlashcardEntity(nativeWord = "Two")
+        val flashcardOne: FlashcardEntity =
+            FlashcardCreating.createFlashcardEntity(nativeWord = "One")
+        val flashcardTwo: FlashcardEntity =
+            FlashcardCreating.createFlashcardEntity(nativeWord = "Two")
 
 
         flashcardDao.insert(flashcardOne)
@@ -68,7 +71,7 @@ class FlashcardDaoTest {
 
     @Test
     fun db_insertAndDeleteFlashcard_flashcardIsDeleted() = runTest {
-        val flashcard = DbTestUtils.createFlashcardEntity()
+        val flashcard = FlashcardCreating.createFlashcardEntity()
 
         flashcardDao.getAll().test {
             assertEquals(emptyList<FlashcardEntity>(), awaitItem())
@@ -85,7 +88,7 @@ class FlashcardDaoTest {
 
     @Test
     fun db_insertAndGetByIdFlashcard_flashcardIsValid() = runTest {
-        val flashcard = DbTestUtils.createFlashcardEntity()
+        val flashcard = FlashcardCreating.createFlashcardEntity()
         flashcardDao.insert(flashcard)
 
         val fetchedFlashcard = flashcardDao.getById(flashcard.uid)
@@ -94,7 +97,7 @@ class FlashcardDaoTest {
 
     @Test
     fun db_addAndUpdateFlashcard_flashcardIsUpdated() = runTest {
-        var flashcard = DbTestUtils.createFlashcardEntity(nativeWord = "one")
+        var flashcard = FlashcardCreating.createFlashcardEntity(nativeWord = "one")
         flashcardDao.insert(flashcard)
 
         flashcard = flashcard.copy(nativeWord = "two")
