@@ -20,6 +20,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.navigation.navigation_bar.CustomNavigationBar
+import com.example.fool_tool.ui.navigation.navigation_bar.settingsDestination
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +29,7 @@ fun RootNavigator(navController: NavHostController) {
     val currentDestination = navBackStackEntry?.destination
 
     val currentBottomNavigationRoute =
-        Route.graphRoutes.firstOrNull { graphRoute ->
+        Route.bottomNavRoutes.firstOrNull { graphRoute ->
             currentDestination?.hierarchy?.any {
                 it.hasRoute(graphRoute::class)
             } == true
@@ -88,6 +89,7 @@ fun RootNavigator(navController: NavHostController) {
                     navController.popBackStack()
                 },
             )
+            settingsDestination()
         }
     }
 }

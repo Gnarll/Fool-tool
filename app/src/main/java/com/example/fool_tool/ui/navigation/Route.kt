@@ -12,6 +12,9 @@ sealed interface Route {
 
         @Serializable
         object SmartnoteGraphRoute : BottomNavigationRoute
+
+        @Serializable
+        object SettingsRoute : BottomNavigationRoute
     }
 
     @Serializable
@@ -30,13 +33,15 @@ sealed interface Route {
     data class EditSmartnoteRoute(val id: String) : Route
 
     companion object {
-        val graphRoutes = listOf<BottomNavigationRoute>(
+        val bottomNavRoutes = listOf<BottomNavigationRoute>(
             BottomNavigationRoute.FlashcardGraphRoute,
-            BottomNavigationRoute.SmartnoteGraphRoute
+            BottomNavigationRoute.SmartnoteGraphRoute,
+            BottomNavigationRoute.SettingsRoute
         )
         val routesShouldShowBottomNavigation = listOf<Route>(
             BottomNavigationRoute.FlashcardGraphRoute,
             BottomNavigationRoute.SmartnoteGraphRoute,
+            BottomNavigationRoute.SettingsRoute,
             FlashcardRoute,
             SmartnoteRoute
         )
