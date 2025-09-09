@@ -62,6 +62,11 @@ private val navigationItems: List<NavigationItem> = listOf(
         icon = R.drawable.ic_notes,
         route = Route.BottomNavigationRoute.SmartnoteGraphRoute
     ),
+    NavigationItem(
+        title = R.string.settings,
+        icon = R.drawable.ic_settings,
+        route = Route.BottomNavigationRoute.SettingsRoute
+    ),
 )
 
 

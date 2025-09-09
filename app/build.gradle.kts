@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.androidx.datastore)
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
 
