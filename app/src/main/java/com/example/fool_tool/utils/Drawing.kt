@@ -1,4 +1,4 @@
-package com.example.fool_tool.ui.utils
+package com.example.fool_tool.utils
 
 import androidx.compose.ui.draw.CacheDrawScope
 import androidx.compose.ui.geometry.Offset

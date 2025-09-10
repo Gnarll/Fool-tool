@@ -4,8 +4,8 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import com.example.fool_tool.R
 import com.example.fool_tool.data.repositories.FlashcardRepository
-import com.example.fool_tool.ui.utils.FlashcardCreating
-import com.example.fool_tool.ui.utils.ValidationError
+import com.example.fool_tool.utils.FlashcardCreating
+import com.example.fool_tool.utils.ValidationError
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
