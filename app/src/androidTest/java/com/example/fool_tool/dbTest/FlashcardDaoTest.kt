@@ -8,7 +8,7 @@ import app.cash.turbine.test
 import com.example.fool_tool.data.local.dao.FlashcardDao
 import com.example.fool_tool.data.local.db.AppDatabase
 import com.example.fool_tool.data.local.entities.FlashcardEntity
-import com.example.fool_tool.ui.utils.FlashcardCreating
+import com.example.fool_tool.utils.FlashcardCreating
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
