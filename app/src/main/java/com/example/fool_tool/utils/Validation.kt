@@ -1,4 +1,4 @@
-package com.example.fool_tool.ui.utils
+package com.example.fool_tool.utils
 
 import androidx.annotation.StringRes
 

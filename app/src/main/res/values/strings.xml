@@ -20,4 +20,7 @@
     <string name="dark_theme">Dark theme</string>
     <string name="light_theme">Light theme</string>
     <string name="system_theme">System theme</string>
+    <string name="english_lang">English</string>
+    <string name="russian_lang">Русский</string>
+    <string name="lang">Language</string>
 </resources>

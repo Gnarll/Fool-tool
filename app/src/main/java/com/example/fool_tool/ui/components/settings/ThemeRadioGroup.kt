@@ -42,7 +42,9 @@ fun ThemeRadioGroup(
                 val selected = selectedTheme == themeRadioButton
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(selected = selected, onClick = { onSelectTheme(themeRadioButton) })
+                    RadioButton(
+                        selected = selected,
+                        onClick = { onSelectTheme(themeRadioButton) })
                     Spacer(modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_x_small)))
                     Text(
                         text = stringResource(themeRadioButton.title),
