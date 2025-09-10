@@ -11,8 +11,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.util.lerp
-import com.example.fool_tool.ui.utils.calculateDistanceToRectBorder
-import com.example.fool_tool.ui.utils.polarToCart
+import com.example.fool_tool.utils.calculateDistanceToRectBorder
+import com.example.fool_tool.utils.polarToCart
 import kotlin.math.hypot
 
 @Composable

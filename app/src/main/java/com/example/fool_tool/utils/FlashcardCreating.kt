@@ -1,4 +1,4 @@
-package com.example.fool_tool.ui.utils
+package com.example.fool_tool.utils
 
 import com.example.fool_tool.data.local.entities.FlashcardEntity
 import com.example.fool_tool.ui.model.Flashcard

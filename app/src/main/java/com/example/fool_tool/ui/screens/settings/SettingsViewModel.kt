@@ -3,7 +3,9 @@ package com.example.fool_tool.ui.screens.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fool_tool.data.local.DataStoreManager
+import com.example.fool_tool.data.local.LocaleManager
 import com.example.fool_tool.ui.components.settings.Theme
+import com.example.fool_tool.utils.Language
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,8 +14,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
-class SettingsViewModel @Inject constructor(private val dataStoreManager: DataStoreManager) :
+class SettingsViewModel @Inject constructor(
+    private val dataStoreManager: DataStoreManager,
+    private val localeManager: LocaleManager
+) :
     ViewModel() {
     val theme: StateFlow<Theme> =
         dataStoreManager.userThemePreferencesFlow
@@ -47,5 +53,11 @@ class SettingsViewModel @Inject constructor(private val dataStoreManager: DataSt
                 }
             }
         }
+    }
+
+    val language = localeManager.language
+
+    fun setLanguage(language: Language) {
+        localeManager.setLanguage(language)
     }
 }
