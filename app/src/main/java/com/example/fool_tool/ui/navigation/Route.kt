@@ -33,11 +33,6 @@ sealed interface Route {
     data class EditSmartnoteRoute(val id: String) : Route
 
     companion object {
-        val bottomNavRoutes = listOf<BottomNavigationRoute>(
-            BottomNavigationRoute.FlashcardGraphRoute,
-            BottomNavigationRoute.SmartnoteGraphRoute,
-            BottomNavigationRoute.SettingsRoute
-        )
         val routesShouldShowBottomNavigation = listOf<Route>(
             BottomNavigationRoute.FlashcardGraphRoute,
             BottomNavigationRoute.SmartnoteGraphRoute,
