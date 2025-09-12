@@ -30,10 +30,11 @@ fun RootNavigator(navController: NavHostController) {
     val currentDestination = navBackStackEntry?.destination
 
     val isBottomBarVisible = remember(currentDestination) {
-        Route.routesShouldShowBottomNavigation.any {
-            currentDestination?.hasRoute(it::class) ?: false
-
-        }
+        currentDestination?.let {
+            Route.routesShouldShowBottomNavigation.any {
+                currentDestination.hasRoute(it::class)
+            }
+        } ?: true
     }
 
     val isTopBarVisible = remember(isBottomBarVisible, currentDestination) {
@@ -68,13 +69,18 @@ fun RootNavigator(navController: NavHostController) {
                 CustomNavigationBar(
                     navigationItems = navigationItems,
                     navigateTo = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.startDestinationId) {
-                                saveState = true
-                                inclusive = true
+                        currentDestination?.let {
+                            if (!currentDestination.hasRoute(route::class)) {
+                                navController.navigate(route) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                        inclusive = true
+                                    }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+
                             }
-                            launchSingleTop = true
-                            restoreState = true
                         }
                     }
                 )
