@@ -9,24 +9,19 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.navigation.navigation_bar.CustomNavigationBar
+import com.example.fool_tool.ui.navigation.navigation_bar.NavigationItem
 import com.example.fool_tool.ui.navigation.navigation_bar.settingsDestination
-import kotlinx.serialization.json.Json
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,56 +29,69 @@ fun RootNavigator(navController: NavHostController) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    var savedBottomNavigationRoute by rememberSaveable(stateSaver = bottomNavRouteSaver) {
-        mutableStateOf(null)
-    }
+    val isBottomBarVisible = remember(currentDestination) {
+        Route.routesShouldShowBottomNavigation.any {
+            currentDestination?.hasRoute(it::class) ?: false
 
-    var shouldShowBottomNavBar by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    LaunchedEffect(currentDestination) {
-        Route.bottomNavRoutes.firstOrNull { graphRoute ->
-            currentDestination?.hierarchy?.any {
-                it.hasRoute(graphRoute::class)
-            } == true
-        }?.let {
-            savedBottomNavigationRoute = it
         }
+    }
+
+    val isTopBarVisible = remember(isBottomBarVisible, currentDestination) {
         currentDestination?.let {
-            shouldShowBottomNavBar = Route.routesShouldShowBottomNavigation.any { route ->
-                currentDestination?.hasRoute(route::class) == true
-            }
+            !isBottomBarVisible
+        } ?: false
+    }
 
-        }
+    val navigationItems: List<NavigationItem> = remember {
+        listOf(
+            NavigationItem(
+                title = R.string.flashcard_screen_title,
+                icon = R.drawable.ic_quiz,
+                route = Route.BottomNavigationRoute.FlashcardGraphRoute,
+            ),
+            NavigationItem(
+                title = R.string.smartnote_screen_title,
+                icon = R.drawable.ic_notes,
+                route = Route.BottomNavigationRoute.SmartnoteGraphRoute,
+            ),
+            NavigationItem(
+                title = R.string.settings,
+                icon = R.drawable.ic_settings,
+                route = Route.BottomNavigationRoute.SettingsRoute,
+            ),
+        )
     }
 
     Scaffold(
         bottomBar = {
-            if (savedBottomNavigationRoute != null) {
-                AnimatedVisibility(visible = shouldShowBottomNavBar) {
-                    CustomNavigationBar(
-                        navController = navController,
-                        currentRoute = savedBottomNavigationRoute as Route.BottomNavigationRoute
-                    )
-                }
+            AnimatedVisibility(visible = isBottomBarVisible) {
+                CustomNavigationBar(
+                    navigationItems = navigationItems,
+                    navigateTo = { route ->
+                        navController.navigate(route) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
             }
-
         },
         topBar = {
-            if (savedBottomNavigationRoute != null) {
-                AnimatedVisibility(visible = !shouldShowBottomNavBar) {
-                    TopAppBar(
-                        title = { },
-                        navigationIcon = {
-                            IconButton(onClick = { navController.popBackStack() }) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_arrow_top_left),
-                                    contentDescription = stringResource(R.string.go_back)
-                                )
-                            }
-                        })
-                }
+            AnimatedVisibility(visible = isTopBarVisible) {
+                TopAppBar(
+                    title = { },
+                    navigationIcon = {
+                        IconButton(onClick = { navController.popBackStack() }) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_arrow_top_left),
+                                contentDescription = stringResource(R.string.go_back)
+                            )
+                        }
+                    })
             }
         }
     ) { innerPadding ->
@@ -112,17 +120,3 @@ fun RootNavigator(navController: NavHostController) {
         }
     }
 }
-
-private val bottomNavRouteSaver: Saver<Route.BottomNavigationRoute?, String> = Saver(
-    save = { route ->
-        route?.let { Json.encodeToString(Route.serializer(), it) }
-    },
-    restore = { json ->
-        json?.let {
-            Json.decodeFromString(
-                Route.serializer(),
-                it
-            ) as? Route.BottomNavigationRoute
-        }
-    }
-)

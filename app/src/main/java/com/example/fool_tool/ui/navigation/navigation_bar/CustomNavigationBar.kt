@@ -1,11 +1,5 @@
 package com.example.fool_tool.ui.navigation.navigation_bar
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,12 +13,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -38,74 +33,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.navigation.NavHostController
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.navigation.Route
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
-private data class NavigationItem(
-    @StringRes val title: Int,
-    @DrawableRes val icon: Int,
-    val route: Route.BottomNavigationRoute
-)
-
-private val navigationItems: List<NavigationItem> = listOf(
-    NavigationItem(
-        title = R.string.flashcard_screen_title,
-        icon = R.drawable.ic_quiz,
-        route = Route.BottomNavigationRoute.FlashcardGraphRoute
-    ),
-    NavigationItem(
-        title = R.string.smartnote_screen_title,
-        icon = R.drawable.ic_notes,
-        route = Route.BottomNavigationRoute.SmartnoteGraphRoute
-    ),
-    NavigationItem(
-        title = R.string.settings,
-        icon = R.drawable.ic_settings,
-        route = Route.BottomNavigationRoute.SettingsRoute
-    ),
-)
-
-
-private sealed interface IndicatorState {
-    object Idle : IndicatorState
-    object Shrinking : IndicatorState
-    object Moving : IndicatorState
-    object Stretching : IndicatorState
-}
-
-private fun calculateRelativeOffsetFromIndicator(
-    indicatorCoords: Offset,
-    navItemsCoords: SnapshotStateMap<Int, Offset>,
-    currentRouteIndex: Int
-): Offset {
-    var resultX = 0f
-    var resultY = 0f
-
-    navItemsCoords[currentRouteIndex]?.let {
-        resultX = it.x - indicatorCoords.x
-        resultY = it.y - indicatorCoords.y
-    }
-
-    return Offset(x = resultX, y = resultY)
-}
-
 @Composable
 fun CustomNavigationBar(
-    navController: NavHostController,
-    currentRoute: Route.BottomNavigationRoute
+    navigationItems: List<NavigationItem>,
+    navigateTo: (Route.BottomNavigationRoute) -> Unit
 ) {
+    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+    val indicatorAnimationManager = rememberIndicatorAnimationManager()
+
     val coroutineScope = rememberCoroutineScope()
     var currentAnimationJob: Job? by remember { mutableStateOf(null) }
-    var currentIndicatorState: IndicatorState by remember { mutableStateOf(IndicatorState.Idle) }
 
     val navItemsCoordinates = remember { mutableStateMapOf<Int, Offset>() }
     var indicatorCoordinates: Offset by remember { mutableStateOf(Offset.Zero) }
-    val relativeIndicatorOffsetAnimatable = remember { Animatable(0f) }
-    val indicatorShapeProgressAnimatable = remember { Animatable(1f) }
 
     val cs = MaterialTheme.colorScheme
     val indicatorColor = cs.secondaryContainer
@@ -113,16 +59,17 @@ fun CustomNavigationBar(
     val navBarItemColor = cs.onSurfaceVariant
 
     LaunchedEffect(Unit) {
-        val currentRouteIndex = navigationItems.indexOfFirst { it.route == currentRoute }
-        if (currentRouteIndex != -1) {
-            val targetPositionX = calculateRelativeOffsetFromIndicator(
-                indicatorCoordinates,
-                navItemsCoordinates,
-                currentRouteIndex
-            ).x
-            relativeIndicatorOffsetAnimatable.snapTo(targetPositionX)
+        val targetX = calculateRelativeOffsetFromIndicator(
+            indicatorCoordinates,
+            navItemsCoordinates,
+            selectedItemIndex
+        ).x
+
+        currentAnimationJob = coroutineScope.launch {
+            indicatorAnimationManager.animateTo(targetX)
         }
     }
+
 
     CustomNavigationBarLayout(
         innerPadding = PaddingValues(
@@ -133,13 +80,13 @@ fun CustomNavigationBar(
         floatingNavigationIndicator = {
             FloatingNavigationIndicator(
                 color = indicatorColor,
-                shapeProgress = indicatorShapeProgressAnimatable.value,
+                shapeProgress = indicatorAnimationManager.shapeAnimation.value,
                 modifier = Modifier
                     .onGloballyPositioned { coordinates ->
                         indicatorCoordinates = coordinates.positionInParent()
                     }
                     .graphicsLayer {
-                        this.translationX = relativeIndicatorOffsetAnimatable.value
+                        this.translationX = indicatorAnimationManager.offsetAnimation.value
                     }
 
             )
@@ -151,93 +98,23 @@ fun CustomNavigationBar(
         },
     ) {
         navigationItems.forEachIndexed { navItemIndex, navItem ->
-            val isSelected = navItem.route == currentRoute
+            val isSelected = navItemIndex == selectedItemIndex
 
             CustomNavigationBarItem(
                 onClick = {
-                    if (isSelected) return@CustomNavigationBarItem
+                    navigateTo(navItem.route)
 
-                    val shapeMorphAnimationSpec: AnimationSpec<Float> = spring(
-                        dampingRatio = Spring.DampingRatioMediumBouncy,
-                        stiffness = Spring.StiffnessMedium
-                    )
+                    selectedItemIndex = navItemIndex
 
-                    val targetPositionX = calculateRelativeOffsetFromIndicator(
+                    val targetX = calculateRelativeOffsetFromIndicator(
                         indicatorCoordinates,
                         navItemsCoordinates,
                         navItemIndex
                     ).x
+
                     currentAnimationJob?.cancel()
-
                     currentAnimationJob = coroutineScope.launch {
-                        when (currentIndicatorState) {
-                            is IndicatorState.Idle -> {
-                                currentIndicatorState = IndicatorState.Shrinking
-                                indicatorShapeProgressAnimatable.animateTo(
-                                    0f,
-                                    shapeMorphAnimationSpec
-                                )
-                                currentIndicatorState = IndicatorState.Moving
-                                relativeIndicatorOffsetAnimatable.animateTo(targetPositionX)
-                                currentIndicatorState = IndicatorState.Stretching
-                                indicatorShapeProgressAnimatable.animateTo(
-                                    1f,
-                                    shapeMorphAnimationSpec
-                                )
-                                currentIndicatorState = IndicatorState.Idle
-                            }
-
-                            is IndicatorState.Shrinking -> {
-                                indicatorShapeProgressAnimatable.animateTo(
-                                    0f,
-                                    shapeMorphAnimationSpec
-                                )
-                                currentIndicatorState = IndicatorState.Moving
-                                relativeIndicatorOffsetAnimatable.animateTo(targetPositionX)
-                                currentIndicatorState = IndicatorState.Stretching
-                                indicatorShapeProgressAnimatable.animateTo(
-                                    1f,
-                                    shapeMorphAnimationSpec
-                                )
-                                currentIndicatorState = IndicatorState.Idle
-                            }
-
-                            is IndicatorState.Moving -> {
-                                relativeIndicatorOffsetAnimatable.animateTo(targetPositionX)
-                                currentIndicatorState = IndicatorState.Stretching
-                                indicatorShapeProgressAnimatable.animateTo(
-                                    1f,
-                                    shapeMorphAnimationSpec
-                                )
-                                currentIndicatorState = IndicatorState.Idle
-                            }
-
-                            is IndicatorState.Stretching -> {
-                                currentIndicatorState = IndicatorState.Shrinking
-                                indicatorShapeProgressAnimatable.animateTo(
-                                    0f,
-                                    shapeMorphAnimationSpec
-                                )
-                                currentIndicatorState = IndicatorState.Moving
-                                relativeIndicatorOffsetAnimatable.animateTo(targetPositionX)
-                                currentIndicatorState = IndicatorState.Stretching
-                                indicatorShapeProgressAnimatable.animateTo(
-                                    1f,
-                                    shapeMorphAnimationSpec
-                                )
-                                currentIndicatorState = IndicatorState.Idle
-                            }
-                        }
-
-                    }
-
-                    navController.navigate(navItem.route) {
-                        popUpTo(currentRoute::class) {
-                            saveState = true
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+                        indicatorAnimationManager.animateTo(targetX)
                     }
                 },
                 icon = painterResource(navItem.icon),
