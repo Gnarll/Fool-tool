@@ -1,5 +1,5 @@
 [versions]
-agp = "8.12.2"
+agp = "8.12.3"
 kotlin = "2.2.0"
 ksp = "2.2.0-2.0.2"
 serialization = "2.2.0"
