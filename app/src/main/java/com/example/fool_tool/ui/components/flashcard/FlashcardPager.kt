@@ -1,8 +1,5 @@
 package com.example.fool_tool.ui.components.flashcard
 
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -26,11 +22,11 @@ import androidx.compose.ui.util.lerp
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.model.Flashcard
 import com.example.fool_tool.ui.screens.flashcard.FlashcardDeletionState
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import com.example.fool_tool.utils.animatePagerItemDeletion
 import kotlin.math.absoluteValue
 
 private const val rotationAngle = 30f
+
 
 @Composable
 fun FlashcardPager(
@@ -45,59 +41,11 @@ fun FlashcardPager(
     var pagerHeight by remember { mutableFloatStateOf(0f) }
     var flashcardHeight by remember { mutableFloatStateOf(0f) }
 
-    val translationYOnDeleting = remember { Animatable(0f) }
-    val alphaOnDeleting = remember { Animatable(1f) }
-
-    val flashcardToDeleteIndex = (flashcardDeletionState as? FlashcardDeletionState.Ready)?.index
-
-    LaunchedEffect(flashcardDeletionState) {
-
-        if (flashcardDeletionState !is FlashcardDeletionState.Ready) {
-            return@LaunchedEffect
-        }
-
-        val animationDuration = 500
-        val distanceToBottom = (pagerHeight - flashcardHeight) / 2 + flashcardHeight
-
-        val jumpBezierEasing = CubicBezierEasing(0.3f, -0.56f, 0.456f, 0.67f)
-
-        coroutineScope {
-            launch {
-                translationYOnDeleting.animateTo(
-                    targetValue = distanceToBottom,
-                    animationSpec = tween(
-                        durationMillis = animationDuration,
-                        easing = jumpBezierEasing
-                    )
-                )
-            }
-            launch {
-                alphaOnDeleting.animateTo(
-                    targetValue = 0.5f,
-                    animationSpec = tween(durationMillis = animationDuration)
-                )
-            }
-        }
-
-        val targetPage = when {
-            flashcards.size == 1 -> 0
-            flashcardDeletionState.index < flashcards.lastIndex -> flashcardDeletionState.index + 1
-            else -> flashcardDeletionState.index
-        }
-
-        if (pagerState.currentPage != targetPage) {
-            pagerState.animateScrollToPage(targetPage)
-        }
-
-        onDeleteFlashcard(flashcardDeletionState.id)
-
-        translationYOnDeleting.snapTo(0f)
-        alphaOnDeleting.snapTo(1f)
-    }
 
     HorizontalPager(
         state = pagerState,
         key = { flashcards[it].id },
+        beyondViewportPageCount = 1,
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .fillMaxSize()
@@ -105,41 +53,58 @@ fun FlashcardPager(
                 pagerHeight = coords.size.height.toFloat()
             }
     ) { page ->
+        flashcards.getOrNull(page)?.let {
+            val flashcard = flashcards[page]
 
-        val flashcard = flashcards[page]
+            val distanceToBottom = (pagerHeight - flashcardHeight) / 2 + flashcardHeight
 
-        val offset =
-            (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction.coerceIn(-1f, 1f)
-        val positiveOffset = offset.absoluteValue
+            val offset =
+                (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction.coerceIn(
+                    -1f,
+                    1f
+                )
+            val positiveOffset = offset.absoluteValue
 
-        val rotation = offset * rotationAngle
-        val translation = lerp(start = 0f, stop = -200f, fraction = positiveOffset)
-        val alpha = lerp(start = 1f, stop = 0.7f, fraction = positiveOffset)
-        val scale = lerp(start = 1f, stop = 0.7f, fraction = positiveOffset)
 
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            FlashcardItem(
-                flashcard = flashcard,
-                onDeleteItem = { id ->
-                    onRequestToDeleteFlashcard(id, page)
-                },
-                modifier = Modifier
-                    .fillMaxWidth(0.8f)
-                    .padding(vertical = dimensionResource(R.dimen.padding_medium))
-                    .aspectRatio(ratio = 8f / 5f, matchHeightConstraintsFirst = true)
-                    .onGloballyPositioned { coords ->
-                        flashcardHeight = coords.size.height.toFloat()
-                    }
-                    .graphicsLayer {
-                        this.rotationZ = rotation
-                        this.translationY =
-                            translation + if (flashcardToDeleteIndex == page) translationYOnDeleting.value else 0f
-                        this.alpha =
-                            alpha * if (flashcardToDeleteIndex == page) alphaOnDeleting.value else 1f
-                        this.scaleX = scale
-                        this.scaleY = scale
-                    }
-            )
+            val rotation = offset * rotationAngle
+            val translation = lerp(start = 0f, stop = -200f, fraction = positiveOffset)
+            val alpha = lerp(start = 1f, stop = 0.7f, fraction = positiveOffset)
+            val scale = lerp(start = 1f, stop = 0.7f, fraction = positiveOffset)
+
+
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+
+                FlashcardItem(
+                    flashcard = flashcard,
+                    onDeleteItem = { id ->
+                        onRequestToDeleteFlashcard(id, page)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth(0.8f)
+                        .padding(vertical = dimensionResource(R.dimen.padding_medium))
+                        .aspectRatio(ratio = 8f / 5f, matchHeightConstraintsFirst = true)
+                        .onGloballyPositioned { coords ->
+                            flashcardHeight = coords.size.height.toFloat()
+                        }
+                        .animatePagerItemDeletion(
+                            flashcardDeletionState = flashcardDeletionState,
+                            index = page,
+                            distanceToBottom = distanceToBottom,
+                            list = flashcards,
+                            pagerState = pagerState,
+                            onStart = {},
+                            onFinish = { id -> onDeleteFlashcard(id) })
+                        .graphicsLayer {
+                            this.rotationZ = rotation
+                            this.translationY =
+                                translation
+                            this.alpha =
+                                alpha
+                            this.scaleX = scale
+                            this.scaleY = scale
+                        }
+                )
+            }
         }
     }
 
