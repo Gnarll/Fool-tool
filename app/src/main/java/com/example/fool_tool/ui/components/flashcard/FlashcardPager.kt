@@ -1,5 +1,6 @@
 package com.example.fool_tool.ui.components.flashcard
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,32 +53,31 @@ fun FlashcardPager(
             .onGloballyPositioned { coords ->
                 pagerHeight = coords.size.height.toFloat()
             }
-    ) { page ->
-        flashcards.getOrNull(page)?.let {
-            val flashcard = flashcards[page]
+    ) { index ->
+        flashcards.getOrNull(index)?.let {
+            val flashcard = flashcards[index]
 
             val distanceToBottom = (pagerHeight - flashcardHeight) / 2 + flashcardHeight
 
-            val offset =
-                (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction.coerceIn(
+            val rawOffset =
+                (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction.coerceIn(
                     -1f,
                     1f
                 )
-            val positiveOffset = offset.absoluteValue
+            val animatedOffset by animateFloatAsState(
+                targetValue = rawOffset
+            )
 
-
-            val rotation = offset * rotationAngle
-            val translation = lerp(start = 0f, stop = -200f, fraction = positiveOffset)
-            val alpha = lerp(start = 1f, stop = 0.7f, fraction = positiveOffset)
-            val scale = lerp(start = 1f, stop = 0.7f, fraction = positiveOffset)
-
+            val positiveOffset = animatedOffset.absoluteValue
+            val rotation = animatedOffset * rotationAngle
+            val alpha = lerp(1f, 0.7f, positiveOffset)
+            val scale = lerp(1f, 0.7f, positiveOffset)
 
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-
                 FlashcardItem(
                     flashcard = flashcard,
                     onDeleteItem = { id ->
-                        onRequestToDeleteFlashcard(id, page)
+                        onRequestToDeleteFlashcard(id, index)
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.8f)
@@ -88,7 +88,7 @@ fun FlashcardPager(
                         }
                         .animatePagerItemDeletion(
                             flashcardDeletionState = flashcardDeletionState,
-                            index = page,
+                            index = index,
                             distanceToBottom = distanceToBottom,
                             list = flashcards,
                             pagerState = pagerState,
@@ -96,8 +96,6 @@ fun FlashcardPager(
                             onFinish = { id -> onDeleteFlashcard(id) })
                         .graphicsLayer {
                             this.rotationZ = rotation
-                            this.translationY =
-                                translation
                             this.alpha =
                                 alpha
                             this.scaleX = scale
