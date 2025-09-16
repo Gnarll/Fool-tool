@@ -38,8 +38,6 @@ fun <T> Modifier.animatePagerItemDeletion(
             onStart()
 
             val animationDuration = 500
-
-
             val jumpBezierEasing = CubicBezierEasing(0.3f, -0.56f, 0.456f, 0.67f)
 
             coroutineScope {
@@ -61,17 +59,19 @@ fun <T> Modifier.animatePagerItemDeletion(
                 }
             }
 
-            if (list.size > 1 && index != list.lastIndex) {
-                pagerState.animateScrollToPage(
-                    page = index + 1,
-                )
-            } else if (index == list.lastIndex) {
-                pagerState.animateScrollToPage(
-                    page = index - 1,
-                )
+            try {
+                if (list.size > 1 && index != list.lastIndex) {
+                    pagerState.animateScrollToPage(
+                        page = index + 1,
+                    )
+                } else if (index == list.lastIndex) {
+                    pagerState.animateScrollToPage(
+                        page = index - 1,
+                    )
+                }
+            } finally {
+                onFinish(flashcardDeletionState.id)
             }
-
-            onFinish(flashcardDeletionState.id)
 
         }
     }
