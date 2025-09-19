@@ -1,4 +1,4 @@
-package com.example.fool_tool.di
+package com.example.fool_tool.di.repositories
 
 import com.example.fool_tool.data.repositories.FlashcardRepository
 import com.example.fool_tool.data.repositories.FlashcardRepositoryImpl
