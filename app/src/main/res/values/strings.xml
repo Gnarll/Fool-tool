@@ -2,8 +2,10 @@
     <string name="app_name">Fool-tool</string>
     <string name="flashcard_screen_title">Flashcards</string>
     <string name="smartnote_screen_title">Notes</string>
+    <string name="reminder_screen_title">Reminders</string>
     <string name="error_msg_something_went_wrong">Something went wrong</string>
     <string name="add_flashcard">Add flashcard</string>
+    <string name="add_reminder">Add reminder</string>
     <string name="turn_over">Turn over</string>
     <string name="delete_word">Delete word</string>
     <string name="ensure_deletion_question">Are you sure, you want to delete?</string>
@@ -23,4 +25,6 @@
     <string name="english_lang">English</string>
     <string name="russian_lang">Русский</string>
     <string name="lang">Language</string>
+    <string name="no_reminders_info">You have no reminders yet</string>
+    <string name="create">Create</string>
 </resources>

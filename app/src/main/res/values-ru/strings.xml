@@ -3,8 +3,10 @@
     <string name="app_name">Fool-tool</string>
     <string name="flashcard_screen_title">Карточки</string>
     <string name="smartnote_screen_title">Заметки</string>
+    <string name="reminder_screen_title">Напоминалки</string>
     <string name="error_msg_something_went_wrong">Что-то пошло не так</string>
     <string name="add_flashcard">Добавить карточку</string>
+    <string name="add_reminder">Добавить напоминалку</string>
     <string name="turn_over">Перевернуть</string>
     <string name="delete_word">Удалить слово</string>
     <string name="ensure_deletion_question">Вы уверены, что хотите удалить?</string>
@@ -24,4 +26,6 @@
     <string name="lang">Язык</string>
     <string name="english_lang">English</string>
     <string name="russian_lang">Русский</string>
+    <string name="no_reminders_info">Пока что нет ни одной напоминалки</string>
+    <string name="create">Создать</string>
 </resources>

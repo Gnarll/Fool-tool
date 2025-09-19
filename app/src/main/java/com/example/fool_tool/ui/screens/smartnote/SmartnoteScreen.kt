@@ -5,7 +5,6 @@ import androidx.compose.ui.Modifier
 
 @Composable
 fun SmartnoteScreen(
-    onNavigateToFlashcard: () -> Unit,
     onCreateSmartnote: () -> Unit,
     onEditSmartnote: (smartnoteId: String) -> Unit,
     modifier: Modifier = Modifier
