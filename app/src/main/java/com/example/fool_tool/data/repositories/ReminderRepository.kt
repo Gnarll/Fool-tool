@@ -6,6 +6,7 @@ import com.example.fool_tool.ui.model.Reminder
 import com.example.fool_tool.ui.model.toReminderEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 interface ReminderRepository {
     fun getAllRemindersStream(): Flow<List<Reminder>>
@@ -13,7 +14,8 @@ interface ReminderRepository {
     suspend fun deleteReminder(reminder: Reminder)
 }
 
-class ReminderRepositoryImpl(private val reminderDao: ReminderDao) : ReminderRepository {
+class ReminderRepositoryImpl @Inject constructor(private val reminderDao: ReminderDao) :
+    ReminderRepository {
     override fun getAllRemindersStream(): Flow<List<Reminder>> =
         reminderDao.getAll().map { reminderEntities ->
             reminderEntities.map {
