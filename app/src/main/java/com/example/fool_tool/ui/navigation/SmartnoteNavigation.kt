@@ -10,12 +10,6 @@ import com.example.fool_tool.ui.screens.smartnote.CreateSmartnoteScreen
 import com.example.fool_tool.ui.screens.smartnote.EditSmartnoteScreen
 import com.example.fool_tool.ui.screens.smartnote.SmartnoteScreen
 
-
-fun NavController.navigateToFlashcardGraph() {
-    popBackStack(route = Route.BottomNavigationRoute.SmartnoteGraphRoute, inclusive = true)
-    navigate(Route.BottomNavigationRoute.FlashcardGraphRoute)
-}
-
 fun NavController.navigateToCreateSmartnote() {
     navigate(Route.CreateSmartnoteRoute)
 }
@@ -25,25 +19,25 @@ fun NavController.navigateToEditSmartnote(id: String) {
 }
 
 fun NavGraphBuilder.smartnoteDestination(
-    onNavigateToFlashcardGraph: () -> Unit,
-    onNavigateToCreateSmartnote: () -> Unit,
-    onNavigateToEditSmartnote: (smartnoteId: String) -> Unit,
-    onNavigateBack: () -> Unit,
+    navigateToCreateSmartnote: () -> Unit,
+    navigateToEditSmartnote: (smartnoteId: String) -> Unit,
+    navigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    navigation<Route.BottomNavigationRoute.SmartnoteGraphRoute>(startDestination = Route.SmartnoteRoute) {
+    navigation<Route.BottomNavigationRoute.SmartnoteGraphRoute>(
+        startDestination = Route.BottomNavigationRoute.SmartnoteGraphRoute.startDestination
+    ) {
         composable<Route.SmartnoteRoute> {
             SmartnoteScreen(
-                onNavigateToFlashcard = onNavigateToFlashcardGraph,
-                onCreateSmartnote = onNavigateToCreateSmartnote,
-                onEditSmartnote = onNavigateToEditSmartnote,
+                onCreateSmartnote = navigateToCreateSmartnote,
+                onEditSmartnote = navigateToEditSmartnote,
                 modifier = modifier
             )
         }
 
         composable<Route.CreateSmartnoteRoute> {
             CreateSmartnoteScreen(
-                onSmartnoteCreated = onNavigateBack,
+                onSmartnoteCreated = navigateBack,
                 modifier = modifier
             )
         }
@@ -52,7 +46,7 @@ fun NavGraphBuilder.smartnoteDestination(
             val smartnoteId = backStack.toRoute<Route.EditSmartnoteRoute>().id
 
             EditSmartnoteScreen(
-                onSmartnoteEdited = onNavigateBack,
+                onSmartnoteEdited = navigateBack,
                 smartnote = smartnoteId,
                 modifier = modifier
             )

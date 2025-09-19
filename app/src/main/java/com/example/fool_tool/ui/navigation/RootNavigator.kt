@@ -56,9 +56,14 @@ fun RootNavigator(navController: NavHostController) {
                 route = Route.BottomNavigationRoute.SmartnoteGraphRoute,
             ),
             NavigationItem(
+                title = R.string.reminder_screen_title,
+                icon = R.drawable.ic_calendar,
+                route = Route.BottomNavigationRoute.ReminderGraphRoute,
+            ),
+            NavigationItem(
                 title = R.string.settings,
                 icon = R.drawable.ic_settings,
-                route = Route.BottomNavigationRoute.SettingsRoute,
+                route = Route.BottomNavigationRoute.SettingsGraphRoute,
             ),
         )
     }
@@ -68,10 +73,13 @@ fun RootNavigator(navController: NavHostController) {
             AnimatedVisibility(visible = isBottomBarVisible) {
                 CustomNavigationBar(
                     navigationItems = navigationItems,
-                    navigateTo = { route ->
+                    navigateTo = { bottomNavRoute ->
                         currentDestination?.let {
-                            if (!currentDestination.hasRoute(route::class)) {
-                                navController.navigate(route) {
+                            val isAlreadyInTargetGraph =
+                                it.hasRoute(bottomNavRoute.startDestination::class)
+
+                            if (!isAlreadyInTargetGraph) {
+                                navController.navigate(bottomNavRoute) {
                                     popUpTo(navController.graph.startDestinationId) {
                                         saveState = true
                                         inclusive = true
@@ -79,7 +87,6 @@ fun RootNavigator(navController: NavHostController) {
                                     launchSingleTop = true
                                     restoreState = true
                                 }
-
                             }
                         }
                     }
@@ -109,19 +116,23 @@ fun RootNavigator(navController: NavHostController) {
                 .fillMaxSize()
         ) {
             flashcardDestination(
-                onNavigateToCreateFlashcard = { navController.navigateToCreateFlashcard() },
-                onNavigateBack = {
+                navigateToCreateFlashcard = { navController.navigateToCreateFlashcard() },
+                navigateBack = {
                     navController.popBackStack()
                 }
             )
             smartnoteDestination(
-                onNavigateToFlashcardGraph = { navController.navigateToFlashcardGraph() },
-                onNavigateToCreateSmartnote = { navController.navigateToCreateSmartnote() },
-                onNavigateToEditSmartnote = { id -> navController.navigateToEditSmartnote(id) },
-                onNavigateBack = {
+                navigateToCreateSmartnote = { navController.navigateToCreateSmartnote() },
+                navigateToEditSmartnote = { id -> navController.navigateToEditSmartnote(id) },
+                navigateBack = {
                     navController.popBackStack()
                 },
             )
+            reminderDestination(
+                navigateToCreateReminder = { navController.navigateToCreateReminder() },
+                navigateBack = {
+                    navController.popBackStack()
+                })
             settingsDestination()
         }
     }

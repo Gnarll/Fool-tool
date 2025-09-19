@@ -14,22 +14,22 @@ fun NavController.navigateToCreateFlashcard() {
 }
 
 fun NavGraphBuilder.flashcardDestination(
-    onNavigateToCreateFlashcard: () -> Unit,
-    onNavigateBack: () -> Unit,
+    navigateToCreateFlashcard: () -> Unit,
+    navigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     navigation<Route.BottomNavigationRoute.FlashcardGraphRoute>(
-        startDestination = Route.FlashcardRoute
+        startDestination = Route.BottomNavigationRoute.FlashcardGraphRoute.startDestination
     ) {
         composable<Route.FlashcardRoute> { backStack ->
             FlashcardScreen(
-                onCreateFlashcard = onNavigateToCreateFlashcard,
+                onCreateFlashcard = navigateToCreateFlashcard,
                 modifier = modifier
             )
         }
         composable<Route.CreateFlashcardRoute> { backStack ->
             CreateFlashcardScreen(
-                onNavigateBack = onNavigateBack,
+                onFlashcardCreated = navigateBack,
                 modifier = modifier
             )
         }

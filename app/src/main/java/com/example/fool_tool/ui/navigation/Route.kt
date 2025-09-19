@@ -6,16 +6,25 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface Route {
     @Serializable
-    sealed interface BottomNavigationRoute : Route {
+    sealed class BottomNavigationRoute(val startDestination: Route) : Route {
         @Serializable
-        object FlashcardGraphRoute : BottomNavigationRoute
+        object FlashcardGraphRoute : BottomNavigationRoute(startDestination = FlashcardRoute)
 
         @Serializable
-        object SmartnoteGraphRoute : BottomNavigationRoute
+        object SmartnoteGraphRoute : BottomNavigationRoute(startDestination = SmartnoteRoute)
 
         @Serializable
-        object SettingsRoute : BottomNavigationRoute
+        object ReminderGraphRoute : BottomNavigationRoute(startDestination = ReminderRoute)
+
+        @Serializable
+        object SettingsGraphRoute : BottomNavigationRoute(startDestination = SettingsRoute)
     }
+
+    @Serializable
+    object SmartnoteRoute : Route
+
+    @Serializable
+    object SettingsRoute : Route
 
     @Serializable
     object FlashcardRoute : Route
@@ -23,11 +32,15 @@ sealed interface Route {
     @Serializable
     object CreateFlashcardRoute : Route
 
-    @Serializable
-    object SmartnoteRoute : Route
 
     @Serializable
     object CreateSmartnoteRoute : Route
+
+    @Serializable
+    object ReminderRoute : Route
+
+    @Serializable
+    object CreateReminderRoute : Route
 
     @Serializable
     data class EditSmartnoteRoute(val id: String) : Route
@@ -36,9 +49,12 @@ sealed interface Route {
         val routesShouldShowBottomNavigation = listOf<Route>(
             BottomNavigationRoute.FlashcardGraphRoute,
             BottomNavigationRoute.SmartnoteGraphRoute,
-            BottomNavigationRoute.SettingsRoute,
+            BottomNavigationRoute.ReminderGraphRoute,
+            BottomNavigationRoute.SettingsGraphRoute,
+            SmartnoteRoute,
             FlashcardRoute,
-            SmartnoteRoute
+            ReminderRoute,
+            SettingsRoute
         )
     }
 }

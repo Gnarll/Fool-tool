@@ -24,7 +24,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CreateFlashcardScreen(
-    onNavigateBack: () -> Unit,
+    onFlashcardCreated: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreateFlashcardViewModel = hiltViewModel()
 ) {
@@ -66,7 +66,7 @@ fun CreateFlashcardScreen(
                             createdToastText,
                             Toast.LENGTH_SHORT
                         ).show()
-                        onNavigateBack()
+                        onFlashcardCreated()
                     }
                 },
                 enabled = formState.nativeWordError == null && formState.foreignWordError == null
