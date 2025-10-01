@@ -11,4 +11,8 @@
 
     <dimen name="surface_tonal_elevation">32dp</dimen>
     <dimen name="surface_shadow_elevation">8dp</dimen>
+    <dimen name="elevation_default">4dp</dimen>
+
+
+    <dimen name="text_field_default_height">64dp</dimen>
 </resources>
