@@ -13,12 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,17 +32,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.fool_tool.R
-import com.example.fool_tool.ui.navigation.Route
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 
 @Composable
 fun CustomNavigationBar(
+    selectedItemIndex: Int,
     navigationItems: List<NavigationItem>,
-    navigateTo: (Route.BottomNavigationRoute) -> Unit
+    navigateTo: (NavigationItem) -> Unit
 ) {
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
     val indicatorAnimationManager = rememberIndicatorAnimationManager()
 
     val coroutineScope = rememberCoroutineScope()
@@ -102,9 +99,8 @@ fun CustomNavigationBar(
 
             CustomNavigationBarItem(
                 onClick = {
-                    navigateTo(navItem.route)
+                    navigateTo(navItem)
 
-                    selectedItemIndex = navItemIndex
 
                     val targetX = calculateRelativeOffsetFromIndicator(
                         indicatorCoordinates,
