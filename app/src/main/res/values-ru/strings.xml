@@ -28,4 +28,9 @@
     <string name="russian_lang">Русский</string>
     <string name="no_reminders_info">Пока что нет ни одной напоминалки</string>
     <string name="create">Создать</string>
+    <string name="select_date">Выбрать дату</string>
+    <string name="date">Дата</string>
+    <string name="ok">ОК</string>
+    <string name="time">Время</string>
+    <string name="select_time">Выбрать время</string>
 </resources>
