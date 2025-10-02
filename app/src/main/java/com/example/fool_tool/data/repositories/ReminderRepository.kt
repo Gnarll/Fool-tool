@@ -10,6 +10,7 @@ import javax.inject.Inject
 
 interface ReminderRepository {
     fun getAllRemindersStream(): Flow<List<Reminder>>
+    suspend fun createReminder(reminder: Reminder)
     suspend fun updateReminder(reminder: Reminder)
     suspend fun deleteReminder(reminder: Reminder)
 }
@@ -22,6 +23,10 @@ class ReminderRepositoryImpl @Inject constructor(private val reminderDao: Remind
                 it.toReminder()
             }
         }
+
+    override suspend fun createReminder(reminder: Reminder) {
+        reminderDao.insert(reminder.toReminderEntity())
+    }
 
     override suspend fun updateReminder(reminder: Reminder) {
         reminderDao.update(reminder.toReminderEntity())

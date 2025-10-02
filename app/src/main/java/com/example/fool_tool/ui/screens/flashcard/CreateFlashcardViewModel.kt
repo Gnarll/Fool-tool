@@ -1,9 +1,8 @@
 package com.example.fool_tool.ui.screens.flashcard
 
-import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
-import com.example.fool_tool.R
 import com.example.fool_tool.data.repositories.FlashcardRepository
+import com.example.fool_tool.utils.EmptyInputError
 import com.example.fool_tool.utils.FlashcardCreating
 import com.example.fool_tool.utils.ValidationError
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,16 +13,11 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 
-enum class FlashcardValidationError(@StringRes override val messageResId: Int) : ValidationError {
-    EMPTY_NATIVE_WORD(R.string.empty_input_error),
-    EMPTY_FOREIGN_WORD(R.string.empty_input_error)
-}
-
 data class CreateFlashcardFormState(
     val nativeWord: String = "",
     val foreignWord: String = "",
-    val nativeWordError: FlashcardValidationError? = null,
-    val foreignWordError: FlashcardValidationError? = null
+    val nativeWordError: ValidationError? = null,
+    val foreignWordError: ValidationError? = null
 )
 
 @HiltViewModel
@@ -31,8 +25,8 @@ class CreateFlashcardViewModel @Inject constructor(private val flashcardReposito
     ViewModel() {
     private var _createFlashcardFormState = MutableStateFlow(
         CreateFlashcardFormState(
-            nativeWordError = FlashcardValidationError.EMPTY_NATIVE_WORD,
-            foreignWordError = FlashcardValidationError.EMPTY_FOREIGN_WORD
+            nativeWordError = EmptyInputError,
+            foreignWordError = EmptyInputError
         )
     )
     val createFlashcardFormState: StateFlow<CreateFlashcardFormState> =
@@ -64,13 +58,13 @@ class CreateFlashcardViewModel @Inject constructor(private val flashcardReposito
         flashcardRepository.insertFlashcard(flashcard)
     }
 
-    private fun validateNativeWord(nativeWord: String): FlashcardValidationError? = when {
-        nativeWord.isEmpty() -> FlashcardValidationError.EMPTY_NATIVE_WORD
+    private fun validateNativeWord(nativeWord: String): ValidationError? = when {
+        nativeWord.isEmpty() -> EmptyInputError
         else -> null
     }
 
-    private fun validateForeignWord(nativeWord: String): FlashcardValidationError? = when {
-        nativeWord.isEmpty() -> FlashcardValidationError.EMPTY_FOREIGN_WORD
+    private fun validateForeignWord(foreignWord: String): ValidationError? = when {
+        foreignWord.isEmpty() -> EmptyInputError
         else -> null
     }
 }

@@ -25,36 +25,33 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.fool_tool.R
+import com.example.fool_tool.utils.toFormattedString
 import com.example.fool_tool.utils.toLocalDateWithZone
+import com.example.fool_tool.utils.toMillisWithZone
 import com.example.fool_tool.utils.toUtcLocalDate
-import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DatePickerDocked(onDatePicked: (LocalDate) -> Unit) {
+fun DatePickerDocked(
+    date: LocalDate,
+    onDatePicked: (LocalDate) -> Unit,
+    modifier: Modifier = Modifier
+) {
     var showDatePicker by remember { mutableStateOf(false) }
+    val dismiss = { showDatePicker = false }
 
     val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
         override fun isSelectableDate(utcTimeMillis: Long): Boolean {
             return utcTimeMillis.toUtcLocalDate() >= LocalDate.now()
         }
-    })
-
-    val selectedDate = datePickerState.selectedDateMillis?.let {
-        convertMillisToDateString(it)
-    } ?: ""
-
-
-    val dismiss = { showDatePicker = false }
+    }, initialSelectedDateMillis = date.toMillisWithZone())
 
     Box(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         OutlinedTextField(
-            value = selectedDate,
+            value = date.toFormattedString(),
             onValueChange = { },
             label = { Text(stringResource(R.string.date)) },
             readOnly = true,
@@ -81,7 +78,6 @@ fun DatePickerDocked(onDatePicked: (LocalDate) -> Unit) {
                         )
 
                     }
-
                     dismiss()
                 },
                 onDismiss = {
@@ -106,10 +102,6 @@ fun DatePickerDocked(onDatePicked: (LocalDate) -> Unit) {
 @Preview
 @Composable
 fun DatePickerDockedPreview() {
-    DatePickerDocked(onDatePicked = {})
+    DatePickerDocked(onDatePicked = {}, date = LocalDate.now())
 }
 
-private fun convertMillisToDateString(millis: Long): String {
-    val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-    return formatter.format(Date(millis))
-}

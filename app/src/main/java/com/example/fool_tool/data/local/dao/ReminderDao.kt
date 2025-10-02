@@ -14,7 +14,7 @@ interface ReminderDao {
     fun getAll(): Flow<List<ReminderEntity>>
 
     @Insert
-    suspend fun insert(flashcard: ReminderEntity)
+    suspend fun insert(reminderEntity: ReminderEntity)
 
     @Update
     suspend fun update(reminderEntity: ReminderEntity)
