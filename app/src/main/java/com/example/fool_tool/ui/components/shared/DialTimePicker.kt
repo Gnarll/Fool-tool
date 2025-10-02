@@ -1,15 +1,16 @@
 package com.example.fool_tool.ui.components.shared
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.AlertDialog
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
@@ -43,6 +44,7 @@ fun DialTimePicker(
 
     var showTimePicker by remember { mutableStateOf(false) }
 
+    val dismiss = { showTimePicker = false }
     Box(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -65,40 +67,29 @@ fun DialTimePicker(
         )
 
         if (showTimePicker) {
-            TimePickerDialog(
+            PickerDialog(
                 onConfirm = {
                     onTimePicked(LocalTime.of(timePickerState.hour, timePickerState.minute))
-                    showTimePicker = false
+                    dismiss()
                 },
                 onDismiss = {
-                    showTimePicker = false
+                    dismiss()
                 })
             {
-                TimePicker(
-                    state = timePickerState,
-                )
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    TimePicker(
+                        state = timePickerState,
+                    )
+
+                }
             }
         }
     }
 
 
-}
-
-@Composable
-private fun TimePickerDialog(
-    onDismiss: () -> Unit,
-    onConfirm: () -> Unit,
-    content: @Composable () -> Unit
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = { onConfirm() }) {
-                Text(stringResource(R.string.ok))
-            }
-        },
-        text = { content() }
-    )
 }
 
 private fun convertToTimeString(hours: Int, minutes: Int): String {
