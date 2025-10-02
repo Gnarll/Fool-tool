@@ -33,4 +33,6 @@
     <string name="ok">ОК</string>
     <string name="time">Время</string>
     <string name="select_time">Выбрать время</string>
+    <string name="invalid_date_error">Неверно указаны дата/время. Установите хотя бы на минуту позже текущего времени</string>
+    <string name="input_max_symbols_error">Максимальное количество символов: %1$d</string>
 </resources>

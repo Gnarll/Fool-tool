@@ -6,7 +6,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import com.example.fool_tool.utils.ValidationError
 
 @Composable
@@ -31,7 +30,7 @@ fun ValidatedTextField(
         supportingText = {
             error?.let {
                 Text(
-                    text = stringResource(it.messageResId),
+                    text = it.errorMessage.asString(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error
                 )

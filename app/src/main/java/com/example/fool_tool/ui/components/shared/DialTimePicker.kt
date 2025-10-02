@@ -31,14 +31,14 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialTimePicker(
+    time: LocalTime,
     onTimePicked: (LocalTime) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val currentTime = LocalTime.now()
 
     val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.hour,
-        initialMinute = currentTime.minute,
+        initialHour = time.hour,
+        initialMinute = time.minute,
         is24Hour = true,
     )
 
@@ -46,10 +46,10 @@ fun DialTimePicker(
 
     val dismiss = { showTimePicker = false }
     Box(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         OutlinedTextField(
-            value = convertToTimeString(timePickerState.hour, timePickerState.minute),
+            value = convertToTimeString(time.hour, time.minute),
             onValueChange = { },
             label = { Text(stringResource(R.string.time)) },
             readOnly = true,

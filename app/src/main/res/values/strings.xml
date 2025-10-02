@@ -32,4 +32,6 @@
     <string name="ok">OK</string>
     <string name="time">Time</string>
     <string name="select_time">Select time</string>
+    <string name="invalid_date_error">Invalid date/time selected. Specify at least one minute later than current time</string>
+    <string name="input_max_symbols_error">Max symbols count is %1$d</string>
 </resources>
