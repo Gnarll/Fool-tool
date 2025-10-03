@@ -35,4 +35,8 @@
     <string name="select_time">Выбрать время</string>
     <string name="invalid_date_error">Неверно указаны дата/время. Установите хотя бы на минуту позже текущего времени</string>
     <string name="input_max_symbols_error">Максимальное количество символов: %1$d</string>
+    <string name="title">Заголовок</string>
+    <string name="description">Описание</string>
+    <string name="create_reminder">Создать напоминалку</string>
+    <string name="create_reminder_success">Напоминалка успешно создана</string>
 </resources>
