@@ -12,9 +12,9 @@ class ErrorMessage(
     vararg val params: Any
 ) {
     @Composable
-    fun asString(): String = stringResource(messageResId, params)
+    fun asString(): String = stringResource(messageResId, *params)
 
-    fun asString(context: Context): String = context.getString(messageResId, params)
+    fun asString(context: Context): String = context.getString(messageResId, *params)
 }
 
 interface ValidationError {
