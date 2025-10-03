@@ -5,14 +5,11 @@ import com.example.fool_tool.data.repositories.ReminderRepository
 import com.example.fool_tool.ui.model.ReminderStatus
 import com.example.fool_tool.utils.DateTimeValidationError
 import com.example.fool_tool.utils.EmptyInputError
-import com.example.fool_tool.utils.ErrorMessage
 import com.example.fool_tool.utils.InputMaxSymbolsError
 import com.example.fool_tool.utils.ReminderCreating
 import com.example.fool_tool.utils.ValidationError
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -42,8 +39,6 @@ class CreateReminderViewModel @Inject constructor(
     )
     val reminderUiState: StateFlow<ReminderUiState> = _reminderUiState.asStateFlow()
 
-    private var _messagesFlow = MutableSharedFlow<ErrorMessage>()
-    val messagesFlow: SharedFlow<ErrorMessage> = _messagesFlow
 
     fun onUiDateChanged(dateTime: LocalDateTime) {
         _reminderUiState.update {
@@ -72,15 +67,15 @@ class CreateReminderViewModel @Inject constructor(
         validateDescription(description)
     }
 
-    suspend fun onCreateReminder() {
-        val dateValidationError = validateDateTime(dateTime = _reminderUiState.value.date)
-
-        if (dateValidationError != null) {
-            _messagesFlow.emit(dateValidationError.errorMessage)
-            return
+    suspend fun attemptToCreateReminder(): Boolean = when {
+        validateDateTime(dateTime = _reminderUiState.value.date) != null -> false
+        validateTitle(title = _reminderUiState.value.title) != null -> false
+        validateDescription(description = _reminderUiState.value.description) != null -> false
+        else -> {
+            createReminder()
+            true
         }
 
-        createReminder()
     }
 
     private fun validateDateTime(dateTime: LocalDateTime): ValidationError? {
@@ -129,7 +124,7 @@ class CreateReminderViewModel @Inject constructor(
     }
 
     private companion object {
-        const val TITLE_MAX_SYMBOLS = 20
-        const val DESCRIPTION_MAX_SYMBOLS = 50
+        const val TITLE_MAX_SYMBOLS = 35
+        const val DESCRIPTION_MAX_SYMBOLS = 80
     }
 }
