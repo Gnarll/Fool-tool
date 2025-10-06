@@ -61,6 +61,8 @@ dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.paging)
+    implementation(libs.androidx.paging.compose)
     ksp(libs.hilt.compiler)
     ksp(libs.androidx.room.compiler)
 
