@@ -39,4 +39,6 @@
     <string name="description">Описание</string>
     <string name="create_reminder">Создать напоминалку</string>
     <string name="create_reminder_success">Напоминалка успешно создана</string>
+    <string name="succeed">Успешна</string>
+    <string name="pending">Ожидает</string>
 </resources>
