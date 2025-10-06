@@ -25,3 +25,12 @@ fun LocalDate.toFormattedString(): String {
     val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     return this.format(formatter)
 }
+
+
+fun LocalDateTime.toFormattedDetailedString(): String {
+    val formatter = DateTimeFormatter.ofPattern(
+        "EEE, HH:mm, dd MMM yyyy"
+    )
+    return this.format(formatter)
+}
+

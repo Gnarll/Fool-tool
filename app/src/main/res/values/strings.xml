@@ -38,4 +38,6 @@
     <string name="description">Description</string>
     <string name="create_reminder">Create reminder</string>
     <string name="create_reminder_success">Reminder successfully created</string>
+    <string name="succeed">Succeed</string>
+    <string name="pending">Pending</string>
 </resources>
