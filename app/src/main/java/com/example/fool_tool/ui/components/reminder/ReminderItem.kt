@@ -9,8 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +21,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.fool_tool.R
+import com.example.fool_tool.ui.components.shared.AdaptiveSpaceRow
 import com.example.fool_tool.ui.model.Reminder
 import com.example.fool_tool.ui.model.ReminderStatus
 import com.example.fool_tool.ui.theme.FooltoolTheme
@@ -34,7 +34,7 @@ import java.time.LocalDateTime
 @Composable
 fun ReminderItem(reminder: Reminder, modifier: Modifier = Modifier) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(
                 horizontal = dimensionResource(R.dimen.padding_large),
@@ -59,20 +59,25 @@ fun ReminderItem(reminder: Reminder, modifier: Modifier = Modifier) {
     ) {
         Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_large))) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = reminder.title,
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = MaterialTheme.colorScheme.onSurface
+                AdaptiveSpaceRow(
+                    weakComposable = {
+                        Text(
+                            text = reminder.title,
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.onSurface,
+                        )
+                    },
+                    strongComposable = { ReminderStatusIndicator(status = reminder.status) }
                 )
-                Spacer(Modifier.width(dimensionResource(R.dimen.padding_small)))
-                Text(
-                    text = reminder.date.toFormattedDetailedString(),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.tertiary
-                )
-                Spacer(Modifier.weight(1f))
-                ReminderStatusIndicator(status = reminder.status)
+
             }
+            Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
+            Text(
+                text = reminder.date.toFormattedDetailedString(),
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                color = MaterialTheme.colorScheme.tertiary
+            )
             Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
             Text(
                 text = reminder.description,
@@ -94,12 +99,17 @@ private fun ReminderStatusIndicator(status: ReminderStatus, modifier: Modifier =
 
     Box(
         modifier = modifier
-            .wrapContentSize()
+            .wrapContentWidth()
             .background(color = color, shape = MaterialTheme.shapes.small)
             .padding(dimensionResource(R.dimen.padding_x_small)),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = text, color=  onPrimaryDarkHighContrast, style = MaterialTheme.typography.labelMedium)
+        Text(
+            text = text,
+            maxLines = 1,
+            color = onPrimaryDarkHighContrast,
+            style = MaterialTheme.typography.labelMedium
+        )
     }
 }
 
