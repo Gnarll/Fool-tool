@@ -1,10 +1,13 @@
 package com.example.fool_tool.ui.screens.reminder
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
@@ -18,9 +21,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.fool_tool.R
-import com.example.fool_tool.ui.UiState
+import com.example.fool_tool.ui.components.reminder.ReminderItem
 
 @Composable
 fun ReminderScreen(
@@ -29,49 +33,84 @@ fun ReminderScreen(
     viewModel: ReminderViewModel = hiltViewModel()
 ) {
     val reminderItems =
-        viewModel.reminders.collectAsStateWithLifecycle().value
+        viewModel.reminders.collectAsLazyPagingItems()
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        when (reminderItems) {
-            is UiState.Success -> {
-                if (reminderItems.value.isEmpty()) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(
-                            text = stringResource(R.string.no_reminders_info),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-                        Button(onClick = onCreateReminder) {
-                            Text(text = stringResource(R.string.create))
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        when (reminderItems.loadState.refresh) {
+            is LoadState.Error -> Text(
+                text = stringResource(R.string.error_msg_something_went_wrong),
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.align(Alignment.Center)
+            )
+
+            LoadState.Loading -> CircularProgressIndicator(Modifier.align(alignment = Alignment.Center))
+
+            else -> {
+                LazyColumn(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    if (reminderItems.itemCount == 0) {
+                        item {
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier.align(
+                                        Alignment.Center
+                                    )
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.no_reminders_info),
+                                        style = MaterialTheme.typography.bodyLarge
+                                    )
+                                    Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+                                    Button(onClick = onCreateReminder) {
+                                        Text(text = stringResource(R.string.create))
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        items(
+                            count = reminderItems.itemCount,
+                            key = { index -> reminderItems[index]?.id ?: index }) { index ->
+                            val reminder = reminderItems[index]
+                            reminder?.let {
+                                ReminderItem(reminder = reminder)
+                            }
+                        }
+                        if (reminderItems.loadState.append is LoadState.Loading) {
+                            item {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
-                } else {
-                    FloatingActionButton(
-                        onClick = onCreateReminder,
-                        content = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_plus),
-                                contentDescription = stringResource(R.string.add_reminder)
-                            )
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(dimensionResource(R.dimen.padding_x_x_large))
-                    )
+
                 }
-
-            }
-
-            is UiState.Loading -> {
-                CircularProgressIndicator()
-            }
-
-            is UiState.Failure -> {
-                Text(
-                    text = stringResource(R.string.error_msg_something_went_wrong),
-                    color = MaterialTheme.colorScheme.error
-                )
             }
         }
+
+        if (reminderItems.loadState.refresh is LoadState.NotLoading && reminderItems.itemCount > 0)
+            FloatingActionButton(
+                onClick = {
+                    viewModel.tempInsert()
+//                    onCreateReminder
+                },
+                content = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_plus),
+                        contentDescription = stringResource(R.string.add_reminder)
+                    )
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(dimensionResource(R.dimen.padding_x_x_large))
+            )
     }
 }

@@ -19,7 +19,7 @@ interface FlashcardRepository {
     suspend fun deleteFlashcardById(id: Long)
 }
 
-class FlashcardRepositoryImpl @Inject constructor(val flashcardDao: FlashcardDao) :
+class FlashcardRepositoryImpl @Inject constructor(private val flashcardDao: FlashcardDao) :
     FlashcardRepository {
     override suspend fun getFlashcardById(id: Long): Flashcard =
         flashcardDao.getById(id = id).toFlashcard()
