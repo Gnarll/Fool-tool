@@ -8,12 +8,15 @@
     <dimen name="padding_x_x_large">24dp</dimen>
 
     <dimen name="nav_icon_size">32dp</dimen>
+    <dimen name="default_icon_size">24dp</dimen>
 
     <dimen name="surface_tonal_elevation">32dp</dimen>
     <dimen name="surface_shadow_elevation">8dp</dimen>
     <dimen name="elevation_default">4dp</dimen>
 
-    <dimen name="card_border_width">4dp</dimen>
+    <dimen name="small_border_width">4dp</dimen>
+
+    <dimen name="medium_shape_radius">8dp</dimen>
 
     <dimen name="text_field_default_height">64dp</dimen>
 </resources>

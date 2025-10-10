@@ -61,7 +61,10 @@ fun ReminderScreen(
                         }
                     }
                 } else {
-                    RemindersList(reminders = reminderItems)
+                    RemindersList(
+                        reminders = reminderItems,
+                        modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                    )
                 }
             }
         }

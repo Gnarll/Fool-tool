@@ -35,11 +35,7 @@ import java.time.LocalDateTime
 fun ReminderItem(reminder: Reminder, modifier: Modifier = Modifier) {
     Card(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = dimensionResource(R.dimen.padding_large),
-                vertical = dimensionResource(R.dimen.padding_small)
-            ),
+            .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
         elevation = CardDefaults.cardElevation(
             defaultElevation = dimensionResource(R.dimen.padding_x_small),
@@ -53,11 +49,16 @@ fun ReminderItem(reminder: Reminder, modifier: Modifier = Modifier) {
 
             ),
         border = BorderStroke(
-            width = dimensionResource(R.dimen.card_border_width),
+            width = dimensionResource(R.dimen.small_border_width),
             color = MaterialTheme.colorScheme.primary
         )
     ) {
-        Column(modifier = Modifier.padding(dimensionResource(R.dimen.padding_large))) {
+        Column(
+            modifier = Modifier.padding(
+                horizontal = dimensionResource(R.dimen.padding_large),
+                vertical = dimensionResource(R.dimen.padding_small)
+            )
+        ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AdaptiveSpaceRow(
                     weakComposable = {
