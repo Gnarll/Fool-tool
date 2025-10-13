@@ -1,5 +1,6 @@
 package com.example.fool_tool.ui.screens.reminder
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -63,6 +64,7 @@ fun ReminderScreen(
                 } else {
                     RemindersList(
                         reminders = reminderItems,
+                        onDeleteReminder = viewModel::deleteReminder,
                         modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
                     )
                 }
@@ -71,10 +73,7 @@ fun ReminderScreen(
 
         if (reminderItems.loadState.refresh is LoadState.NotLoading && reminderItems.itemCount > 0)
             FloatingActionButton(
-                onClick = {
-                    viewModel.tempInsert()
-//                    onCreateReminder
-                },
+                onClick =   onCreateReminder ,
                 content = {
                     Icon(
                         painter = painterResource(R.drawable.ic_plus),
