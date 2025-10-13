@@ -23,4 +23,10 @@ class ReminderViewModel @Inject constructor(
             reminderRepository.createReminder(ReminderCreating.createReminder())
         }
     }
+
+    fun deleteReminder(id: Long) {
+        viewModelScope.launch {
+            reminderRepository.deleteReminder(id)
+        }
+    }
 }

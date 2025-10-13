@@ -16,7 +16,7 @@ interface ReminderRepository {
     fun getPagedReminders(): Flow<PagingData<Reminder>>
     suspend fun createReminder(reminder: Reminder)
     suspend fun updateReminder(reminder: Reminder)
-    suspend fun deleteReminder(reminder: Reminder)
+    suspend fun deleteReminder(id: Long)
 }
 
 class ReminderRepositoryImpl @Inject constructor(
@@ -49,7 +49,7 @@ class ReminderRepositoryImpl @Inject constructor(
         reminderDao.update(reminder.toReminderEntity())
     }
 
-    override suspend fun deleteReminder(reminder: Reminder) {
-        reminderDao.delete(reminder.toReminderEntity())
+    override suspend fun deleteReminder(id: Long) {
+        reminderDao.delete(id)
     }
 }

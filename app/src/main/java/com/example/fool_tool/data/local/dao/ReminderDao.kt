@@ -2,7 +2,6 @@ package com.example.fool_tool.data.local.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -21,6 +20,6 @@ interface ReminderDao {
     suspend fun update(reminderEntity: ReminderEntity)
 
 
-    @Delete
-    suspend fun delete(reminderEntity: ReminderEntity)
+    @Query("DELETE FROM reminder WHERE uid = :id")
+    suspend fun delete(id: Long)
 }

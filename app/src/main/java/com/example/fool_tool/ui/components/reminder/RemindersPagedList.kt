@@ -1,6 +1,5 @@
 package com.example.fool_tool.ui.components.reminder
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,7 +15,11 @@ import com.example.fool_tool.ui.components.shared.SwipeToDeleteItem
 import com.example.fool_tool.ui.model.Reminder
 
 @Composable
-fun RemindersList(reminders: LazyPagingItems<Reminder>, modifier: Modifier = Modifier) {
+fun RemindersList(
+    onDeleteReminder: (Long) -> Unit,
+    reminders: LazyPagingItems<Reminder>,
+    modifier: Modifier = Modifier
+) {
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
@@ -28,9 +31,7 @@ fun RemindersList(reminders: LazyPagingItems<Reminder>, modifier: Modifier = Mod
             val reminder = reminders[index]
             reminder?.let {
                 SwipeToDeleteItem(onDelete = {
-                    Log.i("Test", "Delete")
-                }, onThresholdReached = {
-                    Log.i("Test", "Threshold reached!")
+                    onDeleteReminder(it.id)
                 }) {
                     ReminderItem(reminder = reminder)
                 }
