@@ -21,7 +21,7 @@ class SettingsViewModel @Inject constructor(
     private val localeManager: LocaleManager
 ) :
     ViewModel() {
-    val theme: StateFlow<Theme?> =
+    val theme: StateFlow<Theme> =
         dataStoreManager.userThemePreferencesFlow
             .map { userThemePreferences ->
                 when (userThemePreferences.isDarkTheme) {
@@ -33,7 +33,7 @@ class SettingsViewModel @Inject constructor(
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5000L),
-                initialValue = null
+                initialValue = Theme.SYSTEM_THEME
             )
 
 

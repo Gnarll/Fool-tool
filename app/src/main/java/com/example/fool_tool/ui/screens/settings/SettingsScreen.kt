@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -32,35 +31,31 @@ fun SettingsScreen(modifier: Modifier = Modifier, viewModel: SettingsViewModel =
         contentAlignment = Alignment.Center,
         modifier = modifier
     ) {
-        if (theme == null) {
-            CircularProgressIndicator()
-        } else {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_x_x_large)),
+        Column(
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_x_x_large)),
+            modifier = Modifier
+                .width(IntrinsicSize.Max)
+                .verticalScroll(rememberScrollState())
+        ) {
+            Surface(
+                shape = MaterialTheme.shapes.medium,
+                shadowElevation = dimensionResource(R.dimen.surface_shadow_elevation),
+                tonalElevation = dimensionResource(R.dimen.surface_tonal_elevation),
                 modifier = Modifier
-                    .width(IntrinsicSize.Max)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Surface(
-                    shape = MaterialTheme.shapes.medium,
-                    shadowElevation = dimensionResource(R.dimen.surface_shadow_elevation),
-                    tonalElevation = dimensionResource(R.dimen.surface_tonal_elevation),
-                    modifier = Modifier
-                        .fillMaxWidth()
+                    .fillMaxWidth()
 
-                ) {
-                    ThemeRadioGroup(
-                        selectedTheme = theme,
-                        onSelectTheme = viewModel::setTheme,
-                        Modifier.padding(dimensionResource(R.dimen.padding_small))
-                    )
-                }
-                LanguagesDropdown(
-                    language = language,
-                    onSetLanguage = viewModel::setLanguage,
-                    modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+            ) {
+                ThemeRadioGroup(
+                    selectedTheme = theme,
+                    onSelectTheme = viewModel::setTheme,
+                    Modifier.padding(dimensionResource(R.dimen.padding_small))
                 )
             }
+            LanguagesDropdown(
+                language = language,
+                onSetLanguage = viewModel::setLanguage,
+                modifier = Modifier.padding(dimensionResource(R.dimen.padding_small))
+            )
         }
     }
 }

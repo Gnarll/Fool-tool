@@ -3,6 +3,7 @@ package com.example.fool_tool.ui.screens.reminder
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -18,9 +19,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.fool_tool.R
-import com.example.fool_tool.ui.UiState
+import com.example.fool_tool.ui.components.reminder.RemindersList
 
 @Composable
 fun ReminderScreen(
@@ -29,13 +31,26 @@ fun ReminderScreen(
     viewModel: ReminderViewModel = hiltViewModel()
 ) {
     val reminderItems =
-        viewModel.reminders.collectAsStateWithLifecycle().value
+        viewModel.reminders.collectAsLazyPagingItems()
 
-    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-        when (reminderItems) {
-            is UiState.Success -> {
-                if (reminderItems.value.isEmpty()) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxSize()
+    ) {
+        when (reminderItems.loadState.refresh) {
+            is LoadState.Error -> Text(
+                text = stringResource(R.string.error_msg_something_went_wrong),
+                color = MaterialTheme.colorScheme.error,
+            )
+
+            LoadState.Loading -> CircularProgressIndicator()
+
+            else -> {
+                if (reminderItems.itemCount == 0) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
                         Text(
                             text = stringResource(R.string.no_reminders_info),
                             style = MaterialTheme.typography.bodyLarge
@@ -46,32 +61,29 @@ fun ReminderScreen(
                         }
                     }
                 } else {
-                    FloatingActionButton(
-                        onClick = onCreateReminder,
-                        content = {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_plus),
-                                contentDescription = stringResource(R.string.add_reminder)
-                            )
-                        },
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(dimensionResource(R.dimen.padding_x_x_large))
+                    RemindersList(
+                        reminders = reminderItems,
+                        modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
                     )
                 }
-
-            }
-
-            is UiState.Loading -> {
-                CircularProgressIndicator()
-            }
-
-            is UiState.Failure -> {
-                Text(
-                    text = stringResource(R.string.error_msg_something_went_wrong),
-                    color = MaterialTheme.colorScheme.error
-                )
             }
         }
+
+        if (reminderItems.loadState.refresh is LoadState.NotLoading && reminderItems.itemCount > 0)
+            FloatingActionButton(
+                onClick = {
+                    viewModel.tempInsert()
+//                    onCreateReminder
+                },
+                content = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_plus),
+                        contentDescription = stringResource(R.string.add_reminder)
+                    )
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(dimensionResource(R.dimen.padding_x_x_large))
+            )
     }
 }
