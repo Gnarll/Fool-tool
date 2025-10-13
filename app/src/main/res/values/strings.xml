@@ -27,4 +27,17 @@
     <string name="lang">Language</string>
     <string name="no_reminders_info">You have no reminders yet</string>
     <string name="create">Create</string>
+    <string name="select_date">Select date</string>
+    <string name="date">Date</string>
+    <string name="ok">OK</string>
+    <string name="time">Time</string>
+    <string name="select_time">Select time</string>
+    <string name="invalid_date_error">Invalid date/time selected. Specify at least one minute later than current time</string>
+    <string name="input_max_symbols_error">Max symbols count is %1$d</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="create_reminder">Create reminder</string>
+    <string name="create_reminder_success">Reminder successfully created</string>
+    <string name="succeed">Succeed</string>
+    <string name="pending">Pending</string>
 </resources>
