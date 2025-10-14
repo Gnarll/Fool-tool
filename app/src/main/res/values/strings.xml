@@ -39,5 +39,8 @@
     <string name="create_reminder">Create reminder</string>
     <string name="create_reminder_success">Reminder successfully created</string>
     <string name="succeed">Succeed</string>
+    <string name="denied">Denied</string>
     <string name="pending">Pending</string>
+    <string name="permission_alarms_warning">To use this feature, you have to grant permission for scheduling alarms for this app</string>
+    <string name="to_permission_settings">Go to permission settings</string>
 </resources>
