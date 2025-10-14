@@ -33,7 +33,7 @@ fun CreateReminderScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val uiState = viewModel.reminderUiState.collectAsState().value
+    val uiState = viewModel.createReminderUiState.collectAsState().value
 
     val isFormValid = uiState.titleError == null
             && uiState.dateTimeError == null

@@ -7,11 +7,15 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.example.fool_tool.data.local.entities.ReminderEntity
+import com.example.fool_tool.ui.model.ReminderStatus
 
 @Dao
 interface ReminderDao {
     @Query("SELECT * FROM reminder ORDER BY date DESC")
     fun getPagingSource(): PagingSource<Int, ReminderEntity>
+
+    @Query("SELECT * FROM reminder WHERE status = :status ")
+    fun getRemindersByStatus(status: ReminderStatus): List<ReminderEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(reminderEntity: ReminderEntity)
