@@ -5,13 +5,13 @@ import com.example.fool_tool.data.repositories.ReminderRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
-import dagger.hilt.android.scopes.ActivityRetainedScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityRetainedComponent::class)
+@InstallIn(SingletonComponent::class)
 interface ReminderRepositoryModule {
     @Binds
-    @ActivityRetainedScoped
+    @Singleton
     fun bindReminderRepository(impl: ReminderRepositoryImpl): ReminderRepository
 }
