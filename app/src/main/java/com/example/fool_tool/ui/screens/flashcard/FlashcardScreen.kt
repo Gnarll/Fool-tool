@@ -2,8 +2,6 @@ package com.example.fool_tool.ui.screens.flashcard
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -22,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.UiState
 import com.example.fool_tool.ui.components.flashcard.FlashcardPager
+import com.example.fool_tool.ui.components.shared.DeleteItemAlertDialog
 import com.example.fool_tool.ui.model.Flashcard
 
 @Composable
@@ -68,40 +67,17 @@ fun FlashcardScreen(
                 )
 
                 if (flashcardDeletionState is FlashcardDeletionState.Pending) {
-                    AlertDialog(
-                        onDismissRequest = {
+                    DeleteItemAlertDialog(
+                        onDismiss = {
                             viewModel.setFlashcardDeletionState(FlashcardDeletionState.NoSelection)
                         },
-                        text = {
-                            Text(
-                                text = stringResource(R.string.ensure_deletion_question),
-                                style = MaterialTheme.typography.bodyLarge
+                        onConfirm = {
+                            viewModel.setFlashcardDeletionState(
+                                FlashcardDeletionState.Ready(
+                                    id = flashcardDeletionState.id,
+                                    index = flashcardDeletionState.index
+                                )
                             )
-                        },
-                        confirmButton = {
-                            Button(onClick = {
-                                viewModel.setFlashcardDeletionState(
-                                    FlashcardDeletionState.Ready(
-                                        id = flashcardDeletionState.id,
-                                        index = flashcardDeletionState.index
-                                    )
-                                )
-                            }) {
-                                Text(
-                                    text = stringResource(R.string.positive_answer),
-                                    style = MaterialTheme.typography.labelLarge
-                                )
-                            }
-                        },
-                        dismissButton = {
-                            Button(onClick = {
-                                viewModel.setFlashcardDeletionState(FlashcardDeletionState.NoSelection)
-                            }) {
-                                Text(
-                                    text = stringResource(R.string.negative_answer),
-                                    style = MaterialTheme.typography.labelLarge
-                                )
-                            }
                         },
                     )
                 }

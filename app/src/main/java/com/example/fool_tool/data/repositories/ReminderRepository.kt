@@ -7,6 +7,7 @@ import androidx.paging.map
 import com.example.fool_tool.data.local.dao.ReminderDao
 import com.example.fool_tool.data.local.entities.toReminder
 import com.example.fool_tool.ui.model.Reminder
+import com.example.fool_tool.ui.model.ReminderStatus
 import com.example.fool_tool.ui.model.toReminderEntity
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -14,9 +15,11 @@ import javax.inject.Inject
 
 interface ReminderRepository {
     fun getPagedReminders(): Flow<PagingData<Reminder>>
+
+    suspend fun getPendingReminders(): List<Reminder>
     suspend fun createReminder(reminder: Reminder)
     suspend fun updateReminder(reminder: Reminder)
-    suspend fun deleteReminder(reminder: Reminder)
+    suspend fun deleteReminder(id: Long)
 }
 
 class ReminderRepositoryImpl @Inject constructor(
@@ -41,6 +44,12 @@ class ReminderRepositoryImpl @Inject constructor(
             }
     }
 
+    override suspend fun getPendingReminders(): List<Reminder> {
+        val reminders = reminderDao.getRemindersByStatus(ReminderStatus.PENDING)
+        return reminders.map { it.toReminder() }
+    }
+
+
     override suspend fun createReminder(reminder: Reminder) {
         reminderDao.insert(reminder.toReminderEntity())
     }
@@ -49,7 +58,7 @@ class ReminderRepositoryImpl @Inject constructor(
         reminderDao.update(reminder.toReminderEntity())
     }
 
-    override suspend fun deleteReminder(reminder: Reminder) {
-        reminderDao.delete(reminder.toReminderEntity())
+    override suspend fun deleteReminder(id: Long) {
+        reminderDao.delete(id)
     }
 }

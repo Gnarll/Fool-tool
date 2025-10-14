@@ -18,7 +18,7 @@ import java.time.ZoneId
 import javax.inject.Inject
 
 
-data class ReminderUiState(
+data class CreateReminderUiState(
     val date: LocalDateTime,
     val title: String,
     val description: String,
@@ -32,16 +32,17 @@ class CreateReminderViewModel @Inject constructor(
     private val reminderRepository: ReminderRepository,
 ) : ViewModel() {
 
-    private var _reminderUiState = MutableStateFlow(
-        ReminderUiState(
+    private var _createReminderUiState = MutableStateFlow(
+        CreateReminderUiState(
             date = LocalDateTime.now(), title = "", description = "",
         )
     )
-    val reminderUiState: StateFlow<ReminderUiState> = _reminderUiState.asStateFlow()
+    val createReminderUiState: StateFlow<CreateReminderUiState> =
+        _createReminderUiState.asStateFlow()
 
 
     fun onUiDateChanged(dateTime: LocalDateTime) {
-        _reminderUiState.update {
+        _createReminderUiState.update {
             it.copy(
                 date = dateTime,
             )
@@ -50,7 +51,7 @@ class CreateReminderViewModel @Inject constructor(
     }
 
     fun onUiTitleChanged(title: String) {
-        _reminderUiState.update {
+        _createReminderUiState.update {
             it.copy(
                 title = title,
             )
@@ -59,7 +60,7 @@ class CreateReminderViewModel @Inject constructor(
     }
 
     fun onUiDescriptionChanged(description: String) {
-        _reminderUiState.update {
+        _createReminderUiState.update {
             it.copy(
                 description = description,
             )
@@ -68,9 +69,9 @@ class CreateReminderViewModel @Inject constructor(
     }
 
     suspend fun attemptToCreateReminder(): Boolean = when {
-        validateDateTime(dateTime = _reminderUiState.value.date) != null -> false
-        validateTitle(title = _reminderUiState.value.title) != null -> false
-        validateDescription(description = _reminderUiState.value.description) != null -> false
+        validateDateTime(dateTime = _createReminderUiState.value.date) != null -> false
+        validateTitle(title = _createReminderUiState.value.title) != null -> false
+        validateDescription(description = _createReminderUiState.value.description) != null -> false
         else -> {
             createReminder()
             true
@@ -83,7 +84,7 @@ class CreateReminderViewModel @Inject constructor(
             LocalDateTime.now(ZoneId.systemDefault()) > dateTime -> DateTimeValidationError
             else -> null
         }
-        _reminderUiState.update { it.copy(dateTimeError = validationError) }
+        _createReminderUiState.update { it.copy(dateTimeError = validationError) }
         return validationError
     }
 
@@ -93,7 +94,7 @@ class CreateReminderViewModel @Inject constructor(
             title.length > TITLE_MAX_SYMBOLS -> InputMaxSymbolsError(TITLE_MAX_SYMBOLS)
             else -> null
         }
-        _reminderUiState.update { it.copy(titleError = validationError) }
+        _createReminderUiState.update { it.copy(titleError = validationError) }
         return validationError
     }
 
@@ -106,13 +107,13 @@ class CreateReminderViewModel @Inject constructor(
 
             else -> null
         }
-        _reminderUiState.update { it.copy(descriptionError = validationError) }
+        _createReminderUiState.update { it.copy(descriptionError = validationError) }
         return validationError
     }
 
     private suspend fun createReminder() {
         reminderRepository.createReminder(
-            with(reminderUiState.value) {
+            with(createReminderUiState.value) {
                 ReminderCreating.createReminder(
                     date = date,
                     title = title,

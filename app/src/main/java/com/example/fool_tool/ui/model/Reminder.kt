@@ -6,6 +6,8 @@ import java.time.LocalDateTime
 enum class ReminderStatus {
     PENDING,
     SUCCEED,
+
+    DENIED
 }
 
 data class Reminder(
