@@ -1,60 +1,38 @@
 package com.example.fool_tool.ui.navigation
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 
 
 @Serializable
-sealed interface Route {
+sealed interface Route : NavKey {
     @Serializable
-    sealed class BottomNavigationRoute(val startDestination: Route) : Route {
+    sealed interface BottomNavigationRoute : Route {
         @Serializable
-        object FlashcardGraphRoute : BottomNavigationRoute(startDestination = FlashcardRoute)
+        data object FlashcardRootRoute : BottomNavigationRoute
 
         @Serializable
-        object SmartnoteGraphRoute : BottomNavigationRoute(startDestination = SmartnoteRoute)
+        data object SmartnoteRootRoute : BottomNavigationRoute
 
         @Serializable
-        object ReminderGraphRoute : BottomNavigationRoute(startDestination = ReminderRoute)
+        data object ReminderRootRoute : BottomNavigationRoute
 
         @Serializable
-        object SettingsGraphRoute : BottomNavigationRoute(startDestination = SettingsRoute)
+        data object SettingsRootRoute : BottomNavigationRoute
     }
 
-    @Serializable
-    object SmartnoteRoute : Route
 
     @Serializable
-    object SettingsRoute : Route
-
-    @Serializable
-    object FlashcardRoute : Route
-
-    @Serializable
-    object CreateFlashcardRoute : Route
+    data object CreateFlashcardRoute : Route
 
 
     @Serializable
-    object CreateSmartnoteRoute : Route
+    data object CreateSmartnoteRoute : Route
+
 
     @Serializable
-    object ReminderRoute : Route
+    data object CreateReminderRoute : Route
 
     @Serializable
-    object CreateReminderRoute : Route
-
-    @Serializable
-    data class EditSmartnoteRoute(val id: String) : Route
-
-    companion object {
-        val routesShouldShowBottomNavigation = listOf<Route>(
-            BottomNavigationRoute.FlashcardGraphRoute,
-            BottomNavigationRoute.SmartnoteGraphRoute,
-            BottomNavigationRoute.ReminderGraphRoute,
-            BottomNavigationRoute.SettingsGraphRoute,
-            SmartnoteRoute,
-            FlashcardRoute,
-            ReminderRoute,
-            SettingsRoute
-        )
-    }
+    data class EditSmartnoteRoute(val id: Long) : Route
 }

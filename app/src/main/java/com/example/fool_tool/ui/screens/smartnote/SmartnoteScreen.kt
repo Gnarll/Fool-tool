@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 @Composable
 fun SmartnoteScreen(
     onCreateSmartnote: () -> Unit,
-    onEditSmartnote: (smartnoteId: String) -> Unit,
+    onEditSmartnote: (smartnoteId: Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
