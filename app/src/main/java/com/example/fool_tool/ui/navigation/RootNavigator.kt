@@ -1,6 +1,8 @@
 package com.example.fool_tool.ui.navigation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,7 +62,10 @@ fun RootNavigator() {
 
     Scaffold(
         bottomBar = {
-            AnimatedVisibility(visible = backStack.shouldShowBottomBar())
+            AnimatedVisibility(
+                visible = backStack.shouldShowBottomBar(),
+                enter = slideInVertically { it },
+                exit = slideOutVertically { it })
             {
                 CustomNavigationBar(
                     navigationItems = navigationItems,
@@ -75,7 +80,11 @@ fun RootNavigator() {
             }
         },
         topBar = {
-            AnimatedVisibility(visible = backStack.shouldShowTopBar()) {
+            AnimatedVisibility(
+                visible = backStack.shouldShowTopBar(),
+                enter = slideInVertically { -it },
+                exit = slideOutVertically { -it }
+            ) {
                 TopAppBar(
                     title = { },
                     navigationIcon = {
