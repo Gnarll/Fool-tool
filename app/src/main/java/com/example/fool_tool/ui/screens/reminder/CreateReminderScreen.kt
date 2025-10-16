@@ -10,6 +10,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -19,6 +20,9 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.components.shared.DateTimePicker
 import com.example.fool_tool.ui.components.shared.ValidatedTextField
@@ -26,7 +30,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun CreateReminderScreen(
-    onReminderCreated: () -> Unit,
+    onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: CreateReminderViewModel = hiltViewModel(),
 ) {
@@ -39,6 +43,28 @@ fun CreateReminderScreen(
             && uiState.dateTimeError == null
             && uiState.descriptionError == null
 
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    DisposableEffect(lifecycle) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                val isGranted = viewModel.checkPermission()
+                if (!isGranted) {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.permission_alarms_error),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    onNavigateBack()
+                }
+            }
+        }
+        lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycle.removeObserver(observer)
+        }
+    }
 
     Box(
         modifier = modifier.padding(horizontal = dimensionResource(R.dimen.padding_x_x_large)),
@@ -81,7 +107,7 @@ fun CreateReminderScreen(
                                 context.getString(R.string.create_reminder_success),
                                 Toast.LENGTH_SHORT
                             ).show()
-                            onReminderCreated()
+                            onNavigateBack()
                         }
                     }
                 },

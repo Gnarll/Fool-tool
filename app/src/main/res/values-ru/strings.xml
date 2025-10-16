@@ -44,4 +44,5 @@
     <string name="pending">Ожидает</string>
     <string name="permission_alarms_warning">Чтобы пользоваться этим функционалом, вам нужно дать android разрешение на установку будильников в этом приложении</string>
     <string name="to_permission_settings">В настройки разрешений</string>
+    <string name="permission_alarms_error">Нет разрешения на использование будильников</string>
 </resources>
