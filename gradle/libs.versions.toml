@@ -1,24 +1,26 @@
 [versions]
 agp = "8.12.3"
-kotlin = "2.2.0"
+kotlin = "2.2.20"
 ksp = "2.2.0-2.0.2"
-serialization = "2.2.0"
+serialization = "2.2.20"
 
-coreKtx = "1.16.0"
+coreKtx = "1.17.0"
 junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.9.2"
-activityCompose = "1.10.1"
-composeBom = "2025.07.00"
-room = "2.7.2"
-navigation = "2.9.2"
+junitVersion = "1.3.0"
+espressoCore = "3.7.0"
+lifecycleRuntimeKtx = "2.9.4"
+activityCompose = "1.11.0"
+composeBom = "2025.10.00"
+room = "2.8.2"
+nav3Core = "1.0.0-alpha11"
+lifecycleViewmodelNav3 = "2.10.0-alpha05"
+material3AdaptiveNav3 = "1.3.0-alpha01"
 kotlinxSerializationJson = "1.9.0"
-hilt = "2.57"
-hiltNavigationCompose = "1.2.0"
+hilt = "2.57.2"
+hiltNavigationCompose = "1.3.0"
 turbine = "1.2.1"
 coroutines = "1.10.2"
-uiTextGoogleFonts = "1.9.0"
+uiTextGoogleFonts = "1.9.3"
 datastore = "1.1.7"
 appcompat = "1.7.1"
 desugar = "2.1.5"
@@ -46,8 +48,10 @@ androidx-room-runtime = { group = "androidx.room", name = "room-runtime", versio
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 androidx-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
-androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "navigation" }
+androidx-navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
+androidx-navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
+androidx-lifecycle-viewmodel-navigation3 = { module = "androidx.lifecycle:lifecycle-viewmodel-navigation3", version.ref = "lifecycleViewmodelNav3" }
+androidx-material3-adaptive-navigation3 = { group = "androidx.compose.material3.adaptive", name = "adaptive-navigation3", version.ref = "material3AdaptiveNav3" }
 
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
@@ -55,7 +59,6 @@ hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
 hilt-android-compiler-test = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
-
 hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }

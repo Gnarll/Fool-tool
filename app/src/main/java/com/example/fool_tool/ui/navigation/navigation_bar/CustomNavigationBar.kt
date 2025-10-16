@@ -13,12 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,9 +40,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun CustomNavigationBar(
     navigationItems: List<NavigationItem>,
+    currentNavRoute: Route.BottomNavigationRoute,
     navigateTo: (Route.BottomNavigationRoute) -> Unit
 ) {
-    var selectedItemIndex by rememberSaveable { mutableIntStateOf(0) }
+    var selectedItemIndex = navigationItems.indexOfFirst { currentNavRoute == it.route }
     val indicatorAnimationManager = rememberIndicatorAnimationManager()
 
     val coroutineScope = rememberCoroutineScope()
@@ -58,7 +57,7 @@ fun CustomNavigationBar(
     val backgroundColor = cs.surfaceContainer
     val navBarItemColor = cs.onSurfaceVariant
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedItemIndex) {
         val targetX = calculateRelativeOffsetFromIndicator(
             indicatorCoordinates,
             navItemsCoordinates,

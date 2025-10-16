@@ -6,7 +6,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.rememberNavController
 import com.example.fool_tool.data.local.DataStoreManager
 import com.example.fool_tool.data.local.UserThemePreferences
 import com.example.fool_tool.ui.navigation.RootNavigator
@@ -33,9 +32,7 @@ class MainActivity : AppCompatActivity() {
             val darkTheme = userThemePreferences.value.isDarkTheme ?: isSystemInDarkTheme()
 
             FooltoolTheme(darkTheme = darkTheme) {
-                val navController = rememberNavController()
-
-                RootNavigator(navController = navController)
+                RootNavigator()
             }
         }
     }

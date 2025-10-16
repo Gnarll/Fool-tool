@@ -1,6 +1,8 @@
 package com.example.fool_tool.ui.navigation
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -9,96 +11,84 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
 import com.example.fool_tool.R
+import com.example.fool_tool.ui.navigation.entries.flashcardEntries
+import com.example.fool_tool.ui.navigation.entries.reminderEntries
+import com.example.fool_tool.ui.navigation.entries.smartnoteEntries
 import com.example.fool_tool.ui.navigation.navigation_bar.CustomNavigationBar
 import com.example.fool_tool.ui.navigation.navigation_bar.NavigationItem
-import com.example.fool_tool.ui.navigation.navigation_bar.settingsDestination
+import com.example.fool_tool.ui.screens.settings.SettingsScreen
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RootNavigator(navController: NavHostController) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-
-    val isBottomBarVisible = remember(currentDestination) {
-        currentDestination?.let {
-            Route.routesShouldShowBottomNavigation.any {
-                currentDestination.hasRoute(it::class)
-            }
-        } ?: true
-    }
-
-    val isTopBarVisible = remember(isBottomBarVisible, currentDestination) {
-        currentDestination?.let {
-            !isBottomBarVisible
-        } ?: false
-    }
+fun RootNavigator() {
+    val backStack: BackStack =
+        rememberNavBackStack(Route.BottomNavigationRoute.FlashcardRootRoute)
 
     val navigationItems: List<NavigationItem> = remember {
         listOf(
             NavigationItem(
                 title = R.string.flashcard_screen_title,
                 icon = R.drawable.ic_quiz,
-                route = Route.BottomNavigationRoute.FlashcardGraphRoute,
+                route = Route.BottomNavigationRoute.FlashcardRootRoute,
             ),
             NavigationItem(
                 title = R.string.smartnote_screen_title,
                 icon = R.drawable.ic_notes,
-                route = Route.BottomNavigationRoute.SmartnoteGraphRoute,
+                route = Route.BottomNavigationRoute.SmartnoteRootRoute,
             ),
             NavigationItem(
                 title = R.string.reminder_screen_title,
                 icon = R.drawable.ic_calendar,
-                route = Route.BottomNavigationRoute.ReminderGraphRoute,
+                route = Route.BottomNavigationRoute.ReminderRootRoute,
             ),
             NavigationItem(
                 title = R.string.settings,
                 icon = R.drawable.ic_settings,
-                route = Route.BottomNavigationRoute.SettingsGraphRoute,
+                route = Route.BottomNavigationRoute.SettingsRootRoute,
             ),
         )
     }
 
     Scaffold(
         bottomBar = {
-            AnimatedVisibility(visible = isBottomBarVisible) {
+            AnimatedVisibility(
+                visible = backStack.shouldShowBottomBar(),
+                enter = slideInVertically { it },
+                exit = slideOutVertically { it })
+            {
                 CustomNavigationBar(
                     navigationItems = navigationItems,
-                    navigateTo = { bottomNavRoute ->
-                        currentDestination?.let {
-                            val isAlreadyInTargetGraph =
-                                it.hasRoute(bottomNavRoute.startDestination::class)
-
-                            if (!isAlreadyInTargetGraph) {
-                                navController.navigate(bottomNavRoute) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
-                                        inclusive = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
+                    currentNavRoute = backStack.currentBottomNavRoute(),
+                    navigateTo = { route ->
+                        if (backStack.last() != route) {
+                            backStack.add(route)
                         }
                     }
+
                 )
             }
         },
         topBar = {
-            AnimatedVisibility(visible = isTopBarVisible) {
+            AnimatedVisibility(
+                visible = backStack.shouldShowTopBar(),
+                enter = slideInVertically { -it },
+                exit = slideOutVertically { -it }
+            ) {
                 TopAppBar(
                     title = { },
                     navigationIcon = {
-                        IconButton(onClick = { navController.popBackStack() }) {
+                        IconButton(onClick = { backStack.pop() }) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_arrow_top_left),
                                 contentDescription = stringResource(R.string.go_back)
@@ -108,32 +98,27 @@ fun RootNavigator(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
-        NavHost(
-            navController = navController,
-            startDestination = Route.BottomNavigationRoute.FlashcardGraphRoute,
+        NavDisplay(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            flashcardDestination(
-                navigateToCreateFlashcard = { navController.navigateToCreateFlashcard() },
-                navigateBack = {
-                    navController.popBackStack()
+                .fillMaxSize(),
+            backStack = backStack,
+            onBack = {
+                backStack.pop()
+            },
+            entryDecorators = listOf(
+
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator()
+            ),
+            entryProvider = entryProvider {
+                flashcardEntries(backstack = backStack)
+                reminderEntries(backstack = backStack)
+                smartnoteEntries(backstack = backStack)
+                entry(key = Route.BottomNavigationRoute.SettingsRootRoute) {
+                    SettingsScreen()
                 }
-            )
-            smartnoteDestination(
-                navigateToCreateSmartnote = { navController.navigateToCreateSmartnote() },
-                navigateToEditSmartnote = { id -> navController.navigateToEditSmartnote(id) },
-                navigateBack = {
-                    navController.popBackStack()
-                },
-            )
-            reminderDestination(
-                navigateToCreateReminder = { navController.navigateToCreateReminder() },
-                navigateBack = {
-                    navController.popBackStack()
-                })
-            settingsDestination()
-        }
+            }
+        )
     }
 }
