@@ -1,6 +1,7 @@
 package com.example.fool_tool.ui.screens.reminder
 
 import androidx.lifecycle.ViewModel
+import com.example.fool_tool.data.alarm.AlarmScheduler
 import com.example.fool_tool.data.repositories.ReminderRepository
 import com.example.fool_tool.ui.model.ReminderStatus
 import com.example.fool_tool.utils.DateTimeValidationError
@@ -30,6 +31,7 @@ data class CreateReminderUiState(
 @HiltViewModel
 class CreateReminderViewModel @Inject constructor(
     private val reminderRepository: ReminderRepository,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
     private var _createReminderUiState = MutableStateFlow(
@@ -78,6 +80,8 @@ class CreateReminderViewModel @Inject constructor(
         }
 
     }
+
+    fun checkPermission() = alarmScheduler.checkIsAlarmPermissionGranted()
 
     private fun validateDateTime(dateTime: LocalDateTime): ValidationError? {
         val validationError = when {

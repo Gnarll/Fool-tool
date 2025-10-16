@@ -16,6 +16,6 @@ fun EntryProviderScope<NavKey>.reminderEntries(backstack: BackStack) {
         )
     }
     entry(key = Route.CreateReminderRoute) {
-        CreateReminderScreen(onReminderCreated = { backstack.pop() })
+        CreateReminderScreen(onNavigateBack = { backstack.pop() })
     }
 }

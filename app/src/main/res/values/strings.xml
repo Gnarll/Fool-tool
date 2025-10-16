@@ -43,4 +43,5 @@
     <string name="pending">Pending</string>
     <string name="permission_alarms_warning">To use this feature, you have to grant permission for scheduling alarms for this app</string>
     <string name="to_permission_settings">Go to permission settings</string>
+    <string name="permission_alarms_error">No alarm permission granted</string>
 </resources>
