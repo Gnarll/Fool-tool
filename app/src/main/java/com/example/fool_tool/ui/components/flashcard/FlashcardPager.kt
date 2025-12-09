@@ -1,6 +1,5 @@
 package com.example.fool_tool.ui.components.flashcard
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -59,19 +58,6 @@ fun FlashcardPager(
 
             val distanceToBottom = (pagerHeight - flashcardHeight) / 2 + flashcardHeight
 
-            val rawOffset =
-                (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction.coerceIn(
-                    -1f,
-                    1f
-                )
-            val animatedOffset by animateFloatAsState(
-                targetValue = rawOffset
-            )
-
-            val positiveOffset = animatedOffset.absoluteValue
-            val rotation = animatedOffset * rotationAngle
-            val alpha = lerp(1f, 0.7f, positiveOffset)
-            val scale = lerp(1f, 0.7f, positiveOffset)
 
             Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                 FlashcardItem(
@@ -95,6 +81,17 @@ fun FlashcardPager(
                             onStart = {},
                             onFinish = { id -> onDeleteFlashcard(id) })
                         .graphicsLayer {
+                            val rawOffset =
+                                (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction.coerceIn(
+                                    -1f,
+                                    1f
+                                )
+
+                            val positiveOffset = rawOffset.absoluteValue
+                            val rotation = rawOffset * rotationAngle
+                            val alpha = lerp(1f, 0.7f, positiveOffset)
+                            val scale = lerp(1f, 0.7f, positiveOffset)
+
                             this.rotationZ = rotation
                             this.alpha =
                                 alpha

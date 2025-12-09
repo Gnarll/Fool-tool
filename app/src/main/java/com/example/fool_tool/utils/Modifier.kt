@@ -65,8 +65,9 @@ fun <T> Modifier.animatePagerItemDeletion(
         }
     }
 
-    return this.graphicsLayer(
-        translationY = translationYOnDeleting.value,
-        alpha = alphaOnDeleting.value
-    )
+    return this.graphicsLayer {
+        this.translationY = translationYOnDeleting.value
+        this.alpha = alphaOnDeleting.value
+    }
+
 }
