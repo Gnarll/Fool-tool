@@ -7,125 +7,112 @@ import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.ui.geometry.Offset
 
-fun calculateRelativeOffsetFromIndicator(
-    indicatorCoords: Offset,
-    navItemsCoords: Map<Int, Offset>,
-    currentRouteIndex: Int
-): Offset {
-    var resultX = 0f
-    var resultY = 0f
 
-    navItemsCoords[currentRouteIndex]?.let {
-        resultX = it.x - indicatorCoords.x
-        resultY = it.y - indicatorCoords.y
+class IndicatorAnimationManager private constructor(
+    private var currentIndex: Int,
+    val shapeAnimation: Animatable<Float, AnimationVector1D>,
+    val positionAnimation: Animatable<Float, AnimationVector1D>,
+) {
+    constructor(isInitiallyStretched: Boolean, initialIndex: Int) : this(
+        currentIndex = initialIndex,
+        shapeAnimation = Animatable(
+            if (isInitiallyStretched) SHAPE_STRETCHED_VALUE
+            else SHAPE_SHRANK_VALUE
+        ),
+        positionAnimation = Animatable(initialIndex.toFloat()),
+    )
+
+    private var currentIndicatorState: IndicatorState = IndicatorState.Idle(this)
+
+    suspend fun animateTo(targetIndex: Int) {
+        currentIndicatorState.animateTo(targetIndex)
     }
 
-    return Offset(x = resultX, y = resultY)
-}
+    private sealed class IndicatorState(val indicatorManager: IndicatorAnimationManager) {
 
+        abstract suspend fun animateTo(targetIndex: Int)
 
-class IndicatorAnimationManager(
-    val shapeAnimation: Animatable<Float, AnimationVector1D>,
-    val offsetAnimation: Animatable<Float, AnimationVector1D>
-) {
-    private var currentIndicatorState: IndicatorState = IndicatorState.Idle
+        class Idle(indicatorManager: IndicatorAnimationManager) :
+            IndicatorState(indicatorManager = indicatorManager) {
 
-    suspend fun animateTo(targetX: Float) {
-        when (currentIndicatorState) {
-            is IndicatorState.Idle -> {
-                fromIdleStateAnimateTo(targetX)
+            override suspend fun animateTo(targetIndex: Int) {
+                if (!indicatorManager.isTargetingToSameIndex(targetIndex)) {
+                    indicatorManager.currentIndicatorState = Shrinking(indicatorManager)
+                    indicatorManager.animateTo(targetIndex)
+                }
             }
+        }
 
-            is IndicatorState.Shrinking -> {
-                fromShrinkingStateAnimateTo(targetX)
+        class Shrinking(indicatorManager: IndicatorAnimationManager) :
+            IndicatorState(indicatorManager = indicatorManager) {
+
+            override suspend fun animateTo(targetIndex: Int) {
+                if (!indicatorManager.isTargetingToSameIndex(targetIndex)) {
+                    indicatorManager.shapeAnimation.animateTo(
+                        SHAPE_SHRANK_VALUE,
+                        shapeMorphAnimationSpec
+                    )
+                    indicatorManager.currentIndicatorState = Moving(indicatorManager)
+
+                } else {
+                    indicatorManager.currentIndicatorState = Stretching(indicatorManager)
+                }
+
+                indicatorManager.animateTo(targetIndex)
             }
+        }
 
-            is IndicatorState.Moving -> {
-                fromMovingStateAnimateTo(targetX)
+        class Moving(indicatorManager: IndicatorAnimationManager) :
+            IndicatorState(indicatorManager = indicatorManager) {
+
+            override suspend fun animateTo(targetIndex: Int) {
+                indicatorManager.positionAnimation.animateTo(
+                    targetValue = targetIndex.toFloat(),
+                    animationSpec = positionAnimationSpec,
+                )
+
+                indicatorManager.currentIndex = targetIndex
+
+                indicatorManager.currentIndicatorState =
+                    Stretching(indicatorManager)
+
+                indicatorManager.animateTo(targetIndex)
             }
+        }
 
-            is IndicatorState.Stretching -> {
-                fromStretchingStateAnimateTo(targetX)
+        class Stretching(indicatorManager: IndicatorAnimationManager) :
+            IndicatorState(indicatorManager = indicatorManager) {
+
+            override suspend fun animateTo(targetIndex: Int) {
+                if (indicatorManager.isTargetingToSameIndex(targetIndex)) {
+                    indicatorManager.shapeAnimation.animateTo(
+                        SHAPE_STRETCHED_VALUE,
+                        shapeMorphAnimationSpec
+                    )
+                    indicatorManager.currentIndicatorState = Idle(indicatorManager)
+
+                } else {
+                    indicatorManager.currentIndicatorState = Shrinking(indicatorManager)
+                }
+
+                indicatorManager.animateTo(targetIndex)
             }
         }
     }
 
-    private suspend fun fromIdleStateAnimateTo(targetX: Float) {
-        currentIndicatorState = IndicatorState.Shrinking
-        shapeAnimation.animateTo(
-            0f,
-            shapeMorphAnimationSpec
-        )
-        currentIndicatorState = IndicatorState.Moving
-        offsetAnimation.animateTo(targetValue = targetX, animationSpec = offsetAnimationSpec)
-        currentIndicatorState = IndicatorState.Stretching
-        shapeAnimation.animateTo(
-            1f,
-            shapeMorphAnimationSpec
-        )
-        currentIndicatorState = IndicatorState.Idle
-    }
 
-    private suspend fun fromShrinkingStateAnimateTo(targetX: Float) {
-        shapeAnimation.animateTo(
-            0f,
-            shapeMorphAnimationSpec
-        )
-        currentIndicatorState = IndicatorState.Moving
-        offsetAnimation.animateTo(targetValue = targetX, animationSpec = offsetAnimationSpec)
-        currentIndicatorState = IndicatorState.Stretching
-        shapeAnimation.animateTo(
-            1f,
-            shapeMorphAnimationSpec
-        )
-        currentIndicatorState = IndicatorState.Idle
-    }
-
-    private suspend fun fromMovingStateAnimateTo(targetX: Float) {
-        offsetAnimation.animateTo(
-            targetValue = targetX,
-            animationSpec = offsetAnimationSpec,
-        )
-        currentIndicatorState = IndicatorState.Stretching
-        shapeAnimation.animateTo(
-            1f,
-            shapeMorphAnimationSpec
-        )
-        currentIndicatorState = IndicatorState.Idle
-    }
-
-    private suspend fun fromStretchingStateAnimateTo(targetX: Float) {
-        currentIndicatorState = IndicatorState.Shrinking
-        shapeAnimation.animateTo(
-            0f,
-            shapeMorphAnimationSpec
-        )
-        currentIndicatorState = IndicatorState.Moving
-        offsetAnimation.animateTo(targetValue = targetX, animationSpec = offsetAnimationSpec)
-        currentIndicatorState = IndicatorState.Stretching
-        shapeAnimation.animateTo(
-            1f,
-            shapeMorphAnimationSpec
-        )
-        currentIndicatorState = IndicatorState.Idle
-    }
-
+    private fun isTargetingToSameIndex(targetIndex: Int): Boolean = targetIndex == currentIndex
 
     private companion object {
-        sealed interface IndicatorState {
-            object Idle : IndicatorState
-            object Shrinking : IndicatorState
-            object Moving : IndicatorState
-            object Stretching : IndicatorState
-        }
-
         val shapeMorphAnimationSpec: AnimationSpec<Float> = spring(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessMedium
         )
-        val offsetAnimationSpec: AnimationSpec<Float> =
+        val positionAnimationSpec: AnimationSpec<Float> =
             tween(durationMillis = 300, easing = EaseInOut)
+
+        const val SHAPE_STRETCHED_VALUE = 1f
+        const val SHAPE_SHRANK_VALUE = 0f
     }
 }
