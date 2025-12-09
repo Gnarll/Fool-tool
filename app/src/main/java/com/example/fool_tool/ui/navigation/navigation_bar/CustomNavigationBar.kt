@@ -11,30 +11,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.navigation.Route
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -43,32 +30,12 @@ fun CustomNavigationBar(
     currentNavRoute: Route.BottomNavigationRoute,
     navigateTo: (Route.BottomNavigationRoute) -> Unit
 ) {
-    var selectedItemIndex = navigationItems.indexOfFirst { currentNavRoute == it.route }
-    val indicatorAnimationManager = rememberIndicatorAnimationManager()
-
-    val coroutineScope = rememberCoroutineScope()
-    var currentAnimationJob: Job? by remember { mutableStateOf(null) }
-
-    val navItemsCoordinates = remember { mutableStateMapOf<Int, Offset>() }
-    var indicatorCoordinates: Offset by remember { mutableStateOf(Offset.Zero) }
+    val selectedItemIndex = navigationItems.indexOfFirst { currentNavRoute == it.route }
 
     val cs = MaterialTheme.colorScheme
     val indicatorColor = cs.secondaryContainer
     val backgroundColor = cs.surfaceContainer
     val navBarItemColor = cs.onSurfaceVariant
-
-    LaunchedEffect(selectedItemIndex) {
-        val targetX = calculateRelativeOffsetFromIndicator(
-            indicatorCoordinates,
-            navItemsCoordinates,
-            selectedItemIndex
-        ).x
-
-        currentAnimationJob = coroutineScope.launch {
-            indicatorAnimationManager.animateTo(targetX)
-        }
-    }
-
 
     CustomNavigationBarLayout(
         innerPadding = PaddingValues(
@@ -76,18 +43,12 @@ fun CustomNavigationBar(
             start = dimensionResource(R.dimen.padding_x_small),
             end = dimensionResource(R.dimen.padding_medium),
         ),
-        floatingNavigationIndicator = {
+        selectedIndex = selectedItemIndex,
+        floatingNavigationIndicator = { shapeProgressProvider ->
             FloatingNavigationIndicator(
                 color = indicatorColor,
-                shapeProgress = indicatorAnimationManager.shapeAnimation.value,
+                shapeProgressProvider = shapeProgressProvider,
                 modifier = Modifier
-                    .onGloballyPositioned { coordinates ->
-                        indicatorCoordinates = coordinates.positionInParent()
-                    }
-                    .graphicsLayer {
-                        this.translationX = indicatorAnimationManager.offsetAnimation.value
-                    }
-
             )
         },
         navigationBarBackground = {
@@ -102,26 +63,10 @@ fun CustomNavigationBar(
             CustomNavigationBarItem(
                 onClick = {
                     navigateTo(navItem.route)
-
-                    selectedItemIndex = navItemIndex
-
-                    val targetX = calculateRelativeOffsetFromIndicator(
-                        indicatorCoordinates,
-                        navItemsCoordinates,
-                        navItemIndex
-                    ).x
-
-                    currentAnimationJob?.cancel()
-                    currentAnimationJob = coroutineScope.launch {
-                        indicatorAnimationManager.animateTo(targetX)
-                    }
                 },
-                icon = painterResource(navItem.icon),
+                iconVector = ImageVector.vectorResource(id = navItem.icon),
                 labelText = stringResource(navItem.title),
-                color = if (isSelected) navBarItemColor else navBarItemColor.copy(alpha = 0.5f),
-                modifier = Modifier.onGloballyPositioned { coordinates ->
-                    navItemsCoordinates[navItemIndex] = coordinates.positionInParent()
-                }
+                color = if (isSelected) navBarItemColor else navBarItemColor.copy(alpha = 0.5f)
             )
         }
     }
@@ -137,11 +82,12 @@ fun NavigationBarBackground(modifier: Modifier = Modifier) {
 @Composable
 fun CustomNavigationBarItem(
     onClick: () -> Unit,
-    icon: Painter,
+    iconVector: ImageVector,
     labelText: String,
     color: Color,
     modifier: Modifier = Modifier,
 ) {
+
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -156,7 +102,7 @@ fun CustomNavigationBarItem(
             )
     ) {
         Icon(
-            painter = icon,
+            imageVector = iconVector,
             contentDescription = labelText,
             tint = color,
             modifier = Modifier.size(dimensionResource(R.dimen.nav_icon_size))

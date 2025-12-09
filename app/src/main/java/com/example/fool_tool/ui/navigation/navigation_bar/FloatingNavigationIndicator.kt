@@ -17,7 +17,7 @@ import kotlin.math.hypot
 
 @Composable
 fun FloatingNavigationIndicator(
-    shapeProgress: Float,
+    shapeProgressProvider: () -> Float,
     color: Color,
     numberOfWaves: Int = 5,
     modifier: Modifier = Modifier
@@ -36,7 +36,7 @@ fun FloatingNavigationIndicator(
 
             onDrawBehind {
                 val clipperCurrentRadius =
-                    lerp(clipperInitialRadius, circleRadius, 1 - shapeProgress)
+                    lerp(clipperInitialRadius, circleRadius, 1 - shapeProgressProvider())
 
                 clipPath.reset()
                 clipPath.addOval(Rect(center = origin, radius = clipperCurrentRadius))

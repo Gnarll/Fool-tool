@@ -2,8 +2,11 @@ package com.example.fool_tool.ui.navigation.navigation_bar
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.runtime.Immutable
 import com.example.fool_tool.ui.navigation.Route
 
+
+@Immutable
 data class NavigationItem(
     @StringRes val title: Int,
     @DrawableRes val icon: Int,
