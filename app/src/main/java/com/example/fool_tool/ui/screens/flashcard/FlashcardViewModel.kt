@@ -1,5 +1,6 @@
 package com.example.fool_tool.ui.screens.flashcard
 
+import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fool_tool.data.repositories.FlashcardRepository
@@ -17,11 +18,11 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
+@Immutable
 sealed interface FlashcardDeletionState {
-    object NoSelection : FlashcardDeletionState
-    class Pending(val id: Long, val index: Int) : FlashcardDeletionState
-    class Ready(val id: Long, val index: Int) : FlashcardDeletionState
+    data object NoSelection : FlashcardDeletionState
+    data class Pending(val id: Long, val index: Int) : FlashcardDeletionState
+    data class Ready(val id: Long, val index: Int) : FlashcardDeletionState
 }
 
 @HiltViewModel
