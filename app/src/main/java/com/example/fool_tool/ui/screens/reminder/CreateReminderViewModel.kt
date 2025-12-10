@@ -116,16 +116,17 @@ class CreateReminderViewModel @Inject constructor(
     }
 
     private suspend fun createReminder() {
-        reminderRepository.createReminder(
-            with(createReminderUiState.value) {
-                ReminderCreating.createReminder(
-                    date = date,
-                    title = title,
-                    description = description,
-                    status = ReminderStatus.PENDING
-                )
-            }
-        )
+        val reminder = with(createReminderUiState.value) {
+            ReminderCreating.createReminder(
+                date = date,
+                title = title,
+                description = description,
+                status = ReminderStatus.PENDING
+            )
+        }
+
+        reminderRepository.createReminder(reminder)
+        alarmScheduler.schedule(reminder)
     }
 
     private companion object {
