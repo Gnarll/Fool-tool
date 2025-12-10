@@ -1,5 +1,6 @@
 package com.example.fool_tool.ui.screens.reminder
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,7 +32,9 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.fool_tool.R
+import com.example.fool_tool.data.alarm.ScheduleResult
 import com.example.fool_tool.ui.components.reminder.RemindersList
+import kotlinx.coroutines.launch
 
 @Composable
 fun ReminderScreen(
@@ -56,6 +60,8 @@ fun ReminderScreen(
 
     val remindersUiState =
         viewModel.reminders.collectAsState().value
+
+    val coroutineScope = rememberCoroutineScope()
 
 
     Box(
@@ -92,8 +98,48 @@ fun ReminderScreen(
                     } else {
                         RemindersList(
                             reminders = reminderItems,
-                            onDeleteReminder = viewModel::deleteReminder,
-                            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
+                            onDeleteReminder = { id ->
+                                coroutineScope.launch { viewModel.deleteReminder(id) }
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.reminder_deleted),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                            onCancelReminder = { reminder ->
+                                coroutineScope.launch {
+                                    viewModel.onCancelReminder(reminder)
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.reminder_cancelled),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                            onActivateReminder = { reminder ->
+                                coroutineScope.launch {
+                                    val scheduleResult: ScheduleResult =
+                                        viewModel.onActivateReminder(reminder)
+
+                                    val toastText = when (scheduleResult) {
+                                        ScheduleResult.FailedWithInvalidTime ->
+                                            context.getString(R.string.reminder_impossible_activate_invalid_date)
+
+                                        ScheduleResult.FailedWithNoPermission ->
+                                            context.getString(R.string.permission_alarms_error)
+
+                                        ScheduleResult.Success ->
+                                            context.getString(R.string.reminder_activated)
+                                    }
+
+                                    Toast.makeText(
+                                        context,
+                                        toastText,
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            },
+                            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
                         )
                     }
                 }

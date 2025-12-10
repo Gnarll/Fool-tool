@@ -46,4 +46,8 @@
     <string name="permission_alarms_warning">Чтобы пользоваться этим функционалом, вам нужно дать android разрешение на установку будильников в этом приложении</string>
     <string name="to_permission_settings">В настройки разрешений</string>
     <string name="permission_alarms_error">Нет разрешения на использование будильников</string>
+    <string name="reminder_activated">Напоминалка активирована</string>
+    <string name="reminder_cancelled">Напоминалка отменена</string>
+    <string name="reminder_deleted">Напоминалка удалена</string>
+    <string name="reminder_impossible_activate_invalid_date">Невозможно активировать: дата не валидна</string>
 </resources>

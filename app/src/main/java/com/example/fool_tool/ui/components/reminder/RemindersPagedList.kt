@@ -18,6 +18,8 @@ import com.example.fool_tool.ui.model.Reminder
 fun RemindersList(
     onDeleteReminder: (Long) -> Unit,
     reminders: LazyPagingItems<Reminder>,
+    onCancelReminder: (Reminder) -> Unit,
+    onActivateReminder: (Reminder) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -33,7 +35,11 @@ fun RemindersList(
                 SwipeToDeleteItem(onDelete = {
                     onDeleteReminder(it.id)
                 }) {
-                    ReminderItem(reminder = reminder)
+                    ReminderItem(
+                        reminder = reminder,
+                        onCancelReminder = onCancelReminder,
+                        onActivateReminder = onActivateReminder,
+                    )
                 }
             }
         }

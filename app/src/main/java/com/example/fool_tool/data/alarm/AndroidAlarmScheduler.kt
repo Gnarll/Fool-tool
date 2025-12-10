@@ -9,6 +9,7 @@ import com.example.fool_tool.services.AlarmReceiver
 import com.example.fool_tool.ui.model.Reminder
 import com.example.fool_tool.utils.toMillisWithZone
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 
@@ -20,9 +21,10 @@ class AndroidAlarmScheduler @Inject constructor(
 
     override fun schedule(reminder: Reminder): ScheduleResult {
         if (checkIsAlarmPermissionGranted()) {
+            val serializedReminder = Json.encodeToString(Reminder.serializer(), reminder)
+
             val intent = Intent(context, AlarmReceiver::class.java).apply {
-                putExtra(EXTRA_TITLE, reminder.title)
-                putExtra(EXTRA_DESCRIPTION, reminder.description)
+                putExtra(EXTRA_REMINDER, serializedReminder)
             }
 
             val alarmTime = reminder.date.toMillisWithZone()
@@ -49,11 +51,11 @@ class AndroidAlarmScheduler @Inject constructor(
         }
     }
 
-    override fun cancel(reminder: Reminder) {
+    override fun cancel(reminderId: Long) {
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
-                reminder.id.hashCode(),
+                reminderId.hashCode(),
                 Intent(context, AlarmReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
@@ -67,8 +69,6 @@ class AndroidAlarmScheduler @Inject constructor(
     }
 
     companion object {
-        const val EXTRA_TITLE = "EXTRA_TITLE"
-        const val EXTRA_DESCRIPTION = "EXTRA_DESCRIPTION"
-
+        const val EXTRA_REMINDER = "EXTRA_REMINDER"
     }
 }

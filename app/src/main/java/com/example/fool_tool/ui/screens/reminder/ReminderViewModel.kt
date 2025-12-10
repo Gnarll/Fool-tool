@@ -10,7 +10,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.fool_tool.data.alarm.AlarmScheduler
+import com.example.fool_tool.data.alarm.ScheduleResult
 import com.example.fool_tool.data.repositories.ReminderRepository
+import com.example.fool_tool.data.use_cases.RemindersProcessingUseCase
 import com.example.fool_tool.ui.model.Reminder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -25,7 +27,8 @@ import javax.inject.Inject
 class ReminderViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val reminderRepository: ReminderRepository,
-    private val alarmScheduler: AlarmScheduler
+    private val alarmScheduler: AlarmScheduler,
+    private val remindersProcessingUseCase: RemindersProcessingUseCase
 ) :
     ViewModel() {
 
@@ -46,11 +49,17 @@ class ReminderViewModel @Inject constructor(
         observePermissionChanges()
     }
 
-    fun deleteReminder(id: Long) {
-        viewModelScope.launch {
-            reminderRepository.deleteReminder(id)
-        }
+    suspend fun deleteReminder(id: Long) {
+        remindersProcessingUseCase.deleteReminder(id)
     }
+
+    suspend fun onCancelReminder(reminder: Reminder) {
+        remindersProcessingUseCase.cancelReminder(reminder)
+    }
+
+    suspend fun onActivateReminder(reminder: Reminder): ScheduleResult =
+        remindersProcessingUseCase.activateReminder(reminder)
+
 
     fun checkPermission() {
         _isPermissionGranted.value = alarmScheduler.checkIsAlarmPermissionGranted()

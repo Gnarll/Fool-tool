@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.fool_tool.R
+import com.example.fool_tool.data.alarm.ScheduleResult
 import com.example.fool_tool.ui.components.reminder.ReminderItem
 import com.example.fool_tool.ui.model.Reminder
 import com.example.fool_tool.ui.model.ReminderStatus
@@ -145,7 +146,10 @@ private fun HorizontalGestureDeletingElementPreview() {
                     title = "Title",
                     description = "Description",
                     status = ReminderStatus.PENDING
-                ), modifier = Modifier.alpha(0.5f)
+                ),
+                onCancelReminder = {},
+                onActivateReminder = { ScheduleResult.Success },
+                modifier = Modifier.alpha(0.5f),
             )
         }
 

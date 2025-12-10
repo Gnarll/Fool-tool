@@ -45,4 +45,8 @@
     <string name="permission_alarms_warning">To use this feature, you have to grant permission for scheduling alarms for this app</string>
     <string name="to_permission_settings">Go to permission settings</string>
     <string name="permission_alarms_error">No alarm permission granted</string>
+    <string name="reminder_activated">Reminder has been activated</string>
+    <string name="reminder_cancelled">Reminder has been cancelled</string>
+    <string name="reminder_deleted">Reminder has been deleted</string>
+    <string name="reminder_impossible_activate_invalid_date">Can not activate: invalid date</string>
 </resources>
