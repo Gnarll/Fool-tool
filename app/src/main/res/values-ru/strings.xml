@@ -40,8 +40,9 @@
     <string name="create_reminder">Создать напоминалку</string>
     <string name="create_reminder_success">Напоминалка успешно создана</string>
     <string name="succeed">Успешна</string>
-    <string name="denied">Отменена</string>
+    <string name="denied">Не сработала</string>
     <string name="pending">Ожидает</string>
+    <string name="cancelled">Отменена</string>
     <string name="permission_alarms_warning">Чтобы пользоваться этим функционалом, вам нужно дать android разрешение на установку будильников в этом приложении</string>
     <string name="to_permission_settings">В настройки разрешений</string>
     <string name="permission_alarms_error">Нет разрешения на использование будильников</string>

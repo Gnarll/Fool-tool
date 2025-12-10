@@ -222,6 +222,7 @@ val surfaceContainerHighestDarkHighContrast = Color(0xFF48464C)
 val GREEN_SUCCEED = Color(0xFF00CC00)
 val RED_DENIED = Color(0xFFFF0000)
 val YELLOW_PENDING = Color(0xFFFFC107)
+val ORANGE_CANCELLED = Color(0xFFFF8C00)
 
 
 

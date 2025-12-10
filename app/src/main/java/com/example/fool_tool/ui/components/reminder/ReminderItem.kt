@@ -26,6 +26,7 @@ import com.example.fool_tool.ui.model.Reminder
 import com.example.fool_tool.ui.model.ReminderStatus
 import com.example.fool_tool.ui.theme.FooltoolTheme
 import com.example.fool_tool.ui.theme.GREEN_SUCCEED
+import com.example.fool_tool.ui.theme.ORANGE_CANCELLED
 import com.example.fool_tool.ui.theme.RED_DENIED
 import com.example.fool_tool.ui.theme.YELLOW_PENDING
 import com.example.fool_tool.ui.theme.onPrimaryDarkHighContrast
@@ -98,6 +99,7 @@ private fun ReminderStatusIndicator(status: ReminderStatus, modifier: Modifier =
         ReminderStatus.PENDING -> YELLOW_PENDING to stringResource(R.string.pending)
         ReminderStatus.SUCCEED -> GREEN_SUCCEED to stringResource(R.string.succeed)
         ReminderStatus.DENIED -> RED_DENIED to stringResource(R.string.denied)
+        ReminderStatus.CANCELLED -> ORANGE_CANCELLED to stringResource(R.string.cancelled)
     }
 
     Box(
