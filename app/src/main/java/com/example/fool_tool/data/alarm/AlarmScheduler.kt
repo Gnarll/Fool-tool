@@ -11,7 +11,7 @@ sealed interface ScheduleResult {
 
 interface AlarmScheduler {
     fun schedule(reminder: Reminder): ScheduleResult
-    fun cancel(reminder: Reminder)
+    fun cancel(reminderId: Long)
 
     fun checkIsAlarmPermissionGranted(): Boolean
 }

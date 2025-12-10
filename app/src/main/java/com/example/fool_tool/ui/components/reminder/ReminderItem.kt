@@ -2,6 +2,7 @@ package com.example.fool_tool.ui.components.reminder
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,10 +14,12 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,7 +37,32 @@ import com.example.fool_tool.utils.toFormattedDetailedString
 import java.time.LocalDateTime
 
 @Composable
-fun ReminderItem(reminder: Reminder, modifier: Modifier = Modifier) {
+fun ReminderItem(
+    reminder: Reminder,
+    onCancelReminder: (Reminder) -> Unit,
+    onActivateReminder: (Reminder) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val isReminderPending: Boolean = reminder.status == ReminderStatus.PENDING
+    val canChangeReminderStatus: Boolean = when (reminder.status) {
+        ReminderStatus.PENDING, ReminderStatus.CANCELLED -> true
+        ReminderStatus.SUCCEED, ReminderStatus.DENIED -> false
+    }
+
+    val switchReminderStatus: (Boolean) -> Unit = {
+        when (reminder.status) {
+            ReminderStatus.PENDING -> {
+                onCancelReminder(reminder)
+            }
+
+            ReminderStatus.CANCELLED -> {
+                onActivateReminder(reminder)
+            }
+
+            ReminderStatus.SUCCEED, ReminderStatus.DENIED -> {}
+        }
+    }
+
     Card(
         modifier = modifier
             .fillMaxWidth(),
@@ -70,7 +98,20 @@ fun ReminderItem(reminder: Reminder, modifier: Modifier = Modifier) {
                             color = MaterialTheme.colorScheme.onSurface,
                         )
                     },
-                    strongComposable = { ReminderStatusIndicator(status = reminder.status) }
+                    strongComposable = {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_x_small)),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Switch(
+                                checked = isReminderPending,
+                                enabled = canChangeReminderStatus,
+                                onCheckedChange = switchReminderStatus,
+                                modifier = Modifier.scale(scale = 0.7f)
+                            )
+                            ReminderStatusIndicator(status = reminder.status)
+                        }
+                    }
                 )
 
             }
@@ -130,7 +171,9 @@ fun ReminderItemPreview() {
                 title = "Title",
                 description = "Description",
                 status = ReminderStatus.PENDING
-            )
+            ),
+            onActivateReminder = { },
+            onCancelReminder = {}
         )
     }
 }
@@ -147,7 +190,9 @@ fun ReminderItemDarkPreview() {
                 title = "Title",
                 description = "Description",
                 status = ReminderStatus.SUCCEED
-            )
+            ),
+            onActivateReminder = { },
+            onCancelReminder = {}
         )
     }
 }
