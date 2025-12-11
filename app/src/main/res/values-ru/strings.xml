@@ -10,6 +10,7 @@
     <string name="turn_over">Перевернуть</string>
     <string name="delete_word">Удалить слово</string>
     <string name="ensure_deletion_question">Вы уверены, что хотите удалить?</string>
+    <string name="ensure_edit_reminder_question">Вы хотите отредактировать напоминалку?</string>
     <string name="positive_answer">Да</string>
     <string name="negative_answer">Нет</string>
     <string name="empty_input_error">Поле не должно быть пустым</string>
@@ -37,8 +38,9 @@
     <string name="input_max_symbols_error">Максимальное количество символов: %1$d</string>
     <string name="title">Заголовок</string>
     <string name="description">Описание</string>
-    <string name="create_reminder">Создать напоминалку</string>
+    <string name="confirm_btn_text">Подтвердить</string>
     <string name="create_reminder_success">Напоминалка успешно создана</string>
+    <string name="update_reminder_success">Напоминалка успешно изменена</string>
     <string name="succeed">Успешна</string>
     <string name="denied">Не сработала</string>
     <string name="pending">Ожидает</string>
@@ -50,4 +52,5 @@
     <string name="reminder_cancelled">Напоминалка отменена</string>
     <string name="reminder_deleted">Напоминалка удалена</string>
     <string name="reminder_impossible_activate_invalid_date">Невозможно активировать: дата не валидна</string>
+    <string name="edit_reminder">Редактирование напоминалки</string>
 </resources>

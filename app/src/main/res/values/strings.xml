@@ -9,6 +9,7 @@
     <string name="turn_over">Turn over</string>
     <string name="delete_word">Delete word</string>
     <string name="ensure_deletion_question">Are you sure, you want to delete?</string>
+    <string name="ensure_edit_reminder_question">Do you want to edit reminder?</string>
     <string name="positive_answer">Yes</string>
     <string name="negative_answer">No</string>
     <string name="empty_input_error">This field must not be empty</string>
@@ -36,8 +37,9 @@
     <string name="input_max_symbols_error">Max symbols count is %1$d</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
-    <string name="create_reminder">Create reminder</string>
+    <string name="confirm_btn_text">Confirm</string>
     <string name="create_reminder_success">Reminder successfully created</string>
+    <string name="update_reminder_success">Reminder successfully updated</string>
     <string name="succeed">Succeed</string>
     <string name="denied">Denied</string>
     <string name="pending">Pending</string>
@@ -49,4 +51,5 @@
     <string name="reminder_cancelled">Reminder has been cancelled</string>
     <string name="reminder_deleted">Reminder has been deleted</string>
     <string name="reminder_impossible_activate_invalid_date">Can not activate: invalid date</string>
+    <string name="edit_reminder">Edit reminder</string>
 </resources>

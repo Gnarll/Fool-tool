@@ -15,11 +15,12 @@ import com.example.fool_tool.ui.components.shared.SwipeToDeleteItem
 import com.example.fool_tool.ui.model.Reminder
 
 @Composable
-fun RemindersList(
+fun RemindersPagedList(
     onDeleteReminder: (Long) -> Unit,
     reminders: LazyPagingItems<Reminder>,
     onCancelReminder: (Reminder) -> Unit,
     onActivateReminder: (Reminder) -> Unit,
+    onEditReminder: (Reminder) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -38,6 +39,7 @@ fun RemindersList(
                     ReminderItem(
                         reminder = reminder,
                         onCancelReminder = onCancelReminder,
+                        onEditReminder = onEditReminder,
                         onActivateReminder = onActivateReminder,
                     )
                 }
