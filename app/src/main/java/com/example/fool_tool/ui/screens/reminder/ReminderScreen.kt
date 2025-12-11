@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
@@ -17,7 +18,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,12 +38,14 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.fool_tool.R
 import com.example.fool_tool.data.alarm.ScheduleResult
-import com.example.fool_tool.ui.components.reminder.RemindersList
+import com.example.fool_tool.ui.components.reminder.RemindersPagedList
+import com.example.fool_tool.ui.model.Reminder
 import kotlinx.coroutines.launch
 
 @Composable
 fun ReminderScreen(
     onCreateReminder: () -> Unit,
+    onEditReminder: (id: Long) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: ReminderViewModel = hiltViewModel()
 ) {
@@ -63,12 +70,62 @@ fun ReminderScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
+    var editDialogParams by rememberSaveable {
+        mutableStateOf(
+            Pair<Boolean, Reminder?>(
+                false,
+                null
+            )
+        )
+    }
+    val onDismissDialog = { editDialogParams = editDialogParams.copy(first = false) }
+    val onEditReminderItem: (Reminder) -> Unit = { reminder ->
+        editDialogParams = editDialogParams.copy(first = true, second = reminder)
+    }
+    val onConfirmDialog = {
+        editDialogParams = editDialogParams.copy(first = false)
+        editDialogParams.second?.id?.let {
+            onEditReminder(it)
+        }
+        Unit
+    }
 
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxSize()
     ) {
+
+
+        if (editDialogParams.first) {
+            AlertDialog(
+                onDismissRequest = onDismissDialog,
+                text = {
+                    Text(
+                        text = stringResource(R.string.ensure_edit_reminder_question),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                },
+                confirmButton = {
+                    Button(onClick = onConfirmDialog) {
+                        Text(
+                            text = stringResource(R.string.positive_answer),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = onDismissDialog) {
+                        Text(
+                            text = stringResource(R.string.negative_answer),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                },
+                modifier = modifier
+            )
+        }
+
         if (remindersUiState.isPermissionGranted) {
 
             val reminderItems = remindersUiState.pagingData.collectAsLazyPagingItems()
@@ -96,7 +153,7 @@ fun ReminderScreen(
                             }
                         }
                     } else {
-                        RemindersList(
+                        RemindersPagedList(
                             reminders = reminderItems,
                             onDeleteReminder = { id ->
                                 coroutineScope.launch { viewModel.deleteReminder(id) }
@@ -139,6 +196,7 @@ fun ReminderScreen(
                                     ).show()
                                 }
                             },
+                            onEditReminder = onEditReminderItem,
                             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
                         )
                     }

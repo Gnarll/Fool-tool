@@ -14,6 +14,9 @@ interface ReminderDao {
     @Query("SELECT * FROM reminder ORDER BY date DESC")
     fun getPagingSource(): PagingSource<Int, ReminderEntity>
 
+    @Query("SELECT * FROM reminder WHERE uid = :id")
+    suspend fun getReminderById(id: Long): ReminderEntity
+
     @Query("SELECT * FROM reminder WHERE status = :status ")
     fun getRemindersByStatus(status: ReminderStatus): List<ReminderEntity>
 

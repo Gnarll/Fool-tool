@@ -150,6 +150,7 @@ private fun HorizontalGestureDeletingElementPreview() {
                 onCancelReminder = {},
                 onActivateReminder = { ScheduleResult.Success },
                 modifier = Modifier.alpha(0.5f),
+                onEditReminder = {}
             )
         }
 

@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -21,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.fool_tool.R
@@ -41,6 +45,7 @@ fun ReminderItem(
     reminder: Reminder,
     onCancelReminder: (Reminder) -> Unit,
     onActivateReminder: (Reminder) -> Unit,
+    onEditReminder: (Reminder) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isReminderPending: Boolean = reminder.status == ReminderStatus.PENDING
@@ -116,12 +121,28 @@ fun ReminderItem(
 
             }
             Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
-            Text(
-                text = reminder.date.toFormattedDetailedString(),
-                style = MaterialTheme.typography.bodySmall,
-                maxLines = 1,
-                color = MaterialTheme.colorScheme.tertiary
-            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = reminder.date.toFormattedDetailedString(),
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 1,
+                    color = MaterialTheme.colorScheme.tertiary
+                )
+                IconButton(
+                    onClick = { onEditReminder(reminder) },
+                    modifier = Modifier.size(dimensionResource(R.dimen.default_icon_size))
+                ) {
+                    Icon(
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        painter = painterResource(R.drawable.ic_edit),
+                        contentDescription = stringResource(R.string.edit_reminder)
+                    )
+                }
+            }
             Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
             Text(
                 text = reminder.description,
@@ -173,7 +194,8 @@ fun ReminderItemPreview() {
                 status = ReminderStatus.PENDING
             ),
             onActivateReminder = { },
-            onCancelReminder = {}
+            onCancelReminder = {},
+            onEditReminder = {},
         )
     }
 }
@@ -192,7 +214,8 @@ fun ReminderItemDarkPreview() {
                 status = ReminderStatus.SUCCEED
             ),
             onActivateReminder = { },
-            onCancelReminder = {}
+            onCancelReminder = {},
+            onEditReminder = {},
         )
     }
 }
