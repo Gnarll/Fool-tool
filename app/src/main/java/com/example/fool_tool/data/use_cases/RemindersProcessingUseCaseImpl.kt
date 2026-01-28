@@ -23,17 +23,13 @@ class RemindersProcessingUseCaseImpl @Inject constructor(
     }
 
     override suspend fun activateReminder(reminder: Reminder): ScheduleResult {
-        val result = alarmScheduler.schedule(reminder)
+        val scheduleResult = alarmScheduler.schedule(reminder)
 
-        when (result) {
-            ScheduleResult.Success -> {
-                reminderRepository.updateReminder(reminder.copy(status = ReminderStatus.PENDING))
-            }
-
-            ScheduleResult.FailedWithInvalidTime, ScheduleResult.FailedWithNoPermission -> {}
+        if (scheduleResult is ScheduleResult.Success) {
+            reminderRepository.updateReminder(reminder.copy(status = ReminderStatus.PENDING))
         }
 
-        return result
+        return scheduleResult
     }
 
     override suspend fun reactivateOrDeclinePendingReminders() {
@@ -44,7 +40,7 @@ class RemindersProcessingUseCaseImpl @Inject constructor(
 
             when (scheduleResult) {
                 is ScheduleResult.Success -> {
-
+                    reminderRepository.updateReminder(reminder.copy(status = ReminderStatus.PENDING))
                 }
 
                 is ScheduleResult.FailedWithInvalidTime, is ScheduleResult.FailedWithNoPermission -> {
