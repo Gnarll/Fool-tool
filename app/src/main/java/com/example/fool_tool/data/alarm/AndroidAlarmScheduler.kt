@@ -5,7 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import com.example.fool_tool.services.AlarmReceiver
+import com.example.fool_tool.broadcastReceivers.AlarmReceiver
 import com.example.fool_tool.ui.model.Reminder
 import com.example.fool_tool.utils.toMillisWithZone
 import dagger.hilt.android.qualifiers.ApplicationContext

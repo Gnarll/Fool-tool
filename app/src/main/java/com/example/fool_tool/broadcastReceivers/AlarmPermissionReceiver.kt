@@ -1,4 +1,4 @@
-package com.example.fool_tool.services
+package com.example.fool_tool.broadcastReceivers
 
 import android.app.AlarmManager.ACTION_SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED
 import android.content.BroadcastReceiver
