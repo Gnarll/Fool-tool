@@ -1,4 +1,4 @@
-package com.example.fool_tool.services
+package com.example.fool_tool.broadcastReceivers
 
 import android.content.BroadcastReceiver
 import android.content.Context
