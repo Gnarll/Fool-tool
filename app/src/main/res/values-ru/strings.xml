@@ -53,4 +53,6 @@
     <string name="reminder_deleted">Напоминалка удалена</string>
     <string name="reminder_impossible_activate_invalid_date">Невозможно активировать: дата не валидна</string>
     <string name="edit_reminder">Редактирование напоминалки</string>
+    <string name="reminders_channel_name">Напоминалки</string>
+    <string name="reminders_channel_description">Уведомления для напоминалок</string>
 </resources>

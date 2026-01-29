@@ -52,4 +52,6 @@
     <string name="reminder_deleted">Reminder has been deleted</string>
     <string name="reminder_impossible_activate_invalid_date">Can not activate: invalid date</string>
     <string name="edit_reminder">Edit reminder</string>
+    <string name="reminders_channel_name">Reminders</string>
+    <string name="reminders_channel_description">Notifications for reminders</string>
 </resources>
