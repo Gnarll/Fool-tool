@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -92,6 +93,7 @@ fun SwipeToDeleteItem(
                 contentDescription = stringResource(R.string.ensure_deletion_question),
                 tint = MaterialTheme.colorScheme.onErrorContainer,
                 modifier = Modifier
+                    .size(dimensionResource(R.dimen.default_icon_size))
                     .offset(x = dimensionResource(R.dimen.default_icon_size) / 2)
                     .graphicsLayer {
                         this.translationX = translationX.value / 2

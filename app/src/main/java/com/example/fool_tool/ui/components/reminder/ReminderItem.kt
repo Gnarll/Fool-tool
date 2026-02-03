@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -112,7 +111,7 @@ fun ReminderItem(
                                 checked = isReminderPending,
                                 enabled = canChangeReminderStatus,
                                 onCheckedChange = switchReminderStatus,
-                                modifier = Modifier.scale(scale = 0.7f)
+                                modifier = Modifier.scale(scale = 0.8f)
                             )
                             ReminderStatusIndicator(status = reminder.status)
                         }
@@ -133,8 +132,7 @@ fun ReminderItem(
                     color = MaterialTheme.colorScheme.tertiary
                 )
                 IconButton(
-                    onClick = { onEditReminder(reminder) },
-                    modifier = Modifier.size(dimensionResource(R.dimen.default_icon_size))
+                    onClick = { onEditReminder(reminder) }
                 ) {
                     Icon(
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -168,7 +166,7 @@ private fun ReminderStatusIndicator(status: ReminderStatus, modifier: Modifier =
         modifier = modifier
             .wrapContentWidth()
             .background(color = color, shape = MaterialTheme.shapes.small)
-            .padding(dimensionResource(R.dimen.padding_x_small)),
+            .padding(dimensionResource(R.dimen.padding_small)),
         contentAlignment = Alignment.Center
     ) {
         Text(

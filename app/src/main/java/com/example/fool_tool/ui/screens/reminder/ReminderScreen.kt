@@ -94,6 +94,7 @@ fun ReminderScreen(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxSize()
+            .padding(top = dimensionResource(R.dimen.padding_medium))
     ) {
 
 
