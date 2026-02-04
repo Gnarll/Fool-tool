@@ -44,8 +44,12 @@
     <string name="denied">Denied</string>
     <string name="pending">Pending</string>
     <string name="cancelled">Cancelled</string>
-    <string name="permission_alarms_warning">To use this feature, you have to grant permission for scheduling alarms for this app</string>
-    <string name="to_permission_settings">Go to permission settings</string>
+    <string name="permissions_warning_title">To use this feature, you have to grant some permissions:</string>
+    <string name="permission_alarms_warning_description">Permission for scheduling alarms</string>
+    <string name="permission_notification_warning_description">Permission for notifications</string>
+    <string name="permission_notification_channel_warning_description">Permission for notification channel</string>
+    <string name="to_settings">To settings</string>
+    <string name="ungranted_permissions_error">You have ungranted permissions</string>
     <string name="permission_alarms_error">No alarm permission granted</string>
     <string name="reminder_activated">Reminder has been activated</string>
     <string name="reminder_cancelled">Reminder has been cancelled</string>

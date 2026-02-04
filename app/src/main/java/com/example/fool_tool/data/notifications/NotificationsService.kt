@@ -5,8 +5,8 @@ import com.example.fool_tool.ui.model.Reminder
 interface NotificationsService {
 
     fun sendReminderNotification(reminder: Reminder)
-    fun checkPrimaryPermissionIsGranted(): Boolean
-    fun checkReminderChannelPermissionIsGranted(): Boolean
-    fun openReminderChannelPermissionSettings(channelId: String)
+    fun checkIsPrimaryPermissionGranted(): Boolean
+    fun checkIsReminderChannelPermissionGranted(): Boolean
+    fun openReminderChannelPermissionSettings()
     fun openPrimaryPermissionSettings()
 }

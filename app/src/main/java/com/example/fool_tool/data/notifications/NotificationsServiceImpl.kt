@@ -58,10 +58,10 @@ class NotificationsServiceImpl @Inject constructor(@ApplicationContext private v
         notificationManager.notify(reminder.id.toInt(), notification)
     }
 
-    override fun checkPrimaryPermissionIsGranted(): Boolean =
+    override fun checkIsPrimaryPermissionGranted(): Boolean =
         notificationManager.areNotificationsEnabled()
 
-    override fun checkReminderChannelPermissionIsGranted(): Boolean {
+    override fun checkIsReminderChannelPermissionGranted(): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return true
 
         val reminderChannel = notificationManager.getNotificationChannel(REMINDER_CHANNEL_ID)
@@ -85,11 +85,11 @@ class NotificationsServiceImpl @Inject constructor(@ApplicationContext private v
         context.startActivity(intent)
     }
 
-    override fun openReminderChannelPermissionSettings(channelId: String) {
+    override fun openReminderChannelPermissionSettings() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
                 putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+                putExtra(Settings.EXTRA_CHANNEL_ID, REMINDER_CHANNEL_ID)
                 addFlags(FLAG_ACTIVITY_NEW_TASK)
             }
 

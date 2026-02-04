@@ -14,4 +14,6 @@ interface AlarmScheduler {
     fun cancel(reminderId: Long)
 
     fun checkIsAlarmPermissionGranted(): Boolean
+
+    fun openAlarmPermissionSettings()
 }
