@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.example.fool_tool.data.alarm.AlarmScheduler
 import com.example.fool_tool.data.notifications.NotificationsService
 import com.example.fool_tool.data.repositories.ReminderRepository
+import com.example.fool_tool.di.ReminderValidationConstants
 import com.example.fool_tool.ui.components.reminder.ReminderFormUiState
 import com.example.fool_tool.ui.model.ReminderStatus
 import com.example.fool_tool.utils.DateTimeValidationError
@@ -26,6 +27,7 @@ class CreateReminderViewModel @Inject constructor(
     private val reminderRepository: ReminderRepository,
     private val alarmScheduler: AlarmScheduler,
     private val notificationsService: NotificationsService,
+    private val validationConstants: ReminderValidationConstants,
 ) : ViewModel() {
 
     private var _reminderFormUiState = MutableStateFlow(
@@ -91,7 +93,10 @@ class CreateReminderViewModel @Inject constructor(
     private fun validateTitle(title: String): ValidationError? {
         val validationError = when {
             title.isEmpty() -> EmptyInputError
-            title.length > TITLE_MAX_SYMBOLS -> InputMaxSymbolsError(TITLE_MAX_SYMBOLS)
+            title.length > validationConstants.titleMaxSymbols -> InputMaxSymbolsError(
+                validationConstants.titleMaxSymbols
+            )
+
             else -> null
         }
         _reminderFormUiState.update { it.copy(titleError = validationError) }
@@ -101,8 +106,8 @@ class CreateReminderViewModel @Inject constructor(
     private fun validateDescription(description: String): ValidationError? {
         val validationError = when {
             description.isEmpty() -> EmptyInputError
-            description.length > DESCRIPTION_MAX_SYMBOLS -> InputMaxSymbolsError(
-                DESCRIPTION_MAX_SYMBOLS
+            description.length > validationConstants.descriptionMaxSymbols -> InputMaxSymbolsError(
+                validationConstants.descriptionMaxSymbols
             )
 
             else -> null
@@ -125,8 +130,5 @@ class CreateReminderViewModel @Inject constructor(
         alarmScheduler.schedule(reminder)
     }
 
-    private companion object {
-        const val TITLE_MAX_SYMBOLS = 35
-        const val DESCRIPTION_MAX_SYMBOLS = 80
-    }
+
 }
