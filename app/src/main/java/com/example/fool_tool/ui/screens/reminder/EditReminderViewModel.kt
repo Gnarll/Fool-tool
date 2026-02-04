@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.fool_tool.data.alarm.AlarmScheduler
 import com.example.fool_tool.data.notifications.NotificationsService
 import com.example.fool_tool.data.repositories.ReminderRepository
+import com.example.fool_tool.di.ReminderValidationConstants
 import com.example.fool_tool.ui.components.reminder.ReminderFormUiState
 import com.example.fool_tool.ui.model.ReminderStatus
 import com.example.fool_tool.utils.DateTimeValidationError
@@ -29,6 +30,7 @@ class EditReminderViewModel @AssistedInject constructor(
     private val alarmScheduler: AlarmScheduler,
     private val reminderRepository: ReminderRepository,
     private val notificationsService: NotificationsService,
+    private val validationConstants: ReminderValidationConstants,
     @Assisted private val reminderId: Long
 ) :
     ViewModel() {
@@ -133,8 +135,8 @@ class EditReminderViewModel @AssistedInject constructor(
     private fun validateTitle(title: String): ValidationError? {
         val validationError = when {
             title.isEmpty() -> EmptyInputError
-            title.length > TITLE_MAX_SYMBOLS -> InputMaxSymbolsError(
-                TITLE_MAX_SYMBOLS
+            title.length > validationConstants.titleMaxSymbols -> InputMaxSymbolsError(
+                validationConstants.titleMaxSymbols
             )
 
             else -> null
@@ -146,8 +148,8 @@ class EditReminderViewModel @AssistedInject constructor(
     private fun validateDescription(description: String): ValidationError? {
         val validationError = when {
             description.isEmpty() -> EmptyInputError
-            description.length > DESCRIPTION_MAX_SYMBOLS -> InputMaxSymbolsError(
-                DESCRIPTION_MAX_SYMBOLS
+            description.length > validationConstants.descriptionMaxSymbols -> InputMaxSymbolsError(
+                validationConstants.descriptionMaxSymbols
             )
 
             else -> null
@@ -162,8 +164,5 @@ class EditReminderViewModel @AssistedInject constructor(
         fun createViewModel(reminderId: Long): EditReminderViewModel
     }
 
-    private companion object {
-        const val TITLE_MAX_SYMBOLS = 35
-        const val DESCRIPTION_MAX_SYMBOLS = 80
-    }
+
 }
