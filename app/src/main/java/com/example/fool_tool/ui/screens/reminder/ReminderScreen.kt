@@ -1,7 +1,6 @@
 package com.example.fool_tool.ui.screens.reminder
 
 import android.widget.Toast
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,18 +17,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -39,7 +33,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.fool_tool.R
 import com.example.fool_tool.data.alarm.ScheduleResult
 import com.example.fool_tool.ui.components.reminder.RemindersPagedList
-import com.example.fool_tool.ui.model.Reminder
+import com.example.fool_tool.ui.components.shared.PermissionsBlock
 import kotlinx.coroutines.launch
 
 @Composable
@@ -56,7 +50,7 @@ fun ReminderScreen(
     DisposableEffect(lifecycle) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                viewModel.checkPermission()
+                viewModel.checkAndUpdatePermissions()
             }
         }
         lifecycle.addObserver(observer)
@@ -67,28 +61,12 @@ fun ReminderScreen(
 
     val remindersUiState =
         viewModel.reminders.collectAsState().value
+    val reminderToEditState = viewModel.reminderToEdit.value
+    val permissionsUiState = viewModel.permissionsState.collectAsState().value
 
     val coroutineScope = rememberCoroutineScope()
 
-    var editDialogParams by rememberSaveable {
-        mutableStateOf(
-            Pair<Boolean, Reminder?>(
-                false,
-                null
-            )
-        )
-    }
-    val onDismissDialog = { editDialogParams = editDialogParams.copy(first = false) }
-    val onEditReminderItem: (Reminder) -> Unit = { reminder ->
-        editDialogParams = editDialogParams.copy(first = true, second = reminder)
-    }
-    val onConfirmDialog = {
-        editDialogParams = editDialogParams.copy(first = false)
-        editDialogParams.second?.id?.let {
-            onEditReminder(it)
-        }
-        Unit
-    }
+
 
     Box(
         contentAlignment = Alignment.Center,
@@ -96,40 +74,9 @@ fun ReminderScreen(
             .fillMaxSize()
             .padding(top = dimensionResource(R.dimen.padding_medium))
     ) {
+        if (permissionsUiState.areAllGranted) {
 
-
-        if (editDialogParams.first) {
-            AlertDialog(
-                onDismissRequest = onDismissDialog,
-                text = {
-                    Text(
-                        text = stringResource(R.string.ensure_edit_reminder_question),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
-                },
-                confirmButton = {
-                    Button(onClick = onConfirmDialog) {
-                        Text(
-                            text = stringResource(R.string.positive_answer),
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-                },
-                dismissButton = {
-                    Button(onClick = onDismissDialog) {
-                        Text(
-                            text = stringResource(R.string.negative_answer),
-                            style = MaterialTheme.typography.labelLarge
-                        )
-                    }
-                },
-                modifier = modifier
-            )
-        }
-
-        if (remindersUiState.isPermissionGranted) {
-
-            val reminderItems = remindersUiState.pagingData.collectAsLazyPagingItems()
+            val reminderItems = remindersUiState.collectAsLazyPagingItems()
 
             when (reminderItems.loadState.refresh) {
                 is LoadState.Error -> Text(
@@ -197,7 +144,9 @@ fun ReminderScreen(
                                     ).show()
                                 }
                             },
-                            onEditReminder = onEditReminderItem,
+                            onEditReminder = {
+                                viewModel.selectReminderToEdit(it.id)
+                            },
                             modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
                         )
                     }
@@ -218,20 +167,45 @@ fun ReminderScreen(
                         .padding(dimensionResource(R.dimen.padding_x_x_large))
                 )
         } else {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
-                modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium))
-            ) {
+            PermissionsBlock(
+                modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
+                permissionsUiState = permissionsUiState,
+                grantNotificationPermission = viewModel::grantNotificationPermission,
+                grantNotificationChannelPermission = viewModel::grantNotificationChannelPermission,
+                grantAlarmPermission = viewModel::grantAlarmPermission
+            )
+        }
 
-                Text(
-                    text = stringResource(R.string.permission_alarms_warning),
-                    textAlign = TextAlign.Center
-                )
-                Button(onClick = viewModel::grantPermission) {
-                    Text(text = stringResource(R.string.to_permission_settings))
-                }
-            }
+        reminderToEditState?.let { reminderId ->
+            AlertDialog(
+                onDismissRequest = viewModel::unselectReminderToEdit,
+                text = {
+                    Text(
+                        text = stringResource(R.string.ensure_edit_reminder_question),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        viewModel.unselectReminderToEdit()
+                        onEditReminder(reminderId)
+                    }) {
+                        Text(
+                            text = stringResource(R.string.positive_answer),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                },
+                dismissButton = {
+                    Button(onClick = viewModel::unselectReminderToEdit) {
+                        Text(
+                            text = stringResource(R.string.negative_answer),
+                            style = MaterialTheme.typography.labelLarge
+                        )
+                    }
+                },
+                modifier = modifier
+            )
         }
     }
 }

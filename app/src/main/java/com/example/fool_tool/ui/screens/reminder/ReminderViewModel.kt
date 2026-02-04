@@ -1,52 +1,64 @@
 package com.example.fool_tool.ui.screens.reminder
 
-import android.content.Context
-import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.os.Build
-import android.provider.Settings
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.fool_tool.data.alarm.AlarmScheduler
 import com.example.fool_tool.data.alarm.ScheduleResult
+import com.example.fool_tool.data.notifications.NotificationsService
 import com.example.fool_tool.data.repositories.ReminderRepository
 import com.example.fool_tool.data.use_cases.RemindersProcessingUseCase
 import com.example.fool_tool.ui.model.Reminder
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ReminderViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val reminderRepository: ReminderRepository,
     private val alarmScheduler: AlarmScheduler,
-    private val remindersProcessingUseCase: RemindersProcessingUseCase
+    private val remindersProcessingUseCase: RemindersProcessingUseCase,
+    private val notificationsService: NotificationsService,
+    private val savedStateHandle: SavedStateHandle
 ) :
     ViewModel() {
 
 
-    private val _isPermissionGranted =
-        MutableStateFlow(alarmScheduler.checkIsAlarmPermissionGranted())
+    private val _reminders: MutableStateFlow<Flow<PagingData<Reminder>>> = MutableStateFlow(
+        reminderRepository.getPagedReminders().cachedIn(viewModelScope)
+    )
+    val reminders: StateFlow<Flow<PagingData<Reminder>>> = _reminders.asStateFlow()
 
-
-    var _reminders: MutableStateFlow<ReminderUiState> = MutableStateFlow(
-        ReminderUiState(
-            isPermissionGranted = _isPermissionGranted.value,
-            pagingData = reminderRepository.getPagedReminders().cachedIn(viewModelScope)
+    private val _permissionsState: MutableStateFlow<PermissionsUiState> = MutableStateFlow(
+        PermissionsUiState(
+            notification = checkIsPrimaryPermissionGranted(),
+            notificationChannel = checkIsReminderChannelPermissionGranted(),
+            alarm = checkIsAlarmPermissionGranted()
         )
     )
-    val reminders: StateFlow<ReminderUiState> = _reminders.asStateFlow()
 
-    init {
-        observePermissionChanges()
+    val permissionsState = _permissionsState.asStateFlow()
+
+
+    var reminderToEdit: MutableState<Long?> =
+        mutableStateOf(savedStateHandle[REMINDER_ID_TO_EDIT_KEY])
+        private set
+
+
+    fun unselectReminderToEdit() {
+        reminderToEdit.value = null
+    }
+
+    fun selectReminderToEdit(reminderId: Long) {
+        savedStateHandle[REMINDER_ID_TO_EDIT_KEY] = reminderId
+        reminderToEdit.value = reminderId
     }
 
     suspend fun deleteReminder(id: Long) {
@@ -61,29 +73,53 @@ class ReminderViewModel @Inject constructor(
         remindersProcessingUseCase.activateReminder(reminder)
 
 
-    fun checkPermission() {
-        _isPermissionGranted.value = alarmScheduler.checkIsAlarmPermissionGranted()
-    }
+    fun checkAndUpdatePermissions() {
+        val notificationPermission = checkIsPrimaryPermissionGranted()
+        val notificationChannelPermission =
+            checkIsReminderChannelPermissionGranted()
+        val alarmPermission = checkIsAlarmPermissionGranted()
 
-    fun grantPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
-                addFlags(FLAG_ACTIVITY_NEW_TASK)
-            }
-            context.startActivity(intent)
+        _permissionsState.value = with(_permissionsState.value) {
+            copy(
+                notification = notificationPermission,
+                notificationChannel = notificationChannelPermission,
+                alarm = alarmPermission,
+            )
         }
     }
 
-    private fun observePermissionChanges() {
-        viewModelScope.launch {
-            _isPermissionGranted.collect { isGranted ->
-                _reminders.value = _reminders.value.copy(isPermissionGranted = isGranted)
-            }
-        }
+    fun grantNotificationPermission() {
+        notificationsService.openPrimaryPermissionSettings()
     }
+
+    fun grantNotificationChannelPermission() {
+        notificationsService.openReminderChannelPermissionSettings()
+    }
+
+    fun grantAlarmPermission() {
+        alarmScheduler.openAlarmPermissionSettings()
+    }
+
+    private fun checkIsPrimaryPermissionGranted() =
+        notificationsService.checkIsPrimaryPermissionGranted()
+
+    private fun checkIsReminderChannelPermissionGranted() =
+        notificationsService.checkIsReminderChannelPermissionGranted()
+
+    private fun checkIsAlarmPermissionGranted() = alarmScheduler.checkIsAlarmPermissionGranted()
+
+    companion object {
+        const val REMINDER_ID_TO_EDIT_KEY = "SAVED_STATE_REMINDER_TO_EDIT_KEY"
+    }
+
 }
 
-data class ReminderUiState(
-    val isPermissionGranted: Boolean,
-    val pagingData: Flow<PagingData<Reminder>>
-)
+
+data class PermissionsUiState(
+    val notification: Boolean,
+    val notificationChannel: Boolean,
+    val alarm: Boolean,
+) {
+    val areAllGranted: Boolean
+        get() = notification && notificationChannel && alarm
+}

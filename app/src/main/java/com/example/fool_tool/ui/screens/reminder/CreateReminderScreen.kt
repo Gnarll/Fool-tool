@@ -35,11 +35,11 @@ fun CreateReminderScreen(
     DisposableEffect(lifecycle) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
-                val isGranted = viewModel.checkPermission()
+                val isGranted = viewModel.checkPermissions()
                 if (!isGranted) {
                     Toast.makeText(
                         context,
-                        context.getString(R.string.permission_alarms_error),
+                        context.getString(R.string.ungranted_permissions_error),
                         Toast.LENGTH_SHORT
                     ).show()
                     onNavigateBack()

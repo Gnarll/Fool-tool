@@ -2,6 +2,7 @@ package com.example.fool_tool.ui.screens.reminder
 
 import androidx.lifecycle.ViewModel
 import com.example.fool_tool.data.alarm.AlarmScheduler
+import com.example.fool_tool.data.notifications.NotificationsService
 import com.example.fool_tool.data.repositories.ReminderRepository
 import com.example.fool_tool.ui.components.reminder.ReminderFormUiState
 import com.example.fool_tool.ui.model.ReminderStatus
@@ -23,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CreateReminderViewModel @Inject constructor(
     private val reminderRepository: ReminderRepository,
-    private val alarmScheduler: AlarmScheduler
+    private val alarmScheduler: AlarmScheduler,
+    private val notificationsService: NotificationsService,
 ) : ViewModel() {
 
     private var _reminderFormUiState = MutableStateFlow(
@@ -73,7 +75,9 @@ class CreateReminderViewModel @Inject constructor(
 
     }
 
-    fun checkPermission() = alarmScheduler.checkIsAlarmPermissionGranted()
+    fun checkPermissions() = alarmScheduler.checkIsAlarmPermissionGranted() and
+            notificationsService.checkIsReminderChannelPermissionGranted() and
+            notificationsService.checkIsPrimaryPermissionGranted()
 
     private fun validateDateTime(dateTime: LocalDateTime): ValidationError? {
         val validationError = when {

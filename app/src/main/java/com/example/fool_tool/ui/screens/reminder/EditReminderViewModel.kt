@@ -3,6 +3,7 @@ package com.example.fool_tool.ui.screens.reminder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fool_tool.data.alarm.AlarmScheduler
+import com.example.fool_tool.data.notifications.NotificationsService
 import com.example.fool_tool.data.repositories.ReminderRepository
 import com.example.fool_tool.ui.components.reminder.ReminderFormUiState
 import com.example.fool_tool.ui.model.ReminderStatus
@@ -27,6 +28,7 @@ import java.time.ZoneId
 class EditReminderViewModel @AssistedInject constructor(
     private val alarmScheduler: AlarmScheduler,
     private val reminderRepository: ReminderRepository,
+    private val notificationsService: NotificationsService,
     @Assisted private val reminderId: Long
 ) :
     ViewModel() {
@@ -81,7 +83,11 @@ class EditReminderViewModel @AssistedInject constructor(
 
     }
 
-    fun checkPermission() = alarmScheduler.checkIsAlarmPermissionGranted()
+    fun checkPermissions() =
+        alarmScheduler.checkIsAlarmPermissionGranted() and
+                notificationsService.checkIsReminderChannelPermissionGranted() and
+                notificationsService.checkIsPrimaryPermissionGranted()
+
 
     fun preloadReminder() {
         viewModelScope.launch {
