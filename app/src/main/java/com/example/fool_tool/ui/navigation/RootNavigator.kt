@@ -17,7 +17,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.example.fool_tool.R
@@ -28,13 +27,9 @@ import com.example.fool_tool.ui.navigation.navigation_bar.CustomNavigationBar
 import com.example.fool_tool.ui.navigation.navigation_bar.NavigationItem
 import com.example.fool_tool.ui.screens.settings.SettingsScreen
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RootNavigator() {
-    val backStack: BackStack =
-        rememberNavBackStack(Route.BottomNavigationRoute.FlashcardRootRoute)
-
+fun RootNavigator(backStack: BackStack) {
     val navigationItems: List<NavigationItem> = remember {
         listOf(
             NavigationItem(
@@ -50,7 +45,7 @@ fun RootNavigator() {
             NavigationItem(
                 title = R.string.reminder_screen_title,
                 icon = R.drawable.ic_calendar,
-                route = Route.BottomNavigationRoute.ReminderRootRoute,
+                route = Route.BottomNavigationRoute.ReminderRootRoute(),
             ),
             NavigationItem(
                 title = R.string.settings,

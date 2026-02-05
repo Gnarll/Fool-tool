@@ -15,7 +15,8 @@ sealed interface Route : NavKey {
         data object SmartnoteRootRoute : BottomNavigationRoute
 
         @Serializable
-        data object ReminderRootRoute : BottomNavigationRoute
+        data class ReminderRootRoute(val reminderIdFromNotification: Long? = null) :
+            BottomNavigationRoute
 
         @Serializable
         data object SettingsRootRoute : BottomNavigationRoute

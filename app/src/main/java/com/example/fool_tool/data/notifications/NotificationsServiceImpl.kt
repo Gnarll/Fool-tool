@@ -13,6 +13,7 @@ import android.provider.Settings
 import androidx.core.app.NotificationCompat
 import com.example.fool_tool.MainActivity
 import com.example.fool_tool.R
+import com.example.fool_tool.di.qualifiers.ExtraReminderId
 import com.example.fool_tool.ui.model.Reminder
 import com.example.fool_tool.utils.toShortNotificationContentText
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,7 +21,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class NotificationsServiceImpl @Inject constructor(@ApplicationContext private val context: Context) :
+class NotificationsServiceImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
+    @ExtraReminderId val extraReminderId: String
+) :
     NotificationsService {
     private val notificationManager = context.getSystemService(NotificationManager::class.java)
 
@@ -29,16 +33,7 @@ class NotificationsServiceImpl @Inject constructor(@ApplicationContext private v
     }
 
     override fun sendReminderNotification(reminder: Reminder) {
-        val intent = Intent(context, MainActivity::class.java).apply {
-            addFlags(FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK)
-        }
-        val pendingIntent =
-            PendingIntent.getActivity(
-                context,
-                reminder.id.toInt(),
-                intent,
-                PendingIntent.FLAG_IMMUTABLE
-            )
+
 
         val notification = NotificationCompat.Builder(context, REMINDER_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_calendar)
@@ -50,7 +45,7 @@ class NotificationsServiceImpl @Inject constructor(@ApplicationContext private v
             )
             .setPriority(NotificationCompat.PRIORITY_MAX)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-            .setContentIntent(pendingIntent)
+            .setActionWithDeepLinkToExactReminder(reminder.id)
             .setAutoCancel(true)
             .build()
 
@@ -106,7 +101,7 @@ class NotificationsServiceImpl @Inject constructor(@ApplicationContext private v
 
             val name = context.getString(R.string.reminders_channel_name)
             val descriptionText = context.getString(R.string.reminders_channel_description)
-            val importance = NotificationManager.IMPORTANCE_MAX
+            val importance = NotificationManager.IMPORTANCE_HIGH
             val channelId = REMINDER_CHANNEL_ID
 
             val channel = NotificationChannel(channelId, name, importance).apply {
@@ -116,6 +111,23 @@ class NotificationsServiceImpl @Inject constructor(@ApplicationContext private v
 
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    private fun NotificationCompat.Builder.setActionWithDeepLinkToExactReminder(reminderId: Long): NotificationCompat.Builder {
+        val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra(extraReminderId, reminderId)
+            addFlags(FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK)
+        }
+        val pendingIntent =
+            PendingIntent.getActivity(
+                context,
+                reminderId.toInt(),
+                intent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
+        setContentIntent(pendingIntent)
+
+        return this
     }
 
     companion object {
