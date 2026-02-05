@@ -22,7 +22,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.navigation.entries.flashcardEntries
 import com.example.fool_tool.ui.navigation.entries.reminderEntries
-import com.example.fool_tool.ui.navigation.entries.smartnoteEntries
 import com.example.fool_tool.ui.navigation.navigation_bar.CustomNavigationBar
 import com.example.fool_tool.ui.navigation.navigation_bar.NavigationItem
 import com.example.fool_tool.ui.screens.settings.SettingsScreen
@@ -36,11 +35,6 @@ fun RootNavigator(backStack: BackStack) {
                 title = R.string.flashcard_screen_title,
                 icon = R.drawable.ic_quiz,
                 route = Route.BottomNavigationRoute.FlashcardRootRoute,
-            ),
-            NavigationItem(
-                title = R.string.smartnote_screen_title,
-                icon = R.drawable.ic_notes,
-                route = Route.BottomNavigationRoute.SmartnoteRootRoute,
             ),
             NavigationItem(
                 title = R.string.reminder_screen_title,
@@ -109,7 +103,6 @@ fun RootNavigator(backStack: BackStack) {
             entryProvider = entryProvider {
                 flashcardEntries(backstack = backStack)
                 reminderEntries(backstack = backStack)
-                smartnoteEntries(backstack = backStack)
                 entry(key = Route.BottomNavigationRoute.SettingsRootRoute) {
                     SettingsScreen()
                 }

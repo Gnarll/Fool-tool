@@ -11,8 +11,6 @@ sealed interface Route : NavKey {
         @Serializable
         data object FlashcardRootRoute : BottomNavigationRoute
 
-        @Serializable
-        data object SmartnoteRootRoute : BottomNavigationRoute
 
         @Serializable
         data class ReminderRootRoute(val reminderIdFromNotification: Long? = null) :
@@ -25,10 +23,6 @@ sealed interface Route : NavKey {
 
     @Serializable
     data object CreateFlashcardRoute : Route
-
-
-    @Serializable
-    data object CreateSmartnoteRoute : Route
 
 
     @Serializable

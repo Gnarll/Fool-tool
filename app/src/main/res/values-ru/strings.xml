@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">Fool-tool</string>
     <string name="flashcard_screen_title">Карточки</string>
-    <string name="smartnote_screen_title">Заметки</string>
     <string name="reminder_screen_title">Напоминалки</string>
     <string name="error_msg_something_went_wrong">Что-то пошло не так</string>
     <string name="add_flashcard">Добавить карточку</string>
