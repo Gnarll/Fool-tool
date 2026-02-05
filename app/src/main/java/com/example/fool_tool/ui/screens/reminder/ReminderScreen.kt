@@ -1,12 +1,14 @@
 package com.example.fool_tool.ui.screens.reminder
 
 import android.widget.Toast
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -16,10 +18,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -34,16 +42,21 @@ import com.example.fool_tool.R
 import com.example.fool_tool.data.alarm.ScheduleResult
 import com.example.fool_tool.ui.components.reminder.RemindersPagedList
 import com.example.fool_tool.ui.components.shared.PermissionsBlock
+import com.example.fool_tool.utils.createListItemRippleModifier
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+
 
 @Composable
 fun ReminderScreen(
     onCreateReminder: () -> Unit,
     onEditReminder: (id: Long) -> Unit,
+    reminderIdFromNotification: Long?,
     modifier: Modifier = Modifier,
-    viewModel: ReminderViewModel = hiltViewModel()
+    viewModel: ReminderViewModel = hiltViewModel<ReminderViewModel, ReminderViewModel.Factory> { factory ->
+        factory.create(reminderIdFromNotification)
+    },
 ) {
-
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current
 
@@ -66,8 +79,6 @@ fun ReminderScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -76,96 +87,128 @@ fun ReminderScreen(
     ) {
         if (permissionsUiState.areAllGranted) {
 
-            val reminderItems = remindersUiState.collectAsLazyPagingItems()
+            if (remindersUiState.isPreloading) {
+                CircularProgressIndicator()
+            } else {
+                val reminderItems = remindersUiState.pagingRemindersFlow.collectAsLazyPagingItems()
+                val indexToScrollTo = remindersUiState.indexToScrollTo
 
-            when (reminderItems.loadState.refresh) {
-                is LoadState.Error -> Text(
-                    text = stringResource(R.string.error_msg_something_went_wrong),
-                    color = MaterialTheme.colorScheme.error,
+                val (interactionSource, rippleModifier) = createListItemRippleModifier(
+                    indexToScrollTo
                 )
 
-                LoadState.Loading -> CircularProgressIndicator()
+                val listState = rememberLazyListState()
 
-                else -> {
-                    if (reminderItems.itemCount == 0) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                        ) {
-                            Text(
-                                text = stringResource(R.string.no_reminders_info),
-                                style = MaterialTheme.typography.bodyLarge
-                            )
-                            Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
-                            Button(onClick = onCreateReminder) {
-                                Text(text = stringResource(R.string.create))
-                            }
+                var isScrolled by rememberSaveable {
+                    mutableStateOf(false)
+                }
+
+                LaunchedEffect(Unit) {
+                    if (!isScrolled && indexToScrollTo != null)
+                        coroutineScope.launch {
+                            isScrolled = true
+                            listState.animateScrollToItem(indexToScrollTo)
+
+                            val press = PressInteraction.Press(Offset.Zero)
+
+                            interactionSource.emit(press)
+                            delay(1000L)
+                            interactionSource.emit(PressInteraction.Release(press))
                         }
-                    } else {
-                        RemindersPagedList(
-                            reminders = reminderItems,
-                            onDeleteReminder = { id ->
-                                coroutineScope.launch { viewModel.deleteReminder(id) }
-                                Toast.makeText(
-                                    context,
-                                    context.getString(R.string.reminder_deleted),
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            },
-                            onCancelReminder = { reminder ->
-                                coroutineScope.launch {
-                                    viewModel.onCancelReminder(reminder)
+                }
+
+
+                when (reminderItems.loadState.refresh) {
+                    is LoadState.Error -> Text(
+                        text = stringResource(R.string.error_msg_something_went_wrong),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+
+                    LoadState.Loading -> CircularProgressIndicator()
+
+                    else -> {
+                        if (reminderItems.itemCount == 0) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.no_reminders_info),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Spacer(modifier = Modifier.height(dimensionResource(R.dimen.padding_medium)))
+                                Button(onClick = onCreateReminder) {
+                                    Text(text = stringResource(R.string.create))
+                                }
+                            }
+                        } else {
+                            RemindersPagedList(
+                                reminders = reminderItems,
+                                onDeleteReminder = { id ->
+                                    coroutineScope.launch { viewModel.deleteReminder(id) }
                                     Toast.makeText(
                                         context,
-                                        context.getString(R.string.reminder_cancelled),
+                                        context.getString(R.string.reminder_deleted),
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                }
-                            },
-                            onActivateReminder = { reminder ->
-                                coroutineScope.launch {
-                                    val scheduleResult: ScheduleResult =
-                                        viewModel.onActivateReminder(reminder)
-
-                                    val toastText = when (scheduleResult) {
-                                        ScheduleResult.FailedWithInvalidTime ->
-                                            context.getString(R.string.reminder_impossible_activate_invalid_date)
-
-                                        ScheduleResult.FailedWithNoPermission ->
-                                            context.getString(R.string.permission_alarms_error)
-
-                                        ScheduleResult.Success ->
-                                            context.getString(R.string.reminder_activated)
+                                },
+                                onCancelReminder = { reminder ->
+                                    coroutineScope.launch {
+                                        viewModel.onCancelReminder(reminder)
+                                        Toast.makeText(
+                                            context,
+                                            context.getString(R.string.reminder_cancelled),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                     }
+                                },
+                                onActivateReminder = { reminder ->
+                                    coroutineScope.launch {
+                                        val scheduleResult: ScheduleResult =
+                                            viewModel.activateReminder(reminder)
 
-                                    Toast.makeText(
-                                        context,
-                                        toastText,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            },
-                            onEditReminder = {
-                                viewModel.selectReminderToEdit(it.id)
-                            },
-                            modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
-                        )
+                                        val toastText = when (scheduleResult) {
+                                            ScheduleResult.FailedWithInvalidTime ->
+                                                context.getString(R.string.reminder_impossible_activate_invalid_date)
+
+                                            ScheduleResult.FailedWithNoPermission ->
+                                                context.getString(R.string.permission_alarms_error)
+
+                                            ScheduleResult.Success ->
+                                                context.getString(R.string.reminder_activated)
+                                        }
+
+                                        Toast.makeText(
+                                            context,
+                                            toastText,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                },
+                                onEditReminder = {
+                                    viewModel.selectReminderToEdit(it.id)
+                                },
+                                listState = listState,
+                                modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),
+                                rippleReminderModifier = rippleModifier,
+                            )
+                        }
                     }
                 }
-            }
 
-            if (reminderItems.loadState.refresh is LoadState.NotLoading && reminderItems.itemCount > 0)
-                FloatingActionButton(
-                    onClick = onCreateReminder,
-                    content = {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_plus),
-                            contentDescription = stringResource(R.string.add_reminder)
-                        )
-                    },
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(dimensionResource(R.dimen.padding_x_x_large))
-                )
+                if (reminderItems.loadState.refresh is LoadState.NotLoading && reminderItems.itemCount > 0)
+                    FloatingActionButton(
+                        onClick = onCreateReminder,
+                        content = {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_plus),
+                                contentDescription = stringResource(R.string.add_reminder)
+                            )
+                        },
+                        modifier = Modifier
+                            .align(Alignment.BottomEnd)
+                            .padding(dimensionResource(R.dimen.padding_x_x_large))
+                    )
+            }
         } else {
             PermissionsBlock(
                 modifier = Modifier.padding(horizontal = dimensionResource(R.dimen.padding_medium)),

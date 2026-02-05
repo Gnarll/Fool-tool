@@ -30,7 +30,8 @@ fun CustomNavigationBar(
     currentNavRoute: Route.BottomNavigationRoute,
     navigateTo: (Route.BottomNavigationRoute) -> Unit
 ) {
-    val selectedItemIndex = navigationItems.indexOfFirst { currentNavRoute == it.route }
+    val selectedItemIndex =
+        navigationItems.indexOfFirst { currentNavRoute::class == it.route::class }
 
     val cs = MaterialTheme.colorScheme
     val indicatorColor = cs.secondaryContainer

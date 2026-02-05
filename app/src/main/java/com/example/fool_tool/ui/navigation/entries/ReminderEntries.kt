@@ -11,10 +11,11 @@ import com.example.fool_tool.ui.screens.reminder.ReminderScreen
 
 
 fun EntryProviderScope<NavKey>.reminderEntries(backstack: BackStack) {
-    entry(key = Route.BottomNavigationRoute.ReminderRootRoute) {
+    entry<Route.BottomNavigationRoute.ReminderRootRoute> { key ->
         ReminderScreen(
             onCreateReminder = { backstack.add(Route.CreateReminderRoute) },
-            onEditReminder = { id -> backstack.add(Route.EditReminderRoute(id = id)) }
+            onEditReminder = { id -> backstack.add(Route.EditReminderRoute(id = id)) },
+            reminderIdFromNotification = key.reminderIdFromNotification
         )
     }
     entry<Route.EditReminderRoute> { key ->

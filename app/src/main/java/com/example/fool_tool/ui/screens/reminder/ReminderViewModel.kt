@@ -13,28 +13,53 @@ import com.example.fool_tool.data.notifications.NotificationsService
 import com.example.fool_tool.data.repositories.ReminderRepository
 import com.example.fool_tool.data.use_cases.RemindersProcessingUseCase
 import com.example.fool_tool.ui.model.Reminder
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-@HiltViewModel
-class ReminderViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = ReminderViewModel.Factory::class)
+class ReminderViewModel @AssistedInject constructor(
     private val reminderRepository: ReminderRepository,
     private val alarmScheduler: AlarmScheduler,
     private val remindersProcessingUseCase: RemindersProcessingUseCase,
     private val notificationsService: NotificationsService,
-    private val savedStateHandle: SavedStateHandle
+    private val savedStateHandle: SavedStateHandle,
+    @Assisted private val reminderIdFromNotification: Long?
 ) :
     ViewModel() {
 
 
-    private val _reminders: MutableStateFlow<Flow<PagingData<Reminder>>> = MutableStateFlow(
-        reminderRepository.getPagedReminders().cachedIn(viewModelScope)
+    private val _reminders: MutableStateFlow<RemindersUiState> = MutableStateFlow(
+        RemindersUiState(
+            pagingRemindersFlow = reminderRepository.getPagedReminders().cachedIn(viewModelScope),
+            isPreloading = true,
+            indexToScrollTo = null,
+        )
     )
-    val reminders: StateFlow<Flow<PagingData<Reminder>>> = _reminders.asStateFlow()
+    val reminders: StateFlow<RemindersUiState> = _reminders.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            var reminderOffset: Int? = null
+
+            reminderIdFromNotification?.let {
+                reminderOffset = reminderRepository.getReminderOffset(reminderIdFromNotification)
+            }
+
+            _reminders.update { reminders ->
+                reminders.copy(
+                    isPreloading = false,
+                    indexToScrollTo = reminderOffset?.let { it - 1 })
+            }
+        }
+    }
 
     private val _permissionsState: MutableStateFlow<PermissionsUiState> = MutableStateFlow(
         PermissionsUiState(
@@ -69,7 +94,7 @@ class ReminderViewModel @Inject constructor(
         remindersProcessingUseCase.cancelReminder(reminder)
     }
 
-    suspend fun onActivateReminder(reminder: Reminder): ScheduleResult =
+    suspend fun activateReminder(reminder: Reminder): ScheduleResult =
         remindersProcessingUseCase.activateReminder(reminder)
 
 
@@ -112,8 +137,18 @@ class ReminderViewModel @Inject constructor(
         const val REMINDER_ID_TO_EDIT_KEY = "SAVED_STATE_REMINDER_TO_EDIT_KEY"
     }
 
+    @AssistedFactory
+    interface Factory {
+        fun create(reminderIdFromNotification: Long?): ReminderViewModel
+    }
+
 }
 
+data class RemindersUiState(
+    val isPreloading: Boolean,
+    val indexToScrollTo: Int?,
+    val pagingRemindersFlow: Flow<PagingData<Reminder>>
+)
 
 data class PermissionsUiState(
     val notification: Boolean,

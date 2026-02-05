@@ -6,9 +6,13 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation3.runtime.rememberNavBackStack
 import com.example.fool_tool.data.local.DataStoreManager
 import com.example.fool_tool.data.local.UserThemePreferences
+import com.example.fool_tool.di.qualifiers.ExtraReminderId
+import com.example.fool_tool.ui.navigation.BackStack
 import com.example.fool_tool.ui.navigation.RootNavigator
+import com.example.fool_tool.ui.navigation.Route
 import com.example.fool_tool.ui.theme.FooltoolTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -19,8 +23,15 @@ class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var dataStoreManager: DataStoreManager
 
+    @Inject
+    @ExtraReminderId
+    lateinit var extraReminderId: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
         enableEdgeToEdge()
         setContent {
             val userThemePreferences =
@@ -31,8 +42,31 @@ class MainActivity : AppCompatActivity() {
                 )
             val darkTheme = userThemePreferences.value.isDarkTheme ?: isSystemInDarkTheme()
 
+
+            val initialRoute = getInitialBackStackElements()
+            val backStack: BackStack =
+                rememberNavBackStack(*initialRoute)
+
             FooltoolTheme(darkTheme = darkTheme) {
-                RootNavigator()
+                RootNavigator(backStack = backStack)
+            }
+        }
+    }
+
+    private fun getInitialBackStackElements(): Array<Route> {
+        val defaultValue = -1L
+        val reminderIdFromNotification = intent.getLongExtra(extraReminderId, defaultValue)
+
+        return when {
+            reminderIdFromNotification == defaultValue -> {
+                arrayOf(Route.BottomNavigationRoute.FlashcardRootRoute)
+            }
+
+            else -> {
+                arrayOf(
+                    Route.BottomNavigationRoute.FlashcardRootRoute,
+                    Route.BottomNavigationRoute.ReminderRootRoute(reminderIdFromNotification)
+                )
             }
         }
     }
