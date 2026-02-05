@@ -4,25 +4,31 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
-import com.example.fool_tool.services.AlarmReceiver
+import android.provider.Settings
+import com.example.fool_tool.broadcastReceivers.AlarmReceiver
+import com.example.fool_tool.di.qualifiers.ExtraReminder
 import com.example.fool_tool.ui.model.Reminder
 import com.example.fool_tool.utils.toMillisWithZone
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 
 class AndroidAlarmScheduler @Inject constructor(
     @ApplicationContext private val context: Context,
+    @ExtraReminder private val extraReminder: String
 ) :
     AlarmScheduler {
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
     override fun schedule(reminder: Reminder): ScheduleResult {
         if (checkIsAlarmPermissionGranted()) {
+            val serializedReminder = Json.encodeToString(Reminder.serializer(), reminder)
+
             val intent = Intent(context, AlarmReceiver::class.java).apply {
-                putExtra(EXTRA_TITLE, reminder.title)
-                putExtra(EXTRA_DESCRIPTION, reminder.description)
+                putExtra(extraReminder, serializedReminder)
             }
 
             val alarmTime = reminder.date.toMillisWithZone()
@@ -49,26 +55,29 @@ class AndroidAlarmScheduler @Inject constructor(
         }
     }
 
-    override fun cancel(reminder: Reminder) {
+    override fun cancel(reminderId: Long) {
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
-                reminder.id.hashCode(),
+                reminderId.hashCode(),
                 Intent(context, AlarmReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
     }
 
-    override fun checkIsAlarmPermissionGranted(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    override fun checkIsAlarmPermissionGranted(): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             alarmManager.canScheduleExactAlarms()
         } else true
+
+    override fun openAlarmPermissionSettings() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val intent = Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+                addFlags(FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        }
     }
 
-    companion object {
-        const val EXTRA_TITLE = "EXTRA_TITLE"
-        const val EXTRA_DESCRIPTION = "EXTRA_DESCRIPTION"
-
-    }
 }

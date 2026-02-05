@@ -23,9 +23,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.example.fool_tool.R
-import java.text.SimpleDateFormat
 import java.time.LocalTime
-import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -93,6 +91,5 @@ fun DialTimePicker(
 }
 
 private fun convertToTimeString(hours: Int, minutes: Int): String {
-    val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return formatter.format(Date(((hours * 3600 + minutes * 60).toLong() * 1000)))
+    return String.format(Locale.getDefault(), "%02d:%02d", hours, minutes)
 }

@@ -16,6 +16,8 @@ import javax.inject.Inject
 interface ReminderRepository {
     fun getPagedReminders(): Flow<PagingData<Reminder>>
 
+    suspend fun getReminderOffset(id: Long): Int?
+    suspend fun getReminder(id: Long): Reminder
     suspend fun getPendingReminders(): List<Reminder>
     suspend fun createReminder(reminder: Reminder)
     suspend fun updateReminder(reminder: Reminder)
@@ -43,6 +45,14 @@ class ReminderRepositoryImpl @Inject constructor(
                 }
             }
     }
+
+    override suspend fun getReminderOffset(id: Long): Int? =
+        reminderDao.getReminderOffset(id)
+
+
+    override suspend fun getReminder(id: Long): Reminder =
+        reminderDao.getReminderById(id).toReminder()
+
 
     override suspend fun getPendingReminders(): List<Reminder> {
         val reminders = reminderDao.getRemindersByStatus(ReminderStatus.PENDING)

@@ -9,6 +9,7 @@
     <string name="turn_over">Turn over</string>
     <string name="delete_word">Delete word</string>
     <string name="ensure_deletion_question">Are you sure, you want to delete?</string>
+    <string name="ensure_edit_reminder_question">Do you want to edit reminder?</string>
     <string name="positive_answer">Yes</string>
     <string name="negative_answer">No</string>
     <string name="empty_input_error">This field must not be empty</string>
@@ -36,11 +37,25 @@
     <string name="input_max_symbols_error">Max symbols count is %1$d</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
-    <string name="create_reminder">Create reminder</string>
+    <string name="confirm_btn_text">Confirm</string>
     <string name="create_reminder_success">Reminder successfully created</string>
+    <string name="update_reminder_success">Reminder successfully updated</string>
     <string name="succeed">Succeed</string>
     <string name="denied">Denied</string>
     <string name="pending">Pending</string>
-    <string name="permission_alarms_warning">To use this feature, you have to grant permission for scheduling alarms for this app</string>
-    <string name="to_permission_settings">Go to permission settings</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="permissions_warning_title">To use this feature, you have to grant some permissions:</string>
+    <string name="permission_alarms_warning_description">Permission for scheduling alarms</string>
+    <string name="permission_notification_warning_description">Permission for notifications</string>
+    <string name="permission_notification_channel_warning_description">Permission for notification channel</string>
+    <string name="to_settings">To settings</string>
+    <string name="ungranted_permissions_error">You have ungranted permissions</string>
+    <string name="permission_alarms_error">No alarm permission granted</string>
+    <string name="reminder_activated">Reminder has been activated</string>
+    <string name="reminder_cancelled">Reminder has been cancelled</string>
+    <string name="reminder_deleted">Reminder has been deleted</string>
+    <string name="reminder_impossible_activate_invalid_date">Can not activate: invalid date</string>
+    <string name="edit_reminder">Edit reminder</string>
+    <string name="reminders_channel_name">Reminders</string>
+    <string name="reminders_channel_description">Notifications for reminders</string>
 </resources>

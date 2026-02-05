@@ -10,6 +10,7 @@
     <string name="turn_over">Перевернуть</string>
     <string name="delete_word">Удалить слово</string>
     <string name="ensure_deletion_question">Вы уверены, что хотите удалить?</string>
+    <string name="ensure_edit_reminder_question">Вы хотите отредактировать напоминалку?</string>
     <string name="positive_answer">Да</string>
     <string name="negative_answer">Нет</string>
     <string name="empty_input_error">Поле не должно быть пустым</string>
@@ -37,11 +38,25 @@
     <string name="input_max_symbols_error">Максимальное количество символов: %1$d</string>
     <string name="title">Заголовок</string>
     <string name="description">Описание</string>
-    <string name="create_reminder">Создать напоминалку</string>
+    <string name="confirm_btn_text">Подтвердить</string>
     <string name="create_reminder_success">Напоминалка успешно создана</string>
+    <string name="update_reminder_success">Напоминалка успешно изменена</string>
     <string name="succeed">Успешна</string>
-    <string name="denied">Отменена</string>
+    <string name="denied">Не сработала</string>
     <string name="pending">Ожидает</string>
-    <string name="permission_alarms_warning">Чтобы пользоваться этим функционалом, вам нужно дать android разрешение на установку будильников в этом приложении</string>
-    <string name="to_permission_settings">В настройки разрешений</string>
+    <string name="cancelled">Отменена</string>
+    <string name="permission_alarms_error">Нет разрешения на использование будильников</string>
+    <string name="to_settings">В настройки</string>
+    <string name="ungranted_permissions_error">Не предоставлены необходимые разрешения</string>
+    <string name="reminder_activated">Напоминалка активирована</string>
+    <string name="reminder_cancelled">Напоминалка отменена</string>
+    <string name="reminder_deleted">Напоминалка удалена</string>
+    <string name="reminder_impossible_activate_invalid_date">Невозможно активировать: дата не валидна</string>
+    <string name="edit_reminder">Редактирование напоминалки</string>
+    <string name="reminders_channel_name">Напоминалки</string>
+    <string name="reminders_channel_description">Уведомления для напоминалок</string>
+    <string name="permissions_warning_title">Для пользования этим функционалом необходимо предоставить разрешения:</string>
+    <string name="permission_alarms_warning_description">Разрешение на установку будильников</string>
+    <string name="permission_notification_warning_description">Разрешение для уведомлений</string>
+    <string name="permission_notification_channel_warning_description">Разрешение для уведомлений канала</string>
 </resources>

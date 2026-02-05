@@ -6,16 +6,22 @@ import com.example.fool_tool.ui.navigation.BackStack
 import com.example.fool_tool.ui.navigation.Route
 import com.example.fool_tool.ui.navigation.pop
 import com.example.fool_tool.ui.screens.reminder.CreateReminderScreen
+import com.example.fool_tool.ui.screens.reminder.EditReminderScreen
 import com.example.fool_tool.ui.screens.reminder.ReminderScreen
 
 
 fun EntryProviderScope<NavKey>.reminderEntries(backstack: BackStack) {
-    entry(key = Route.BottomNavigationRoute.ReminderRootRoute) {
+    entry<Route.BottomNavigationRoute.ReminderRootRoute> { key ->
         ReminderScreen(
-            onCreateReminder = { backstack.add(Route.CreateReminderRoute) }
+            onCreateReminder = { backstack.add(Route.CreateReminderRoute) },
+            onEditReminder = { id -> backstack.add(Route.EditReminderRoute(id = id)) },
+            reminderIdFromNotification = key.reminderIdFromNotification
         )
     }
+    entry<Route.EditReminderRoute> { key ->
+        EditReminderScreen(reminderId = key.id, onNavigateBack = { backstack.pop() })
+    }
     entry(key = Route.CreateReminderRoute) {
-        CreateReminderScreen(onReminderCreated = { backstack.pop() })
+        CreateReminderScreen(onNavigateBack = { backstack.pop() })
     }
 }

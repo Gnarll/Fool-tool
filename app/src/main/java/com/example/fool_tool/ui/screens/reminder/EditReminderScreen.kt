@@ -3,9 +3,11 @@ package com.example.fool_tool.ui.screens.reminder
 import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,17 +22,17 @@ import com.example.fool_tool.ui.components.reminder.ReminderForm
 import kotlinx.coroutines.launch
 
 @Composable
-fun CreateReminderScreen(
+fun EditReminderScreen(
+    reminderId: Long,
     onNavigateBack: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: CreateReminderViewModel = hiltViewModel(),
+    viewModel: EditReminderViewModel = hiltViewModel<EditReminderViewModel, EditReminderViewModel.Factory> { factory ->
+        factory.createViewModel(reminderId = reminderId)
+    },
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
-
-    val uiState = viewModel.reminderFormUiState.collectAsState()
-
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val coroutineScope = rememberCoroutineScope()
 
     DisposableEffect(lifecycle) {
         val observer = LifecycleEventObserver { _, event ->
@@ -53,29 +55,35 @@ fun CreateReminderScreen(
         }
     }
 
-    Box(
-        modifier = modifier.padding(horizontal = dimensionResource(R.dimen.padding_x_x_large)),
-        contentAlignment = Alignment.Center
-    ) {
-        ReminderForm(
-            uiStateProvider = { uiState.value },
-            onUiDateChanged = viewModel::onUiDateChanged,
-            onUiTitleChanged = viewModel::onUiTitleChanged,
-            onUiDescriptionChanged = viewModel::onUiDescriptionChanged,
-            onConfirm = {
-                coroutineScope.launch {
-                    val isSucceed = viewModel.attemptToCreateReminder()
-                    if (isSucceed) {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.create_reminder_success),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        onNavigateBack()
-                    }
-                }
-            },
-        )
+    val uiState = viewModel.uiState.collectAsState()
+    val isPreloaded by viewModel.isPreloaded.collectAsState()
 
+    if (isPreloaded) {
+        Box(
+            modifier = modifier.padding(horizontal = dimensionResource(R.dimen.padding_x_x_large)),
+            contentAlignment = Alignment.Center
+        ) {
+            ReminderForm(
+                uiStateProvider = { uiState.value },
+                onUiDateChanged = viewModel::onUiDateChanged,
+                onUiTitleChanged = viewModel::onUiTitleChanged,
+                onUiDescriptionChanged = viewModel::onUiDescriptionChanged,
+                onConfirm = {
+                    coroutineScope.launch {
+                        val isSucceed = viewModel.attemptToUpdateReminder()
+                        if (isSucceed) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.update_reminder_success),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            onNavigateBack()
+                        }
+                    }
+                },
+            )
+        }
+    } else {
+        CircularProgressIndicator()
     }
 }

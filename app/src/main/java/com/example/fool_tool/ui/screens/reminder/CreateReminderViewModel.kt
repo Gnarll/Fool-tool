@@ -1,7 +1,11 @@
 package com.example.fool_tool.ui.screens.reminder
 
 import androidx.lifecycle.ViewModel
+import com.example.fool_tool.data.alarm.AlarmScheduler
+import com.example.fool_tool.data.notifications.NotificationsService
 import com.example.fool_tool.data.repositories.ReminderRepository
+import com.example.fool_tool.di.ReminderValidationConstants
+import com.example.fool_tool.ui.components.reminder.ReminderFormUiState
 import com.example.fool_tool.ui.model.ReminderStatus
 import com.example.fool_tool.utils.DateTimeValidationError
 import com.example.fool_tool.utils.EmptyInputError
@@ -18,31 +22,25 @@ import java.time.ZoneId
 import javax.inject.Inject
 
 
-data class CreateReminderUiState(
-    val date: LocalDateTime,
-    val title: String,
-    val description: String,
-    val dateTimeError: ValidationError? = null,
-    val titleError: ValidationError? = null,
-    val descriptionError: ValidationError? = null
-)
-
 @HiltViewModel
 class CreateReminderViewModel @Inject constructor(
     private val reminderRepository: ReminderRepository,
+    private val alarmScheduler: AlarmScheduler,
+    private val notificationsService: NotificationsService,
+    private val validationConstants: ReminderValidationConstants,
 ) : ViewModel() {
 
-    private var _createReminderUiState = MutableStateFlow(
-        CreateReminderUiState(
+    private var _reminderFormUiState = MutableStateFlow(
+        ReminderFormUiState(
             date = LocalDateTime.now(), title = "", description = "",
         )
     )
-    val createReminderUiState: StateFlow<CreateReminderUiState> =
-        _createReminderUiState.asStateFlow()
+    val reminderFormUiState: StateFlow<ReminderFormUiState> =
+        _reminderFormUiState.asStateFlow()
 
 
     fun onUiDateChanged(dateTime: LocalDateTime) {
-        _createReminderUiState.update {
+        _reminderFormUiState.update {
             it.copy(
                 date = dateTime,
             )
@@ -51,7 +49,7 @@ class CreateReminderViewModel @Inject constructor(
     }
 
     fun onUiTitleChanged(title: String) {
-        _createReminderUiState.update {
+        _reminderFormUiState.update {
             it.copy(
                 title = title,
             )
@@ -60,7 +58,7 @@ class CreateReminderViewModel @Inject constructor(
     }
 
     fun onUiDescriptionChanged(description: String) {
-        _createReminderUiState.update {
+        _reminderFormUiState.update {
             it.copy(
                 description = description,
             )
@@ -69,9 +67,9 @@ class CreateReminderViewModel @Inject constructor(
     }
 
     suspend fun attemptToCreateReminder(): Boolean = when {
-        validateDateTime(dateTime = _createReminderUiState.value.date) != null -> false
-        validateTitle(title = _createReminderUiState.value.title) != null -> false
-        validateDescription(description = _createReminderUiState.value.description) != null -> false
+        validateDateTime(dateTime = _reminderFormUiState.value.date) != null -> false
+        validateTitle(title = _reminderFormUiState.value.title) != null -> false
+        validateDescription(description = _reminderFormUiState.value.description) != null -> false
         else -> {
             createReminder()
             true
@@ -79,53 +77,58 @@ class CreateReminderViewModel @Inject constructor(
 
     }
 
+    fun checkPermissions() = alarmScheduler.checkIsAlarmPermissionGranted() and
+            notificationsService.checkIsReminderChannelPermissionGranted() and
+            notificationsService.checkIsPrimaryPermissionGranted()
+
     private fun validateDateTime(dateTime: LocalDateTime): ValidationError? {
         val validationError = when {
             LocalDateTime.now(ZoneId.systemDefault()) > dateTime -> DateTimeValidationError
             else -> null
         }
-        _createReminderUiState.update { it.copy(dateTimeError = validationError) }
+        _reminderFormUiState.update { it.copy(dateTimeError = validationError) }
         return validationError
     }
 
     private fun validateTitle(title: String): ValidationError? {
         val validationError = when {
             title.isEmpty() -> EmptyInputError
-            title.length > TITLE_MAX_SYMBOLS -> InputMaxSymbolsError(TITLE_MAX_SYMBOLS)
+            title.length > validationConstants.titleMaxSymbols -> InputMaxSymbolsError(
+                validationConstants.titleMaxSymbols
+            )
+
             else -> null
         }
-        _createReminderUiState.update { it.copy(titleError = validationError) }
+        _reminderFormUiState.update { it.copy(titleError = validationError) }
         return validationError
     }
 
     private fun validateDescription(description: String): ValidationError? {
         val validationError = when {
             description.isEmpty() -> EmptyInputError
-            description.length > DESCRIPTION_MAX_SYMBOLS -> InputMaxSymbolsError(
-                DESCRIPTION_MAX_SYMBOLS
+            description.length > validationConstants.descriptionMaxSymbols -> InputMaxSymbolsError(
+                validationConstants.descriptionMaxSymbols
             )
 
             else -> null
         }
-        _createReminderUiState.update { it.copy(descriptionError = validationError) }
+        _reminderFormUiState.update { it.copy(descriptionError = validationError) }
         return validationError
     }
 
     private suspend fun createReminder() {
-        reminderRepository.createReminder(
-            with(createReminderUiState.value) {
-                ReminderCreating.createReminder(
-                    date = date,
-                    title = title,
-                    description = description,
-                    status = ReminderStatus.PENDING
-                )
-            }
-        )
+        val reminder = with(reminderFormUiState.value) {
+            ReminderCreating.createReminder(
+                date = date,
+                title = title,
+                description = description,
+                status = ReminderStatus.PENDING
+            )
+        }
+
+        reminderRepository.createReminder(reminder)
+        alarmScheduler.schedule(reminder)
     }
 
-    private companion object {
-        const val TITLE_MAX_SYMBOLS = 35
-        const val DESCRIPTION_MAX_SYMBOLS = 80
-    }
+
 }

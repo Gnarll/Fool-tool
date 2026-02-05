@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -20,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,6 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.fool_tool.R
+import com.example.fool_tool.data.alarm.ScheduleResult
 import com.example.fool_tool.ui.components.reminder.ReminderItem
 import com.example.fool_tool.ui.model.Reminder
 import com.example.fool_tool.ui.model.ReminderStatus
@@ -58,7 +61,7 @@ fun SwipeToDeleteItem(
     }
     val translationX = remember { Animatable(0f) }
 
-    var isDialogShown by remember { mutableStateOf(false) }
+    var isDialogShown by rememberSaveable { mutableStateOf(false) }
 
     val draggableState =
         rememberDraggableState { delta ->
@@ -91,6 +94,7 @@ fun SwipeToDeleteItem(
                 contentDescription = stringResource(R.string.ensure_deletion_question),
                 tint = MaterialTheme.colorScheme.onErrorContainer,
                 modifier = Modifier
+                    .size(dimensionResource(R.dimen.default_icon_size))
                     .offset(x = dimensionResource(R.dimen.default_icon_size) / 2)
                     .graphicsLayer {
                         this.translationX = translationX.value / 2
@@ -145,7 +149,11 @@ private fun HorizontalGestureDeletingElementPreview() {
                     title = "Title",
                     description = "Description",
                     status = ReminderStatus.PENDING
-                ), modifier = Modifier.alpha(0.5f)
+                ),
+                onCancelReminder = {},
+                onActivateReminder = { ScheduleResult.Success },
+                modifier = Modifier.alpha(0.5f),
+                onEditReminder = {}
             )
         }
 
