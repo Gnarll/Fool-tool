@@ -60,9 +60,7 @@ fun RootNavigator(backStack: BackStack) {
                     navigationItems = navigationItems,
                     currentNavRoute = backStack.currentBottomNavRoute(),
                     navigateTo = { route ->
-                        if (backStack.last() != route) {
-                            backStack.add(route)
-                        }
+                        backStack.navigateToBottomRoute(route)
                     }
 
                 )

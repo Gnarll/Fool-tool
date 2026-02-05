@@ -18,3 +18,9 @@ fun BackStack.shouldShowBottomBar() = all { it is Route.BottomNavigationRoute }
 
 fun BackStack.currentBottomNavRoute(): Route.BottomNavigationRoute =
     last { it is Route.BottomNavigationRoute } as Route.BottomNavigationRoute
+
+fun BackStack.navigateToBottomRoute(route: Route.BottomNavigationRoute) {
+    if (last() != route) {
+        add(route)
+    }
+}
