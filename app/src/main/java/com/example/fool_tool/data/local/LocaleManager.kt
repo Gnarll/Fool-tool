@@ -18,10 +18,23 @@ import javax.inject.Singleton
 
 @Singleton
 class LocaleManager @Inject constructor(@ApplicationContext private val context: Context) {
-    private var _language = MutableStateFlow(Language.DEFAULT)
+    private var _language = MutableStateFlow(Language.SYSTEM)
     val language = _language.asStateFlow()
 
     init {
+        val currentLanguage = getCurrentAppLocale()
+
+        _language.value = Language.getFromString(currentLanguage)
+    }
+
+    fun setLanguage(language: Language) {
+        AppCompatDelegate.setApplicationLocales(
+            LocaleListCompat.forLanguageTags(language.isoName)
+        )
+        _language.value = language
+    }
+
+    private fun getCurrentAppLocale(): String {
         val appLocales = AppCompatDelegate.getApplicationLocales()
         val firstLocaleTag =
             appLocales.toLanguageTags().split(",").firstOrNull()?.takeIf { it.isNotBlank() }
@@ -38,14 +51,7 @@ class LocaleManager @Inject constructor(@ApplicationContext private val context:
             }
         }
 
-        val currentLanguageCode = firstLocale?.language
-        _language.value = Language.getFromString(currentLanguageCode)
+        return firstLocale?.language ?: Locale.getDefault().language
     }
 
-    fun setLanguage(language: Language) {
-        AppCompatDelegate.setApplicationLocales(
-            LocaleListCompat.forLanguageTags(language.isoName)
-        )
-        _language.value = language
-    }
 }

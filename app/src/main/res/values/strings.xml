@@ -24,6 +24,7 @@
     <string name="system_theme">System theme</string>
     <string name="english_lang">English</string>
     <string name="russian_lang">Русский</string>
+    <string name="system_lang">Selected by system</string>
     <string name="lang">Language</string>
     <string name="no_reminders_info">You have no reminders yet</string>
     <string name="create">Create</string>

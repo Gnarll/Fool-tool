@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
 
-
         enableEdgeToEdge()
         setContent {
             val userThemePreferences =

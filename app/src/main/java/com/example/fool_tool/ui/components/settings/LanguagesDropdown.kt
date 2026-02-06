@@ -73,6 +73,7 @@ fun LanguagesDropdown(
                             isExpanded = false
                         },
                         contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding,
+                        enabled = item.selectable
                     )
                     if (index != items.size - 1) {
                         HorizontalDivider()

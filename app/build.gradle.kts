@@ -38,6 +38,11 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     buildFeatures {
         compose = true
     }
