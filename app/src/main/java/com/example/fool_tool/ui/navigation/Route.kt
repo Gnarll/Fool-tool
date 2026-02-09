@@ -30,7 +30,4 @@ sealed interface Route : NavKey {
 
     @Serializable
     data class EditReminderRoute(val id: Long) : Route
-
-    @Serializable
-    data class EditSmartnoteRoute(val id: Long) : Route
 }

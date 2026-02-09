@@ -6,8 +6,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.example.fool_tool.data.local.entities.ReminderEntity
-import com.example.fool_tool.ui.model.ReminderStatus
+import com.example.fool_tool.data.model.ReminderEntity
+import com.example.fool_tool.domain.model.ReminderStatus
 
 @Dao
 interface ReminderDao {

@@ -8,8 +8,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.rememberNavBackStack
 import com.example.fool_tool.data.local.DataStoreManager
-import com.example.fool_tool.data.local.UserThemePreferences
 import com.example.fool_tool.di.qualifiers.ExtraReminderId
+import com.example.fool_tool.domain.model.UserThemePreferences
 import com.example.fool_tool.ui.navigation.BackStack
 import com.example.fool_tool.ui.navigation.RootNavigator
 import com.example.fool_tool.ui.navigation.Route

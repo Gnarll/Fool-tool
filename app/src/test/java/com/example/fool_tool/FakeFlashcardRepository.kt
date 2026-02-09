@@ -1,7 +1,7 @@
 package com.example.fool_tool
 
-import com.example.fool_tool.data.repositories.FlashcardRepository
-import com.example.fool_tool.ui.model.Flashcard
+import com.example.fool_tool.domain.model.Flashcard
+import com.example.fool_tool.domain.repository.FlashcardRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

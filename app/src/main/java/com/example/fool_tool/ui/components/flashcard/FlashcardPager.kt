@@ -20,9 +20,9 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.util.lerp
 import com.example.fool_tool.R
-import com.example.fool_tool.ui.model.Flashcard
-import com.example.fool_tool.ui.screens.flashcard.FlashcardDeletionState
-import com.example.fool_tool.utils.animatePagerItemDeletion
+import com.example.fool_tool.core_android.extensions.animatePagerItemDeletion
+import com.example.fool_tool.domain.model.Flashcard
+import com.example.fool_tool.ui.presentation.ui_state.flashcard.FlashcardDeletionUiState
 import kotlin.math.absoluteValue
 
 private const val rotationAngle = 30f
@@ -32,7 +32,7 @@ private const val rotationAngle = 30f
 fun FlashcardPager(
     flashcards: List<Flashcard>,
     onRequestToDeleteFlashcard: (id: Long, index: Int) -> Unit,
-    flashcardDeletionState: FlashcardDeletionState,
+    flashcardDeletionUiState: FlashcardDeletionUiState,
     onDeleteFlashcard: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -73,7 +73,7 @@ fun FlashcardPager(
                             flashcardHeight = coords.size.height.toFloat()
                         }
                         .animatePagerItemDeletion(
-                            flashcardDeletionState = flashcardDeletionState,
+                            flashcardDeletionUiState = flashcardDeletionUiState,
                             index = index,
                             distanceToBottom = distanceToBottom,
                             list = flashcards,
@@ -113,7 +113,7 @@ fun FlashcardPagerPreview(modifier: Modifier = Modifier) {
         flashcards = previewFlashcards,
         onDeleteFlashcard = {},
         onRequestToDeleteFlashcard = { _, _ -> },
-        flashcardDeletionState = FlashcardDeletionState.NoSelection,
+        flashcardDeletionUiState = FlashcardDeletionUiState.NoSelection,
         modifier = modifier
     )
 }

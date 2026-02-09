@@ -10,7 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import com.example.fool_tool.R
-import com.example.fool_tool.utils.ValidationError
+import com.example.fool_tool.core_android.util.validation.ValidationError
 import java.time.LocalDateTime
 
 @Composable

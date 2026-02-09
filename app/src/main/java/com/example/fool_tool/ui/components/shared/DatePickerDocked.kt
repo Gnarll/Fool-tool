@@ -25,10 +25,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.fool_tool.R
-import com.example.fool_tool.utils.toFormattedString
-import com.example.fool_tool.utils.toLocalDateWithZone
-import com.example.fool_tool.utils.toMillisWithZone
-import com.example.fool_tool.utils.toUtcLocalDate
+import com.example.fool_tool.core.extensions.toFormattedString
+import com.example.fool_tool.core.extensions.toLocalDateWithZone
+import com.example.fool_tool.core.extensions.toMillisWithZone
+import com.example.fool_tool.core.extensions.toUtcLocalDate
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)

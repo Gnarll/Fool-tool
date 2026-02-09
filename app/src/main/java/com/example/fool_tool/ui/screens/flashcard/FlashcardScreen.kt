@@ -18,10 +18,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.fool_tool.R
-import com.example.fool_tool.ui.UiState
+import com.example.fool_tool.domain.model.Flashcard
 import com.example.fool_tool.ui.components.flashcard.FlashcardPager
 import com.example.fool_tool.ui.components.shared.DeleteItemAlertDialog
-import com.example.fool_tool.ui.model.Flashcard
+import com.example.fool_tool.ui.presentation.ui_state.UiState
+import com.example.fool_tool.ui.presentation.ui_state.flashcard.FlashcardDeletionUiState
+import com.example.fool_tool.ui.presentation.viewmodel.flashcard.FlashcardViewModel
 
 @Composable
 fun FlashcardScreen(
@@ -30,7 +32,7 @@ fun FlashcardScreen(
     viewModel: FlashcardViewModel = hiltViewModel(),
 ) {
     val flashcardState by viewModel.flashcardStateFlow.collectAsStateWithLifecycle()
-    val flashcardDeletionState = viewModel.flashcardDeletionState.collectAsState().value
+    val flashcardDeletionState = viewModel.flashcardDeletionUiState.collectAsState().value
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         when (flashcardState) {
@@ -51,29 +53,29 @@ fun FlashcardScreen(
                     flashcards = (flashcardState as UiState.Success<List<Flashcard>>).value,
                     onRequestToDeleteFlashcard = { id, index ->
                         viewModel.setFlashcardDeletionState(
-                            FlashcardDeletionState.Pending(id = id, index = index)
+                            FlashcardDeletionUiState.Pending(id = id, index = index)
                         )
                     },
                     onDeleteFlashcard = { id ->
                         viewModel.setFlashcardDeletionState(
-                            FlashcardDeletionState.NoSelection
+                            FlashcardDeletionUiState.NoSelection
                         )
                         viewModel.deleteFlashcardById(id)
                     },
-                    flashcardDeletionState = flashcardDeletionState,
+                    flashcardDeletionUiState = flashcardDeletionState,
                     modifier = Modifier.align(
                         Alignment.Center
                     )
                 )
 
-                if (flashcardDeletionState is FlashcardDeletionState.Pending) {
+                if (flashcardDeletionState is FlashcardDeletionUiState.Pending) {
                     DeleteItemAlertDialog(
                         onDismiss = {
-                            viewModel.setFlashcardDeletionState(FlashcardDeletionState.NoSelection)
+                            viewModel.setFlashcardDeletionState(FlashcardDeletionUiState.NoSelection)
                         },
                         onConfirm = {
                             viewModel.setFlashcardDeletionState(
-                                FlashcardDeletionState.Ready(
+                                FlashcardDeletionUiState.Ready(
                                     id = flashcardDeletionState.id,
                                     index = flashcardDeletionState.index
                                 )

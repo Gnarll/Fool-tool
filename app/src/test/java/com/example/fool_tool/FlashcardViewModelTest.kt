@@ -1,7 +1,7 @@
 package com.example.fool_tool
 
-import com.example.fool_tool.ui.UiState
-import com.example.fool_tool.ui.screens.flashcard.FlashcardViewModel
+import com.example.fool_tool.ui.presentation.ui_state.UiState
+import com.example.fool_tool.ui.presentation.viewmodel.flashcard.FlashcardViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -82,7 +82,7 @@ class FlashcardViewModelTest {
         }
 
     }
-    
+
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun flashcardViewModel_deleteItemById_ItemDeleted() = runTest(UnconfinedTestDispatcher()) {

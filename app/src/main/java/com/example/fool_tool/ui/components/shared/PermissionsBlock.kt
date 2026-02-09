@@ -11,7 +11,7 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.example.fool_tool.R
-import com.example.fool_tool.ui.screens.reminder.PermissionsUiState
+import com.example.fool_tool.ui.presentation.ui_state.PermissionsUiState
 
 @Composable
 fun PermissionsBlock(

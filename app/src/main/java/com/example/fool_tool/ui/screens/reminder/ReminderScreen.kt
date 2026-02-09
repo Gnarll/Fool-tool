@@ -39,10 +39,11 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.fool_tool.R
-import com.example.fool_tool.data.alarm.ScheduleResult
+import com.example.fool_tool.domain.model.ScheduleResult
 import com.example.fool_tool.ui.components.reminder.RemindersPagedList
 import com.example.fool_tool.ui.components.shared.PermissionsBlock
-import com.example.fool_tool.utils.createListItemRippleModifier
+import com.example.fool_tool.ui.presentation.viewmodel.reminder.ReminderViewModel
+import com.example.fool_tool.ui.util.createListItemRippleModifier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

@@ -7,8 +7,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
 import com.example.fool_tool.data.local.dao.FlashcardDao
 import com.example.fool_tool.data.local.db.AppDatabase
-import com.example.fool_tool.data.local.entities.FlashcardEntity
-import com.example.fool_tool.utils.FlashcardCreating
+import com.example.fool_tool.data.model.FlashcardEntity
+import com.example.fool_tool.test.FlashcardFactory
 import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertTrue
 import kotlinx.coroutines.Dispatchers
@@ -45,9 +45,9 @@ class FlashcardDaoTest {
     @Test
     fun db_writeAndReadFlashcard_flashcardIsValid() = runTest {
         val flashcardOne: FlashcardEntity =
-            FlashcardCreating.createFlashcardEntity(nativeWord = "One")
+            FlashcardFactory.createFlashcardEntity(nativeWord = "One")
         val flashcardTwo: FlashcardEntity =
-            FlashcardCreating.createFlashcardEntity(nativeWord = "Two")
+            FlashcardFactory.createFlashcardEntity(nativeWord = "Two")
 
 
         flashcardDao.insert(flashcardOne)
@@ -71,7 +71,7 @@ class FlashcardDaoTest {
 
     @Test
     fun db_insertAndDeleteFlashcard_flashcardIsDeleted() = runTest {
-        val flashcard = FlashcardCreating.createFlashcardEntity()
+        val flashcard = FlashcardFactory.createFlashcardEntity()
 
         flashcardDao.getAll().test {
             assertEquals(emptyList<FlashcardEntity>(), awaitItem())
@@ -88,7 +88,7 @@ class FlashcardDaoTest {
 
     @Test
     fun db_insertAndGetByIdFlashcard_flashcardIsValid() = runTest {
-        val flashcard = FlashcardCreating.createFlashcardEntity()
+        val flashcard = FlashcardFactory.createFlashcardEntity()
         flashcardDao.insert(flashcard)
 
         val fetchedFlashcard = flashcardDao.getById(flashcard.uid)
@@ -97,7 +97,7 @@ class FlashcardDaoTest {
 
     @Test
     fun db_addAndUpdateFlashcard_flashcardIsUpdated() = runTest {
-        var flashcard = FlashcardCreating.createFlashcardEntity(nativeWord = "one")
+        var flashcard = FlashcardFactory.createFlashcardEntity(nativeWord = "one")
         flashcardDao.insert(flashcard)
 
         flashcard = flashcard.copy(nativeWord = "two")

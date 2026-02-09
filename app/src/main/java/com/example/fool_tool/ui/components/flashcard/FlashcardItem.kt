@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.fool_tool.R
-import com.example.fool_tool.ui.model.Flashcard
+import com.example.fool_tool.domain.model.Flashcard
 
 @Composable
 fun FlashcardItem(
