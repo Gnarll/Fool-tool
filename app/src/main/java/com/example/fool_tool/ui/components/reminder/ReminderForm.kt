@@ -13,9 +13,9 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import com.example.fool_tool.R
+import com.example.fool_tool.core_android.util.validation.ValidationError
 import com.example.fool_tool.ui.components.shared.DateTimePicker
 import com.example.fool_tool.ui.components.shared.ValidatedTextField
-import com.example.fool_tool.utils.ValidationError
 import java.time.LocalDateTime
 
 data class ReminderFormUiState(

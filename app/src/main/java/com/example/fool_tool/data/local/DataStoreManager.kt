@@ -4,13 +4,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import com.example.fool_tool.domain.model.UserThemePreferences
 import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-data class UserThemePreferences(val isDarkTheme: Boolean?)
-
+@Singleton
 class DataStoreManager @Inject constructor(
     private val dataStore: DataStore<Preferences>,
 ) {

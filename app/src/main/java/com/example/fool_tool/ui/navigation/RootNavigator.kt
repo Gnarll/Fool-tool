@@ -20,10 +20,9 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.example.fool_tool.R
+import com.example.fool_tool.ui.components.navigation_bar.CustomNavigationBar
 import com.example.fool_tool.ui.navigation.entries.flashcardEntries
 import com.example.fool_tool.ui.navigation.entries.reminderEntries
-import com.example.fool_tool.ui.navigation.navigation_bar.CustomNavigationBar
-import com.example.fool_tool.ui.navigation.navigation_bar.NavigationItem
 import com.example.fool_tool.ui.screens.settings.SettingsScreen
 
 @OptIn(ExperimentalMaterial3Api::class)

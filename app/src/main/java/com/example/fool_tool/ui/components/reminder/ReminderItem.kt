@@ -27,16 +27,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.fool_tool.R
+import com.example.fool_tool.core.extensions.toFormattedDetailedString
+import com.example.fool_tool.domain.model.Reminder
+import com.example.fool_tool.domain.model.ReminderStatus
 import com.example.fool_tool.ui.components.shared.AdaptiveSpaceRow
-import com.example.fool_tool.ui.model.Reminder
-import com.example.fool_tool.ui.model.ReminderStatus
 import com.example.fool_tool.ui.theme.FooltoolTheme
 import com.example.fool_tool.ui.theme.GREEN_SUCCEED
 import com.example.fool_tool.ui.theme.ORANGE_CANCELLED
 import com.example.fool_tool.ui.theme.RED_DENIED
 import com.example.fool_tool.ui.theme.YELLOW_PENDING
 import com.example.fool_tool.ui.theme.onPrimaryDarkHighContrast
-import com.example.fool_tool.utils.toFormattedDetailedString
 import java.time.LocalDateTime
 
 @Composable

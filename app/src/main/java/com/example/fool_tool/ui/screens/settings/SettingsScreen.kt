@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.components.settings.LanguagesDropdown
 import com.example.fool_tool.ui.components.settings.ThemeRadioGroup
+import com.example.fool_tool.ui.presentation.viewmodel.settings.SettingsViewModel
 
 
 @Composable

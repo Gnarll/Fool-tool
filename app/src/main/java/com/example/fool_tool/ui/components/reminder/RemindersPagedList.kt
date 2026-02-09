@@ -12,8 +12,8 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.example.fool_tool.R
+import com.example.fool_tool.domain.model.Reminder
 import com.example.fool_tool.ui.components.shared.SwipeToDeleteItem
-import com.example.fool_tool.ui.model.Reminder
 
 @Composable
 fun RemindersPagedList(

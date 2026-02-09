@@ -19,6 +19,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.fool_tool.R
 import com.example.fool_tool.ui.components.shared.ValidatedTextField
+import com.example.fool_tool.ui.presentation.viewmodel.flashcard.CreateFlashcardViewModel
 import kotlinx.coroutines.launch
 
 
@@ -28,7 +29,7 @@ fun CreateFlashcardScreen(
     modifier: Modifier = Modifier,
     viewModel: CreateFlashcardViewModel = hiltViewModel()
 ) {
-    val formState = viewModel.createFlashcardFormState.collectAsState().value
+    val formState = viewModel.createFlashcardFormUiState.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 

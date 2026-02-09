@@ -6,8 +6,8 @@ import androidx.room.TypeConverters
 import com.example.fool_tool.data.local.Converters
 import com.example.fool_tool.data.local.dao.FlashcardDao
 import com.example.fool_tool.data.local.dao.ReminderDao
-import com.example.fool_tool.data.local.entities.FlashcardEntity
-import com.example.fool_tool.data.local.entities.ReminderEntity
+import com.example.fool_tool.data.model.FlashcardEntity
+import com.example.fool_tool.data.model.ReminderEntity
 
 @Database(
     entities = [FlashcardEntity::class, ReminderEntity::class],
