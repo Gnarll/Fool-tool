@@ -83,6 +83,7 @@ dependencies {
     testImplementation(libs.coroutines.test)
     testImplementation(libs.mockk)
     testImplementation(libs.androidx.paging.testing)
+    testImplementation(kotlin("test"))
 
     androidTestImplementation(libs.turbine)
     androidTestImplementation(libs.androidx.junit)
@@ -90,12 +91,12 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(kotlin("test"))
 
     kspAndroidTest(libs.hilt.android.compiler.test)
 
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-    testImplementation(kotlin("test"))
 
     coreLibraryDesugaring(libs.android.desugar)
 }

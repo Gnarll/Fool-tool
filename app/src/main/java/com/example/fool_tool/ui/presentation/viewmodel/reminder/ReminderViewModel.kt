@@ -60,7 +60,8 @@ class ReminderViewModel @AssistedInject constructor(
             _reminders.update { reminders ->
                 reminders.copy(
                     isPreloading = false,
-                    indexToScrollTo = reminderOffset?.let { it - 1 })
+                    indexToScrollTo = reminderOffset
+                )
             }
         }
     }
