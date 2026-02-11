@@ -126,7 +126,7 @@ class CreateReminderViewModel @Inject constructor(
             )
         }
 
-        reminderRepository.createReminder(reminder)
+        reminderRepository.insertReminder(reminder)
         alarmScheduler.schedule(reminder)
     }
 

@@ -18,16 +18,12 @@ import javax.inject.Singleton
 @Singleton
 class ReminderRepositoryImpl @Inject constructor(
     private val reminderDao: ReminderDao,
+    private val reminderPagingConfig: PagingConfig
 ) :
     ReminderRepository {
     override fun getPagedReminders(): Flow<PagingData<Reminder>> {
         return Pager(
-            config = PagingConfig(
-                pageSize = 20,
-                initialLoadSize = 40,
-                prefetchDistance = 10,
-                enablePlaceholders = false
-            )
+            config = reminderPagingConfig
         ) {
             reminderDao.getPagingSource()
         }.flow
@@ -42,7 +38,7 @@ class ReminderRepositoryImpl @Inject constructor(
         reminderDao.getReminderOffset(id)
 
 
-    override suspend fun getReminder(id: Long): Reminder =
+    override suspend fun getReminderById(id: Long): Reminder =
         reminderDao.getReminderById(id).toReminder()
 
 
@@ -52,7 +48,7 @@ class ReminderRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun createReminder(reminder: Reminder) {
+    override suspend fun insertReminder(reminder: Reminder) {
         reminderDao.insert(reminder.toReminderEntity())
     }
 

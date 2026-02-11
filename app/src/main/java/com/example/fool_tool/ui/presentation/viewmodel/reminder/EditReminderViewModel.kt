@@ -93,7 +93,7 @@ class EditReminderViewModel @AssistedInject constructor(
 
     fun preloadReminder() {
         viewModelScope.launch {
-            val reminder = reminderRepository.getReminder(reminderId)
+            val reminder = reminderRepository.getReminderById(reminderId)
 
             _uiState.update { state ->
                 state.copy(
