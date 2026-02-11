@@ -8,9 +8,9 @@ interface ReminderRepository {
     fun getPagedReminders(): Flow<PagingData<Reminder>>
 
     suspend fun getReminderOffset(id: Long): Int?
-    suspend fun getReminder(id: Long): Reminder
+    suspend fun getReminderById(id: Long): Reminder
     suspend fun getPendingReminders(): List<Reminder>
-    suspend fun createReminder(reminder: Reminder)
+    suspend fun insertReminder(reminder: Reminder)
     suspend fun updateReminder(reminder: Reminder)
     suspend fun deleteReminder(id: Long)
 }
