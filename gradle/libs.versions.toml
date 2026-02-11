@@ -73,6 +73,7 @@ androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "a
 android-desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 
 androidx-paging = { module = "androidx.paging:paging-runtime", version.ref = "paging" }
+androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "paging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
