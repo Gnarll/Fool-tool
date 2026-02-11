@@ -28,7 +28,6 @@ import com.example.fool_tool.R
 import com.example.fool_tool.core.extensions.toFormattedString
 import com.example.fool_tool.core.extensions.toLocalDateWithZone
 import com.example.fool_tool.core.extensions.toMillisWithZone
-import com.example.fool_tool.core.extensions.toUtcLocalDate
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +42,7 @@ fun DatePickerDocked(
 
     val datePickerState = rememberDatePickerState(selectableDates = object : SelectableDates {
         override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-            return utcTimeMillis.toUtcLocalDate() >= LocalDate.now()
+            return utcTimeMillis.toLocalDateWithZone() >= LocalDate.now()
         }
     }, initialSelectedDateMillis = date.toMillisWithZone())
 
