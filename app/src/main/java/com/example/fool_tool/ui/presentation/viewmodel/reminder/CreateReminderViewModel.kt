@@ -9,8 +9,8 @@ import com.example.fool_tool.core_android.util.validation.InputMaxSymbolsError
 import com.example.fool_tool.core_android.util.validation.ValidationError
 import com.example.fool_tool.di.ReminderValidationConstants
 import com.example.fool_tool.domain.model.ReminderStatus
+import com.example.fool_tool.domain.model.factory.ReminderFactory
 import com.example.fool_tool.domain.repository.ReminderRepository
-import com.example.fool_tool.test.ReminderFactory
 import com.example.fool_tool.ui.components.reminder.ReminderFormUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

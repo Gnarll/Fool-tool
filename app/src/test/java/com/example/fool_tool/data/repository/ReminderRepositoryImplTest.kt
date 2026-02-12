@@ -6,7 +6,7 @@ import androidx.paging.testing.asSnapshot
 import com.example.fool_tool.data.local.dao.ReminderDao
 import com.example.fool_tool.data.mappers.toReminder
 import com.example.fool_tool.domain.model.ReminderStatus
-import com.example.fool_tool.test.ReminderFactory
+import com.example.fool_tool.domain.model.factory.ReminderFactory
 import io.mockk.MockKAnnotations
 import io.mockk.clearAllMocks
 import io.mockk.coEvery

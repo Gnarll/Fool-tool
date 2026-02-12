@@ -1,4 +1,4 @@
-package com.example.fool_tool.test
+package com.example.fool_tool.domain.model.factory
 
 import com.example.fool_tool.data.model.ReminderEntity
 import com.example.fool_tool.domain.model.Reminder

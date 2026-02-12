@@ -3,8 +3,8 @@ package com.example.fool_tool.ui.presentation.viewmodel.flashcard
 import androidx.lifecycle.ViewModel
 import com.example.fool_tool.core_android.util.validation.EmptyInputError
 import com.example.fool_tool.core_android.util.validation.ValidationError
+import com.example.fool_tool.domain.model.factory.FlashcardFactory
 import com.example.fool_tool.domain.repository.FlashcardRepository
-import com.example.fool_tool.test.FlashcardFactory
 import com.example.fool_tool.ui.presentation.ui_state.flashcard.CreateFlashcardFormUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

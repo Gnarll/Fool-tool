@@ -5,7 +5,7 @@ import com.example.fool_tool.data.local.dao.FlashcardDao
 import com.example.fool_tool.data.mappers.toFlashcard
 import com.example.fool_tool.data.mappers.toFlashcardEntity
 import com.example.fool_tool.data.model.FlashcardEntity
-import com.example.fool_tool.test.FlashcardFactory
+import com.example.fool_tool.domain.model.factory.FlashcardFactory
 import io.mockk.clearAllMocks
 import io.mockk.coEvery
 import io.mockk.coVerify
