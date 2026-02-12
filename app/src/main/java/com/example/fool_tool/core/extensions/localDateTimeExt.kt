@@ -4,7 +4,8 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-fun LocalDateTime.toMillisWithZone(): Long = atZone(ZoneId.systemDefault()).toEpochSecond() * 1000
+fun LocalDateTime.toMillisWithZone(): Long =
+    atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
 
 
 fun LocalDateTime.toFormattedDetailedString(): String {
