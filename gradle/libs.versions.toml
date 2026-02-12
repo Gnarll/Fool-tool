@@ -76,6 +76,7 @@ androidx-paging = { module = "androidx.paging:paging-runtime", version.ref = "pa
 androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "paging" }
 androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

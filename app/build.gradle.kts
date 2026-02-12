@@ -92,6 +92,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.hilt.android.testing)
     androidTestImplementation(kotlin("test"))
+    androidTestImplementation(libs.mockk.android)
 
     kspAndroidTest(libs.hilt.android.compiler.test)
 
