@@ -42,6 +42,29 @@ android {
     buildFeatures {
         compose = true
     }
+
+    testOptions {
+        managedDevices {
+            localDevices {
+                create("pixel2api27") {
+                    device = "Pixel 2"
+                    apiLevel = 27
+                    systemImageSource = "aosp"
+                }
+                create("pixel9proapi36") {
+                    device = "Pixel 9 Pro"
+                    apiLevel = 36
+                    systemImageSource = "aosp"
+                }
+            }
+            groups {
+                create("defaultGroup") {
+                    targetDevices.add(localDevices["pixel2api27"])
+                    targetDevices.add(localDevices["pixel9proapi36"])
+                }
+            }
+        }
+    }
 }
 
 kotlin {
