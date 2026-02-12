@@ -7,7 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.fool_tool.core.extensions.toLocalDateTimeWithZone
 import com.example.fool_tool.core.extensions.toMillisWithZone
 import com.example.fool_tool.data.local.db.AppDatabase
-import com.example.fool_tool.test.ReminderFactory
+import com.example.fool_tool.domain.model.factory.ReminderFactory
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Before
