@@ -37,13 +37,13 @@ class AlarmSchedulerImpl @Inject constructor(
             val alarmTime = reminder.date.toMillisWithZone()
             val currentTime = System.currentTimeMillis()
 
-            if (alarmTime < currentTime - 1000) {
+            if (alarmTime < currentTime + 200L) {
                 return ScheduleResult.FailedWithInvalidTime
             }
 
             alarmManager.setExactAndAllowWhileIdle(
                 AlarmManager.RTC_WAKEUP,
-                reminder.date.toMillisWithZone(),
+                alarmTime,
                 PendingIntent.getBroadcast(
                     context,
                     reminder.id.hashCode(),
