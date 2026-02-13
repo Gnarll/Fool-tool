@@ -50,11 +50,13 @@ android {
                     device = "Pixel 2"
                     apiLevel = 27
                     systemImageSource = "aosp"
+                    testedAbi = "x86"
                 }
                 create("pixel9proapi36") {
                     device = "Pixel 9 Pro"
                     apiLevel = 36
                     systemImageSource = "aosp"
+                    testedAbi = "x86_64"
                 }
             }
             groups {
