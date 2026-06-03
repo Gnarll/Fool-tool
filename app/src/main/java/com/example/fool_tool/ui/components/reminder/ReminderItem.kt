@@ -6,9 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Card
@@ -91,7 +89,7 @@ fun ReminderItem(
             modifier = Modifier.padding(
                 horizontal = dimensionResource(R.dimen.padding_large),
                 vertical = dimensionResource(R.dimen.padding_small)
-            )
+            ), verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small))
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AdaptiveSpaceRow(
@@ -119,7 +117,6 @@ fun ReminderItem(
                 )
 
             }
-            Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -141,12 +138,13 @@ fun ReminderItem(
                     )
                 }
             }
-            Spacer(Modifier.height(dimensionResource(R.dimen.padding_small)))
-            Text(
-                text = reminder.description,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (!reminder.description.isEmpty()) {
+                Text(
+                    text = reminder.description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
 
         }
     }
@@ -208,7 +206,7 @@ fun ReminderItemDarkPreview() {
                 id = 1,
                 date = LocalDateTime.now(),
                 title = "Title",
-                description = "Description",
+                description = "",
                 status = ReminderStatus.SUCCEED
             ),
             onActivateReminder = { },
