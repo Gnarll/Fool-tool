@@ -4,6 +4,8 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -37,10 +39,15 @@ fun CreateFlashcardScreen(
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = dimensionResource(R.dimen.padding_small)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_medium)),
             horizontalAlignment = Alignment.Start
         ) {
             ValidatedTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 value = formState.nativeWord,
                 onValueChange = viewModel::onNativeWordChange,
                 labelText =
@@ -50,6 +57,8 @@ fun CreateFlashcardScreen(
             )
 
             ValidatedTextField(
+                modifier = Modifier
+                    .fillMaxWidth(),
                 value = formState.foreignWord,
                 onValueChange = viewModel::onForeignWordChange,
                 labelText =
