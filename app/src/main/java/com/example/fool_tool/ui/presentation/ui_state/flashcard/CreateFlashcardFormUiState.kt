@@ -1,7 +1,7 @@
 package com.example.fool_tool.ui.presentation.ui_state.flashcard
 
 import androidx.compose.runtime.Immutable
-import com.example.fool_tool.core_android.util.validation.ValidationError
+import com.example.fool_tool.domain.validation.ValidationError
 
 @Immutable
 data class CreateFlashcardFormUiState(

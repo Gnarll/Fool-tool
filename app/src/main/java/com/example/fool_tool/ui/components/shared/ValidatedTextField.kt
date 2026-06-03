@@ -8,7 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.fool_tool.core_android.util.validation.ValidationError
+import com.example.fool_tool.domain.validation.ValidationError
+import com.example.fool_tool.ui.presentation.validation.asText
 
 @Composable
 fun ValidatedTextField(
@@ -35,7 +36,7 @@ fun ValidatedTextField(
         supportingText = {
             error?.let {
                 Text(
-                    text = it.errorMessage.asString(),
+                    text = it.asText(),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.error
                 )

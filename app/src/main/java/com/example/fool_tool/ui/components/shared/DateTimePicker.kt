@@ -10,7 +10,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.dimensionResource
 import com.example.fool_tool.R
-import com.example.fool_tool.core_android.util.validation.ValidationError
+import com.example.fool_tool.domain.validation.ValidationError
+import com.example.fool_tool.ui.presentation.validation.asText
 import java.time.LocalDateTime
 
 @Composable
@@ -51,7 +52,7 @@ fun DateTimePicker(
         }
         error?.let {
             Text(
-                text = it.errorMessage.asString(),
+                text = it.asText(),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error
             )

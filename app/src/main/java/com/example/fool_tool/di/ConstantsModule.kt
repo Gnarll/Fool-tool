@@ -15,11 +15,6 @@ import javax.inject.Singleton
 object ConstantsModule {
 
     @Provides
-    @Singleton
-    fun provideReminderValidationConstants(): ReminderValidationConstants =
-        ReminderValidationConstants(TITLE_MAX_SYMBOLS, DESCRIPTION_MAX_SYMBOLS)
-
-    @Provides
     @ExtraReminder
     @Singleton
     fun provideExtraReminder(): String = EXTRA_REMINDER
@@ -34,8 +29,6 @@ object ConstantsModule {
     fun provideReminderPagingConfig(): PagingConfig = REMINDER_PAGING_CONFIG
 
 
-    private const val TITLE_MAX_SYMBOLS = 35
-    private const val DESCRIPTION_MAX_SYMBOLS = 80
     private const val EXTRA_REMINDER = "EXTRA_REMINDER"
     private const val EXTRA_REMINDER_ID = "EXTRA_REMINDER_ID"
 
@@ -46,6 +39,3 @@ object ConstantsModule {
         enablePlaceholders = false
     )
 }
-
-
-data class ReminderValidationConstants(val titleMaxSymbols: Int, val descriptionMaxSymbols: Int)

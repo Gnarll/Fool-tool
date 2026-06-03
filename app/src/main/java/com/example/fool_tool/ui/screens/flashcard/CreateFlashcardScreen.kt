@@ -29,7 +29,7 @@ fun CreateFlashcardScreen(
     modifier: Modifier = Modifier,
     viewModel: CreateFlashcardViewModel = hiltViewModel()
 ) {
-    val formState = viewModel.createFlashcardFormUiState.collectAsState().value
+    val formState = viewModel.uiState.collectAsState().value
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 

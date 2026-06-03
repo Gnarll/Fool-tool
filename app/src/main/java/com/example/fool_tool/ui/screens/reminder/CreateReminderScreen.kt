@@ -29,7 +29,7 @@ fun CreateReminderScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
 
-    val uiState = viewModel.reminderFormUiState.collectAsState()
+    val uiState = viewModel.uiState.collectAsState()
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 

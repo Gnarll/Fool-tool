@@ -4,15 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.fool_tool.core_android.alarm.AlarmScheduler
 import com.example.fool_tool.core_android.notification.NotificationService
-import com.example.fool_tool.core_android.util.validation.DateTimeValidationError
-import com.example.fool_tool.core_android.util.validation.EmptyInputError
-import com.example.fool_tool.core_android.util.validation.InputMaxSymbolsError
-import com.example.fool_tool.core_android.util.validation.ValidationError
-import com.example.fool_tool.di.ReminderValidationConstants
 import com.example.fool_tool.domain.model.ReminderStatus
 import com.example.fool_tool.domain.model.factory.ReminderFactory
 import com.example.fool_tool.domain.repository.ReminderRepository
-import com.example.fool_tool.ui.components.reminder.ReminderFormUiState
+import com.example.fool_tool.domain.validation.ReminderValidator
+import com.example.fool_tool.ui.presentation.ui_state.reminder.ReminderFormUiState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -22,7 +18,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 
 @HiltViewModel(assistedFactory = EditReminderViewModel.Factory::class)
@@ -30,7 +25,7 @@ class EditReminderViewModel @AssistedInject constructor(
     private val alarmScheduler: AlarmScheduler,
     private val reminderRepository: ReminderRepository,
     private val notificationService: NotificationService,
-    private val validationConstants: ReminderValidationConstants,
+    private val validator: ReminderValidator,
     @Assisted private val reminderId: Long
 ) :
     ViewModel() {
@@ -54,35 +49,36 @@ class EditReminderViewModel @AssistedInject constructor(
 
 
     fun onUiDateChanged(dateTime: LocalDateTime) {
+        val error = validator.validateDateTime(dateTime)
         _uiState.update { state ->
-            state.copy(date = dateTime)
+            state.copy(date = dateTime, dateTimeError = error)
         }
-        validateDateTime(dateTime)
     }
 
     fun onUiTitleChanged(title: String) {
+        val error = validator.validateTitle(title)
         _uiState.update { state ->
-            state.copy(title = title)
+            state.copy(title = title, titleError = error)
         }
-        validateTitle(title)
     }
 
     fun onUiDescriptionChanged(description: String) {
+        val error = validator.validateDescription(description)
         _uiState.update { state ->
-            state.copy(description = description)
+            state.copy(description = description, descriptionError = error)
         }
-        validateDescription(description)
     }
 
-    suspend fun attemptToUpdateReminder(): Boolean = when {
-        validateDateTime(dateTime = _uiState.value.date) != null -> false
-        validateTitle(title = _uiState.value.title) != null -> false
-        validateDescription(description = _uiState.value.description) != null -> false
-        else -> {
+    suspend fun attemptToUpdateReminder(): Boolean {
+        val dateTimeError = validator.validateDateTime(_uiState.value.date)
+
+        if (dateTimeError != null) {
             updateReminder()
-            true
+            return true
         }
 
+        _uiState.update { it.copy(dateTimeError = dateTimeError) }
+        return false
     }
 
     fun checkPermissions() =
@@ -122,42 +118,6 @@ class EditReminderViewModel @AssistedInject constructor(
         reminderRepository.updateReminder(reminder)
         alarmScheduler.schedule(reminder)
     }
-
-    private fun validateDateTime(dateTime: LocalDateTime): ValidationError? {
-        val validationError = when {
-            LocalDateTime.now(ZoneId.systemDefault()) > dateTime -> DateTimeValidationError
-            else -> null
-        }
-        _uiState.update { it.copy(dateTimeError = validationError) }
-        return validationError
-    }
-
-    private fun validateTitle(title: String): ValidationError? {
-        val validationError = when {
-            title.isEmpty() -> EmptyInputError
-            title.length > validationConstants.titleMaxSymbols -> InputMaxSymbolsError(
-                validationConstants.titleMaxSymbols
-            )
-
-            else -> null
-        }
-        _uiState.update { it.copy(titleError = validationError) }
-        return validationError
-    }
-
-    private fun validateDescription(description: String): ValidationError? {
-        val validationError = when {
-            description.isEmpty() -> EmptyInputError
-            description.length > validationConstants.descriptionMaxSymbols -> InputMaxSymbolsError(
-                validationConstants.descriptionMaxSymbols
-            )
-
-            else -> null
-        }
-        _uiState.update { it.copy(descriptionError = validationError) }
-        return validationError
-    }
-
 
     @AssistedFactory
     interface Factory {

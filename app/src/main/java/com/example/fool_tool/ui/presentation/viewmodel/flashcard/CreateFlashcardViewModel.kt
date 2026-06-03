@@ -1,10 +1,10 @@
 package com.example.fool_tool.ui.presentation.viewmodel.flashcard
 
 import androidx.lifecycle.ViewModel
-import com.example.fool_tool.core_android.util.validation.EmptyInputError
-import com.example.fool_tool.core_android.util.validation.ValidationError
 import com.example.fool_tool.domain.model.factory.FlashcardFactory
 import com.example.fool_tool.domain.repository.FlashcardRepository
+import com.example.fool_tool.domain.validation.FlashcardValidator
+import com.example.fool_tool.domain.validation.ValidationError
 import com.example.fool_tool.ui.presentation.ui_state.flashcard.CreateFlashcardFormUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,50 +15,45 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class CreateFlashcardViewModel @Inject constructor(private val flashcardRepository: FlashcardRepository) :
+class CreateFlashcardViewModel @Inject constructor(
+    private val flashcardRepository: FlashcardRepository,
+    private val validator: FlashcardValidator
+) :
     ViewModel() {
-    private var _createFlashcardFormUiState = MutableStateFlow(
+    private var _uiState = MutableStateFlow(
         CreateFlashcardFormUiState(
-            nativeWordError = EmptyInputError,
-            foreignWordError = EmptyInputError
+            nativeWordError = ValidationError.EmptyInputError,
+            foreignWordError = ValidationError.EmptyInputError
         )
     )
-    val createFlashcardFormUiState: StateFlow<CreateFlashcardFormUiState> =
-        _createFlashcardFormUiState.asStateFlow()
+    val uiState: StateFlow<CreateFlashcardFormUiState> =
+        _uiState.asStateFlow()
 
     fun onNativeWordChange(nativeWord: String) {
-        _createFlashcardFormUiState.update {
+        val error = validator.validateNativeWord(nativeWord)
+        _uiState.update {
             it.copy(
                 nativeWord = nativeWord,
-                nativeWordError = validateNativeWord(nativeWord)
+                nativeWordError = error
             )
         }
     }
 
     fun onForeignWordChange(foreignWord: String) {
-        _createFlashcardFormUiState.update {
+        val error = validator.validateForeignWord(foreignWord)
+        _uiState.update {
             it.copy(
                 foreignWord = foreignWord,
-                foreignWordError = validateForeignWord(foreignWord)
+                foreignWordError = error
             )
         }
     }
 
     suspend fun createFlashcard() {
         val flashcard = FlashcardFactory.createFlashcard(
-            nativeWord = _createFlashcardFormUiState.value.nativeWord,
-            foreignWord = _createFlashcardFormUiState.value.foreignWord
+            nativeWord = _uiState.value.nativeWord,
+            foreignWord = _uiState.value.foreignWord
         )
         flashcardRepository.insertFlashcard(flashcard)
-    }
-
-    private fun validateNativeWord(nativeWord: String): ValidationError? = when {
-        nativeWord.isEmpty() -> EmptyInputError
-        else -> null
-    }
-
-    private fun validateForeignWord(foreignWord: String): ValidationError? = when {
-        foreignWord.isEmpty() -> EmptyInputError
-        else -> null
     }
 }
