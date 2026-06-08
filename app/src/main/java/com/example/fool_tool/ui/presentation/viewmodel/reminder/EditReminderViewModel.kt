@@ -73,12 +73,12 @@ class EditReminderViewModel @AssistedInject constructor(
         val dateTimeError = validator.validateDateTime(_uiState.value.date)
 
         if (dateTimeError != null) {
-            updateReminder()
-            return true
+            _uiState.update { it.copy(dateTimeError = dateTimeError) }
+            return false
         }
 
-        _uiState.update { it.copy(dateTimeError = dateTimeError) }
-        return false
+        updateReminder()
+        return true
     }
 
     fun checkPermissions() =
